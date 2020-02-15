@@ -3,7 +3,7 @@ set JAVA_HOME=c:\Programs\Java\jdk1.8.0_211
 if not exist T:\vishia\Testbuild mkdir T:\vishia\Testbuild
 if not exist build mklink /J build T:\vishia\Testbuild
 ::pause
-call gradle.bat jar 2>build\err.txt
+call gradle.bat test 2>build\err.txt
 type build\err.txt
 pause
 

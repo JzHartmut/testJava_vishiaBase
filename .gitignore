@@ -1,4 +1,5 @@
 .gitRepository
+.gitcommit
 _*.sh
 _resyncRepository.jz.cmd
 src/main/java

@@ -19,6 +19,14 @@ version='3.0.0'
 //}
 //
 
+
+
+dependencies {
+  implementation files('../jars/junit-platform-console-standalone-1.6.0.jar')
+}
+
+
+
 sourceSets {
     main {
          java {
@@ -46,7 +54,10 @@ jar {
 
 
 test {
-
+  dependsOn jar
+  useJUnitPlatform {
+    includeTags 'teststd'
+  }
 }
 
 
