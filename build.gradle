@@ -1,7 +1,6 @@
 apply plugin: 'java'
                                                                 
-version='3.0.1'
-
+version='2020-03-14'
 
 
 //sourceSets {
@@ -43,6 +42,26 @@ sourceSets {
 }
 
                               
+task jcc_minisys(type: Exec) {
+  outputs.dir('build/minisys/bin');
+  executable "javac"
+  args "-d", "build/minisys/bin", "-sourcepath", "src/main/java", "src/main/java/org/vishia/minisys/*.java" 
+  doLast {
+    ant.touch( pattern:"2020-01-01") { fileTree(dir: 'build/minisys/bin' , include: '**/*.class') } //{fileset( dir:'build/minisys/bin') { include(name: '**/*.class')} }
+  }
+}
+
+//task timestampclassfiles_minisys(type: Exec) {
+//  dependsOn jcc_minisys
+//}
+
+
+task jar_minisys(type: Exec) {
+  dependsOn jcc_minisys
+  //dependsOn timestampclassfiles_minisys
+  executable "jar"
+  args "-cvfm", "build/minisys_vishia.jar", "src/main/jarmanifest/minisys.manifest", "-C", "build/minisys/bin", "." 
+}
 
                                                
 jar {                                                
@@ -53,10 +72,24 @@ jar {
 }
 
 
+
+task srcZip(type: Zip) {
+    archiveFileName = 'vishiaBase-'+version+'-source.zip'
+    //destinationDirectory = file("$buildDir/libs")
+    destinationDirectory = file("libs")
+
+    from "src/main/java"
+}
+
+
 task copyJar(type:Exec) {
   dependsOn jar
-  commandLine 'cmd', '/c', 'copy', 'build\\libs\\vishiaBase-'+version+'.jar', '..\\jars'
-  commandLine 'cmd', '/c', 'copy', 'build\\libs\\vishiaBase-'+version+'.jar', '..\\jars\\vishiaBase.jar'
+  dependsOn srcZip
+  dependsOn jar_minisys
+  commandLine 'cmd', '/c', 'copy', 'build\\libs\\cmpnJava_vishiaBase-'+version+'.jar', 'libs'
+  commandLine 'cmd', '/c', 'copy', 'build\\libs\\cmpnJava_vishiaBase-'+version+'.jar', 'libs\\vishiaBase.jar'
+  commandLine 'cmd', '/c', 'copy', 'build\\libs\\cmpnJava_vishiaBase-'+version+'.jar', 'libs\\vishiaBase-'+version+'.jar'
+  commandLine 'cmd', '/c', 'copy', 'build\\minisys_vishia.jar', 'libs'
 }
 
 test {                                                                                                 
@@ -96,4 +129,7 @@ test {
 //    archives sourcesJar
 //    archives javadocJar
 //}
+
+//defaultTask 'test'
+
 
