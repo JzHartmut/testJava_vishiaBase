@@ -6,3 +6,4 @@ src/main/java
 .gradle
 build
 gradle
+deploy

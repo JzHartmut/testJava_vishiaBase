@@ -1,4 +1,5 @@
 if "%JAVA_HOME%" == "" set JAVA_HOME=c:\Programs\Java\jdk1.8.0_211
+set JAVAC_HOME=%JAVA_HOME%
 call +mkLinkBuildGradle.bat
 :repeat
 cls
