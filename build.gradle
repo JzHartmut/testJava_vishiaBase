@@ -1,6 +1,6 @@
 apply plugin: 'java'
                                                                 
-version='2020-03-17'
+version='2020-03-20'
 
 
 //sourceSets {
@@ -47,10 +47,10 @@ task jcc_main(type: Exec) {
  workingDir 'src/main/java/_make'
  
  environment('TMPJAVAC', '../../../../build/javac')
+ environment('VISHIABASE', '../../../../build/javac/binjar')  //use the yet compiled class to generate jar
+ environment('VERSION', version)
  environment('CLASSPATH', 'xx')
- environment('VERSION', version)   //should have the form of a date, yyyy-mm-dd
- environment('JARFILE', '../../../../deploy/vishiaBase-'+version+'.jar')
- environment('MD5FILE', '../../../../deploy/vishiaBase-'+version+'.MD5.txt')
+ environment('DEPLOY', '../../../../deploy/vishiaBase-')
  environment('SRCPATH', '..')            //located in the workingDir  
  environment('MANIFEST', 'vishiaBase.manifest')  //located in the workingDir
  environment('SRC_ALL', '..')            //located in the workingDir
@@ -64,10 +64,10 @@ task jcc_minisys(type: Exec) {
  workingDir 'src/main/java/_make'
  
  environment('TMPJAVAC', '../../../../build/javac_minisys')
+ environment('VERSION', version)
+ environment('VISHIABASE', '../../../../deploy/vishiaBase-'+version+'.jar')  //use the before compiled class to generate jar
  environment('CLASSPATH', 'xx')
- environment('VERSION', version)   //should have the form of a date, yyyy-mm-dd
- environment('JARFILE', '../../../../deploy/vishiaMinisys-'+version+'.jar')
- environment('MD5FILE', '../../../../deploy/vishiaMinisys-'+version+'.MD5.txt')
+ environment('DEPLOY', '../../../../deploy/vishiaMinisys-')
  environment('SRCPATH', '..')            //located in the workingDir  
  environment('MANIFEST', 'minisys.manifest')  //located in the workingDir
  environment('FILE1SRC', '@minisys.files')            //located in the workingDir

@@ -5,6 +5,7 @@ call +mkLinkBuildGradle.bat
 cls
 call gradle.bat --warning-mode all test 2>build\err.txt
 type build\err.txt
+echo close window or repeat
 pause
 goto :repeat
 call inetBrowser %CD%\build\reports\tests\test\index.html
