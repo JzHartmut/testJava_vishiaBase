@@ -1,4 +1,5 @@
 apply plugin: 'java'
+//apply plugin: 'org.asciidoctor.convert'
                                                                 
 version='2020-03-20'
 
@@ -47,13 +48,14 @@ task jcc_main(type: Exec) {
  workingDir 'src/main/java/_make'
  
  environment('TMPJAVAC', '../../../../build/javac')
- environment('VISHIABASE', '../../../../build/javac/binjar')  //use the yet compiled class to generate jar
- environment('VERSION', version)
+ environment('VERSION', version)  //use version from gradle file
+ //use the yet compiled class to generate jar:
+ environment('JAR_vishiaBase', '../../../../build/javac/binjar')  
  environment('CLASSPATH', 'xx')
  environment('DEPLOY', '../../../../deploy/vishiaBase-')
- environment('SRCPATH', '..')            //located in the workingDir  
+ environment('SRCPATH', '..')            //relative from workingDir  
  environment('MANIFEST', 'vishiaBase.manifest')  //located in the workingDir
- environment('SRC_ALL', '..')            //located in the workingDir
+ environment('SRC_ALL', '..')            //relative from workingDir
  
  executable 'sh'
  args '-c', './makejar.sh'
@@ -65,7 +67,8 @@ task jcc_minisys(type: Exec) {
  
  environment('TMPJAVAC', '../../../../build/javac_minisys')
  environment('VERSION', version)
- environment('VISHIABASE', '../../../../deploy/vishiaBase-'+version+'.jar')  //use the before compiled class to generate jar
+ //use the yet compiled class to generate jar:
+ environment('JAR_vishiaBase', '../../../../deploy/vishiaBase-'+version+'.jar')
  environment('CLASSPATH', 'xx')
  environment('DEPLOY', '../../../../deploy/vishiaMinisys-')
  environment('SRCPATH', '..')            //located in the workingDir  
@@ -99,9 +102,17 @@ task srcZip(type: Zip) {
 }
 
 
+//asciidoctor {
+//  dependsOn srcZip
+//  sourceDir = file('src/docs/asciidoc')
+//  outputDir = file('.')  //create a dir html5
+//  //backends = ['html', 'pdf']
+//}
+
 
 test {                                                                                                 
   dependsOn srcZip
+  //dependsOn asciidoctor
   testLogging.showStandardStreams = true
   useJUnitPlatform {
     includeTags 'teststd'
