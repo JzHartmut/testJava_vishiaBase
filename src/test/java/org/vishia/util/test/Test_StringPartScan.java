@@ -2,6 +2,9 @@ package org.vishia.util.test;
 
 import java.text.ParseException;
 
+import org.junit.Assert;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.vishia.util.StringPart;
 import org.vishia.util.StringPartScan;
 
@@ -11,9 +14,10 @@ public class Test_StringPartScan
   
   
   public static void main(String[] args){
+    Test_StringPartScan thiz = new Test_StringPartScan();
     try {
       //test_NumericConversion();
-      test_scanPrinciple();
+      thiz.test_scanPrinciple();
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -22,6 +26,7 @@ public class Test_StringPartScan
   }
 
   static void check(boolean cond, String text) {
+    Assert.assertTrue(text, cond);
     if(!cond) {
       System.out.println("failed: " + text);
     } else {
@@ -30,7 +35,8 @@ public class Test_StringPartScan
   }
   
   
-  private static void test_scanPrinciple() {
+  @Test @Tag("teststd")
+  void test_scanPrinciple() {
     String src = "  Test  A ";
     StringPartScan sc = new StringPartScan(src);
     StringPart sp = sc; //Use sp for basic operations.
@@ -82,7 +88,8 @@ public class Test_StringPartScan
   
   
   
-  private static void test_NumericConversion() throws ParseException {
+  @Test @Tag("teststd")
+  void test_NumericConversion() throws ParseException {
     String src      = "            +1e+3            -0'123.045e3           1\"234'567              -0.0625    ";
     Result[] results = {new Result(+1e+3), new Result(-123.045e3), new Result(1234567), new Result(-0.0625)};
     StringPartScan sp = new StringPartScan(src);

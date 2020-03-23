@@ -1,16 +1,20 @@
 package org.vishia.util.test;
 
-import org.vishia.util.Assert;
+import org.junit.Assert;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.vishia.util.StringPart;
 
 public class Test_StringPart
 {
   public static void main(String[] args){
-    test_seek_len_basics();
+    Test_StringPart thiz = new Test_StringPart();
+    thiz.test_seek_len_basics();
     //test_getCircumScriptionToAnyChar();
   }
 
   static void check(boolean cond, String text) {
+    Assert.assertTrue(text, cond);
     if(!cond) {
       System.out.println("failed: " + text);
     } else {
@@ -19,18 +23,11 @@ public class Test_StringPart
   }
   
   
-  private static void test_getCircumScriptionToAnyChar()
-  {
-    StringPart sp = new StringPart("y\\<\\:arg\\><textExpr?argExpr>");
-    sp.seekPos(1);
-    String res = ""; //sp.getCircumScriptionToAnyChar("<?").toString();
-    sp.close();
-    Assert.check(res.equals("\\<\\:arg\\>"));
-  }
 
   
   
-  private static void test_seek_len_basics() {
+  @Test @Tag("teststd")
+  void test_seek_len_basics() {
     String str = " 0123456789ABC";
     int pos0 = str.indexOf('0');  //to compare, pos of 0
     StringPart sp = new StringPart(str);

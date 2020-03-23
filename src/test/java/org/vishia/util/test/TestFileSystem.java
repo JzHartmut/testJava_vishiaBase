@@ -1,7 +1,7 @@
 package org.vishia.util.test;
 
 import java.io.File;
-import java.util.Formatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.vishia.util.FileSystem;
 import org.vishia.util.StringFunctions;
+import org.vishia.util.FileSystem.FileAndBasePath;
 
 public class TestFileSystem
 {
@@ -70,6 +71,68 @@ public class TestFileSystem
     
   }
   
+  /**Test routine with examples to test {@link #normalizePath(String)}. */
+  public static void test_searchFile(){
+    List<File> foundFile = new LinkedList<File>();
+    boolean bOk = FileSystem.addFileToList("D:/**/vishia/**/srcJava_vishiaBase", foundFile);
+    Assert.assertTrue(bOk);
+  }  
   
+  
+  
+  /**Test routine with examples to test {@link #normalizePath(String)}. */
+  public static void test_addFilesWithBasePath(){
+    CharSequence result;
+    File dir = new File(".");  //it is the current dir, but without absolute path.
+    File dirAbs = dir.getAbsoluteFile();
+    File parent = FileSystem.getDir(dir);   //builds the real parent. It depends on the start directory of this routine.
+    File grandparent = FileSystem.getDir(parent);
+    String sParent = parent.getPath().replace("\\", "/");  //the path
+    int posSlash = sParent.lastIndexOf('/');
+    String sNameParent = sParent.substring(posSlash +1);
+    String searchPath = sNameParent + "/**/*";
+    List<FileAndBasePath> files = new ArrayList<FileAndBasePath>();
+    FileSystem.addFilesWithBasePath(grandparent, searchPath, files);
+    searchPath = sNameParent + "/..:**/*";
+    files.clear();
+    FileSystem.addFilesWithBasePath(parent, searchPath, files);
+  }  
+  
+  
+  
+  /**Test routine with examples to test {@link #normalizePath(String)}. */
+  public static void test_normalizePath2(){
+    CharSequence result;
+    result = FileSystem.normalizePath("../path//../file"); 
+    assert(result.toString().equals( "../file"));
+    result = FileSystem.normalizePath("../path/file/."); 
+    assert(result.toString().equals( "../path/file"));
+    result = FileSystem.normalizePath("../path/../."); 
+    assert(result.toString().equals( ".."));
+    result = FileSystem.normalizePath("../path//../file"); 
+    assert(result.toString().equals( "../file"));
+    result = FileSystem.normalizePath("..\\path\\\\..\\file"); 
+    assert(result.toString().equals( "../file"));
+    result = FileSystem.normalizePath("/../path//../file"); 
+    assert(result.toString().equals( "/../file"));  //not for praxis, but correct
+    result = FileSystem.normalizePath("./path//file/"); 
+    assert(result.toString().equals( "path/file/"));    //ending "/" will not deleted.
+    result = FileSystem.normalizePath("path/./../file"); 
+    assert(result.toString().equals( "file"));       
+
+    File dir = new File(".");  //it is the current dir, but without absolute path.
+    File dirAbs = dir.getAbsoluteFile();
+    File parent = dir.getParentFile();  assert(parent == null);  //property of java.io.File
+    parent = FileSystem.getDir(dir);   //builds the real parent. It depends on the start directory of this routine.
+    String sParent = parent.getPath().replace("\\", "/");  //the path
+    int posSlash = sParent.lastIndexOf('/');
+    String sNameParent = sParent.substring(posSlash +1);
+    File fileTest = new File(sParent + "/..",sNameParent); //constructed filecontains "/../" in its path
+    CharSequence sFileTest = FileSystem.normalizePath(fileTest.getAbsolutePath());
+    CharSequence sDirAbs = FileSystem.normalizePath(dirAbs.getAbsolutePath());
+    assert(StringFunctions.equals(sFileTest,sDirAbs));
+  }
+  
+
   
 }
