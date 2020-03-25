@@ -1,7 +1,23 @@
 apply plugin: 'java'
-//apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'org.asciidoctor.convert'
                                                                 
-version='2020-03-23'
+version='2020-03-24'
+def versionZipJar='2020-03-24'
+
+buildscript {
+    repositories {
+       jcenter()
+    }
+
+    dependencies {
+        //dedicated files, missing some:
+        //classpath files ('C:/programs/gradle/jars/asciidoctorj-1.5.6.jar', 'C:/programs/gradle/jars/asciidoctor-gradle-plugin-1.5.6.jar')
+        //loaded and stored in C:/User/.../.gradle/caches
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.6'
+        //does not work: classpath 'org.asciidoctor:AsciiDoctorj-pdf:1.5.0'
+    }
+}
+
 
 
 //sourceSets {
@@ -48,7 +64,8 @@ task jcc_zipjar(type: Exec) {
   workingDir 'src/main/java/_make'
   
   environment('TMPJAVAC', '../../../../build/javac_zipjar')
-  environment('VERSION', version)
+  environment('VERSION', versionZipJar)    //generates newly the same as this version
+  environment('TIME', "2020-03-23+06:12")  //generates reproducible with this timestamp
   environment('DEPLOY', '../../../../deploy/vishiaZipJar-')
   //use the yet compiled class to generate jar:
   environment('JAR_zipjar', '../../../../build/javac_zipjar/binjar')  
@@ -68,8 +85,9 @@ task jcc_minisys(type: Exec) {
   
   environment('TMPJAVAC', '../../../../build/javac_minisys')
   environment('VERSION', "")  //use version from _make/makejar.sh
+  environment('TIME', "")     //use time stamp from _make/makejar.sh
   //use the before built jar:
-  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
+  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+versionZipJar+'.jar')  
   environment('CLASSPATH', 'xx')
   environment('DEPLOY', '../../../../deploy/vishiaMinisys-')
   environment('SRCPATH', '..')  
@@ -87,8 +105,9 @@ task jcc_main(type: Exec) {
   
   environment('TMPJAVAC', '../../../../build/javac')
   environment('VERSION', "")  //use version from _make/makejar.sh
+  environment('TIME', "")     //use time stamp from _make/makejar.sh
   //use the before built jar:
-  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
+  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+versionZipJar+'.jar')  
   environment('CLASSPATH', 'xx')
   environment('DEPLOY', '../../../../deploy/vishiaBase-')
   environment('SRCPATH', '..')            //relative from workingDir  
@@ -99,13 +118,6 @@ task jcc_main(type: Exec) {
   args '-c', './makejar.sh'
 }
 
-
-//jar {                                                
-//  //source('org.vishia.checkDeps_C.CheckDeps.java')
-//  manifest {                                                 
-//      attributes 'Main-Class': 'org.vishia.jztxtcmd.JZtxtcmd'
-//   }
-//}
 
 
 
@@ -122,17 +134,17 @@ task srcZip(type: Zip) {
 }
 
 
-//asciidoctor {
-//  dependsOn srcZip
-//  sourceDir = file('src/docs/asciidoc')
-//  outputDir = file('.')  //create a dir html5
-//  //backends = ['html', 'pdf']
-//}
+asciidoctor {
+  dependsOn srcZip
+  sourceDir = file('src/docs/asciidoc')
+  outputDir = file('.')  //create a dir html5
+  //backends = ['html', 'pdf']
+}
 
 
 test {                                                                                                 
-  dependsOn srcZip
-  //dependsOn asciidoctor
+  //dependsOn srcZip
+  dependsOn asciidoctor
   testLogging.showStandardStreams = true
   useJUnitPlatform {
     includeTags 'teststd'

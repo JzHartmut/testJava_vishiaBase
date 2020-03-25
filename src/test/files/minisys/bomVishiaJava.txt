@@ -1,0 +1,6 @@
+ #file to test Get from web
+  
+vishiaBase.jar@https://vishia.org/Java/Download/versionArchive/vishiaBase-2020-03-24.jar ?MD5=b0d2ea45f467e67c73d7510c3360176b 
+vishiaZipJar.jar@https://vishia.org/Java/Download/versionArchive/vishiaZipJar-2020-03-23.jar ?!MD5=4bbab3e6061d5cc134b007b96e178029
+vishiaMiniSys.jar@https://vishia.org/Java/Download/versionArchive/vishiaMinisys-2020-03-24.jar ?MD5=b0d2ea45f467e67c73d7510c3360176b
+

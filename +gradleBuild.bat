@@ -4,8 +4,9 @@ set JAVAC_HOME=c:\Programs\Java\jdk1.8.0_241
 call +mkLinkBuildGradle.bat
 :repeat
 cls
-call gradle.bat --warning-mode all test 2>build\err.txt
-type build\err.txt
+call gradle.bat --warning-mode all test
+::2>build\err.txt
+::type build\err.txt
 echo close window or repeat
 pause
 goto :repeat
