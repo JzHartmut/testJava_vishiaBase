@@ -1,6 +1,6 @@
 2020-03-16 18:37:24  x     +MD5check.cmd                            ::           .508  1910682666 
 2020-03-14 10:00:50  x     +clean.bat                               ::           . 55 -2113340307 
-2020-03-26 00:01:58  x     +gitclone_srcJava_vishiaBase.sh          ::           .589  1547989784 
+2020-04-07 00:21:41  x     +gitclone_srcJava_vishiaBase.sh          ::           .589 -2056972921 
 2020-03-25 23:27:03  x     +gradleBuild.bat                         ::           .354  1301883578 
 2020-03-14 23:51:48  x     +mkLinkBuildGradle.bat                   ::           .964 -2022330699 
 2020-03-21 18:41:59  x     README.md                                ::           .316 -1542741362 
