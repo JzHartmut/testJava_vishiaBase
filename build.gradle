@@ -1,8 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'org.asciidoctor.convert'
                                                                 
-version='2020-03-24'
-def versionZipJar='2020-03-24'
+version='2020-04-04'
+def versionNumber='02:03'  //write as hh:mm because it is used in the time stamp in jar.
+//def versionZipJar='2020-03-23'
 
 buildscript {
     repositories {
@@ -64,8 +65,8 @@ task jcc_zipjar(type: Exec) {
   workingDir 'src/main/java/_make'
   
   environment('TMPJAVAC', '../../../../build/javac_zipjar')
-  environment('VERSION', versionZipJar)    //generates newly the same as this version
-  environment('TIME', "2020-03-23+06:12")  //generates reproducible with this timestamp
+  environment('VERSION', version)    //generates newly the same as this version
+  environment('TIME', "2020-04-04+02:03")  //generates reproducible with this timestamp
   environment('DEPLOY', '../../../../deploy/vishiaZipJar-')
   //use the yet compiled class to generate jar:
   environment('JAR_zipjar', '../../../../build/javac_zipjar/binjar')  
@@ -84,10 +85,10 @@ task jcc_minisys(type: Exec) {
   workingDir 'src/main/java/_make'
   
   environment('TMPJAVAC', '../../../../build/javac_minisys')
-  environment('VERSION', "")  //use version from _make/makejar.sh
-  environment('TIME', "")     //use time stamp from _make/makejar.sh
+  environment('VERSION', version)
+  environment('TIME', "2020-03-24+02:02")  //reproducible with this old timestamp
   //use the before built jar:
-  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+versionZipJar+'.jar')  
+  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
   environment('CLASSPATH', 'xx')
   environment('DEPLOY', '../../../../deploy/vishiaMinisys-')
   environment('SRCPATH', '..')  
@@ -104,10 +105,10 @@ task jcc_main(type: Exec) {
   workingDir 'src/main/java/_make'
   
   environment('TMPJAVAC', '../../../../build/javac')
-  environment('VERSION', "")  //use version from _make/makejar.sh
-  environment('TIME', "")     //use time stamp from _make/makejar.sh
+  environment('VERSION', version)
+  environment('TIME', version + "+" + versionNumber)
   //use the before built jar:
-  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+versionZipJar+'.jar')  
+  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
   environment('CLASSPATH', 'xx')
   environment('DEPLOY', '../../../../deploy/vishiaBase-')
   environment('SRCPATH', '..')            //relative from workingDir  

@@ -343,12 +343,20 @@ The file `_make/makejar.sh` for this jar component contains (snippets):
 
  ##Both variables should be corrected for any new version, 
  ##if is used for gradle build and for shell build!
- if test "$VERSION" == ""; then export VERSION="2020-03-23"; fi
- export TIME="2020-03-23+12:34"
+ if test "$VERSION" == ""; then export VERSION="2020-04-04"; fi
+ if test "$TIME" == ""; then export TIME="2020-04-04+02:03"; fi
+ 
+The `VERSION` can be set outside if desired, it affects only the file names. 
+The `TIME` can be set outside if desired too, but it affects the content of jar
+and hence the MD5 code because it determines the time stamps in the jar file. 
 
-The `VERSION` can be set outside if desired, it affets only the file names. 
-The `TIME` should not be set outside because the time stamp from manual build and from gradle
-should be the same. But it is to adapt here for any new version.
+Both script variables `VERSION` and `TIME` can be set outside because this script
+maybe called for some different jar files. The value set inside should be valid
+for the main jar file. See next chapters for invoke this script.
+
+The `TIME` is used as UTC-Time. This is important because daylight saving time switching
+in local times are disrupting (this effect was detected after re-check the algorithm 
+on 2020-04-04 after the spring daylight saving time switch in Europe).
  
  #determine out file names from VERSION
  export JARFILE=$DEPLOY$VERSION.jar
@@ -407,6 +415,7 @@ a `vishiaZipJar-VERSION.jar`-file:
   
   environment('TMPJAVAC', '../../../../build/javac_zipjar')
   environment('VERSION', version)
+  environment('TIME', "2020-04-04+02:03")  //generates reproducible with this timestamp
   environment('DEPLOY', '../../../../deploy/vishiaZipJar-')
   //use the yet compiled class to generate jar:
   environment('JAR_zipjar', '../../../../build/javac_zipjar/binjar')  
@@ -431,11 +440,26 @@ The `CLASSPATH` is `xx` because the argument should be existing. It is not used 
 The `SOURCEPATH` is `..` relative from `_make`. `SRC_ALL` is set, adequate of gradle
 all java files in this directory are compiled. 
 
-The `VERSION` is gotten from the gradle build script, because the yet generated jar
-is used in the same version for the following jar generating actions, see below. 
-It determines the name of the deployment only.
+The `VERSION` is gotten from the gradle build script variable. 
+It determines only the name of the deployment only.
 
-The `TIME` is not set here, it is determined in the called `makejar.sh` . 
+The `TIME` value should only be changed if a new jar content is expected or created.
+The following rule is recommended:
+
+* Do not change the `TIME`
+* Compile newly
+* Check whether the MD5 respectively the binary code of the jar is change. If it is changed, 
+then set a new value for the `TIME` because the real source time should be able
+to recognize in the jar file. The source time may be present by month and day,
+whereby hour and minutes can be used for a version number. 
+
+It is possible that some sources are changed, but a certain jar file is not really changed 
+because the sources for this jar file are not affected. Another situation is,
+that sources from a used jar file (in `-classpath` of the `javac` call) are changed,
+but the compiled jar file is not affected because the call conditions of that used
+class files are unchanged. With manual comparison of the generated MD5 code 
+(adequate comparison of binary result of the jar) it is able to recognize 
+whether the jar file should be newly deployed. 
 
 The `FILE1SRC` is the last argument of the `javac`-call, the files to compile. 
 In this case the jar should contain the `org.vishia.zip.Zip` as only one class,
@@ -463,7 +487,8 @@ The third `jcc`-Block is the compilation and generation of the whole
   workingDir 'src/main/java/_make'
   
   environment('TMPJAVAC', '../../../../build/javac')
-  environment('VERSION', "")  //use version from _make/makejar.sh
+  environment('VERSION', version)
+  environment('TIME', version + "+" + versionNumber)
   //use the before built jar:
   environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
   environment('CLASSPATH', 'xx')
@@ -482,6 +507,11 @@ jar file to build jar, set into the environment variable `JAR_zipjar`
 
 The `makejar.sh` is the same script as used for vishiaBase.
 
+The `TIME` is build with the `versionNumber` which should (need to) be written as
+valid `hh:mm` format (`def versionNumber='02:03'`) to build a valid time stamp.
+So the `hh:mm` value inside the jar is used as version number. The date should be
+present the date of the last source.  
+
 Here `FILE1SRC` is not set, instead  `SRC_ALL` is given. Therefore all sources
 of this path are gathered als sources to compile. That is like the normal approach 
 of gradle - compile all given. 
@@ -496,7 +526,8 @@ The next example shows how a more complex jar file is generate:
   def JAR_vishiaBase = '../../../../../cmpnJava_vishiaBase/deploy/vishiaBase-' + 
                        version_vishiaBase + '.jar'
   environment('JAR_zipjar', JAR_vishiaBase)
-  environment('VERSION', "")              //use version from makejar.sh 
+  environment('VERSION', version)              //use version from makejar.sh 
+  environment('TIME', "")
   environment('DEPLOY', '../../../../deploy/vishiaGui-')
   environment('CLASSPATH', 
     '../../../../libs/org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar'
@@ -512,7 +543,8 @@ The next example shows how a more complex jar file is generate:
  }
 
 This complete example shows the generation of the `vishiaGui-VERSION.jar` 
-which uses the Eclipse-`swt...jar` and the `vishiaBase-VERSION.jar` as library.
+which uses the Eclipse-`swt...jar` and the `vishiaBase-VERSION.jar` 
+with `version_vishiaBase` as library.
 Both are set to the `CLASSPATH` variable because the compiler should know the
 signatures of called routines. Because the same `vishiaGui-VERSION.jar` is used 
 as tool to build the jar, its path is stored in the internal gradle (groovy-) variable 
