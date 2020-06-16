@@ -8,9 +8,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.vishia.util.FileFunctions;
 import org.vishia.util.FileSystem;
 import org.vishia.util.StringFunctions;
-import org.vishia.util.FileSystem.FileAndBasePath;
 
 public class TestFileSystem
 {
@@ -91,7 +91,7 @@ public class TestFileSystem
     int posSlash = sParent.lastIndexOf('/');
     String sNameParent = sParent.substring(posSlash +1);
     String searchPath = sNameParent + "/**/*";
-    List<FileAndBasePath> files = new ArrayList<FileAndBasePath>();
+    List<FileFunctions.FileAndBasePath> files = new ArrayList<FileFunctions.FileAndBasePath>();
     FileSystem.addFilesWithBasePath(grandparent, searchPath, files);
     searchPath = sNameParent + "/..:**/*";
     files.clear();

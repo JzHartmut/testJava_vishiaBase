@@ -5,12 +5,14 @@
 //==endJZcmd==
 package org.vishia.util.test;
 
+import org.vishia.testOrg.TestOrg;
 import org.vishia.util.Assert;
 import org.vishia.util.StringFunctions;
 
 public class TestStringFunctions
 {
   public static void main(String[] args){
+    test_comparePos();
     testCompare();
     test_indexOf();
   }
@@ -39,25 +41,33 @@ public class TestStringFunctions
   
   public static void test_comparePos()
   {
+    TestOrg test = new TestOrg("test_comparePos");
     String s1 = "a";
     String s2 = "b";
     int cmp = StringFunctions.comparePos(s1, 0, s2, 0, Integer.MAX_VALUE);
-    if(cmp !=-1) error("TestStringFunctions.comparePos e1");
+    test.expect(cmp==-1, true, "only one char per String, a ? b returns -1");
     //
     s1 = "abcx";
     s2 = "abcy";
     cmp = StringFunctions.comparePos(s1, 0, s2, 0, Integer.MAX_VALUE);
-    if(cmp !=-4) error("TestStringFunctions.comparePos abc ? abcx ");
+    test.expect(cmp ==-4, true, "abcx ? abcy returns -4");
     //
     s1 = "abc";
     s2 = "abcy";
     cmp = StringFunctions.comparePos(s1, 0, s2, 0, Integer.MAX_VALUE);
-    if(cmp !=-4) error("TestStringFunctions.comparePos abc ? abcx ");
+    test.expect(cmp ==-4, true, "abc ? abcy returns -4");
     //
     s1 = "abcx";
     s2 = "abc";
     cmp = StringFunctions.comparePos(s1, 0, s2, 0, Integer.MAX_VALUE);
-    if(cmp != 4) error("TestStringFunctions.comparePos abc ? abcx ");
+    test.expect(cmp ==4, true, "abc ? abcy returns 4");
+    //
+    s1 = "abcx";
+    s2 = "abcx";
+    cmp = StringFunctions.comparePos(s1, 0, s2, 0, Integer.MAX_VALUE);
+    test.expect(cmp ==0, true, "abcx ? abcx returns 0");
+    //
+    test.finish();
   }
 
   

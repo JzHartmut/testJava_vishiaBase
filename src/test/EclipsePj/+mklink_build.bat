@@ -1,6 +1,6 @@
+call +clean.bat
 set DIRBIN=%TMP%\Eclipse\testJava_vishiaBase
-if exist bin rmdir /S/Q bin
-if exist %DIRBIN% rmdir /S/Q %DIRBIN% 
+if exist %DIRBIN% rmdir %DIRBIN%
 mkdir %DIRBIN%
 mklink /J bin %DIRBIN%
 

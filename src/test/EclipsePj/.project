@@ -21,9 +21,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/libs</locationURI>
 		</link>
 		<link>
-			<name>srcJava_vishiaBase</name>
+			<name>src_vishiaBase</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/main/java</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/main/java/srcJava_vishiaBase</locationURI>
 		</link>
 		<link>
 			<name>testJava_vishiaBase</name>

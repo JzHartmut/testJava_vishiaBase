@@ -140,7 +140,7 @@ public class TestReadMsc15Cfg
   
   static void readKeys(File fXmlIn) throws IOException {
     XmlJzReader xmlReader = new XmlJzReader();
-    xmlReader.readCfg(new File("c:/Programs/MSC15_adaptSmlk/settings.cfg.xml"));
+    xmlReader.readCfg(new File("src/test/files/xmlReader/Exported-2020-05-08.vssettings"));
     KeyboardShortCuts data = new KeyboardShortCuts();
     xmlReader.readXml(fXmlIn, data);
     for(KeyboardShortcut sc: data.shortcutsUser) {
@@ -181,7 +181,7 @@ public class TestReadMsc15Cfg
   public static void main(String args[]) {
     
     //File fXmlIn = new File("c:/Users/hartmut/Documents/Visual Studio 2015/Settings/CurrentSettings.vssettings");
-    File fXmlIn = new File("D:/ML/SULtrcCurve/SULtrc.xml");
+    File fXmlIn = new File("src/test/files/xmlReader/Exported-2020-05-08.vssettings");
     try {
       analyzeStruct(fXmlIn);
     } catch (Exception e) {

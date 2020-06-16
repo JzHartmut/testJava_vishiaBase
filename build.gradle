@@ -63,66 +63,16 @@ sourceSets {
  
 task jcc_zipjar(type: Exec) {
   workingDir 'src/main/java/_make'
-  
-  environment('TMPJAVAC', '../../../../build/javac_zipjar')
-  environment('VERSION', version)    //generates newly the same as this version
-  environment('TIME', "2020-04-04+02:03")  //generates reproducible with this timestamp
-  environment('DEPLOY', '../../../../deploy/vishiaZipJar-')
-  //use the yet compiled class to generate jar:
-  environment('JAR_zipjar', '../../../../build/javac_zipjar/binjar')  
-  environment('CLASSPATH', 'xx')
-  environment('SRCPATH', '..')                 //located in the workingDir  
-  environment('MANIFEST', 'zipjar.manifest')  //located in the workingDir
-  environment('FILE1SRC', '../org/vishia/zip/Zip.java')    //located in the workingDir
-  
   executable 'sh'
-  args '-c', './makejar.sh'
-}
-
-
-task jcc_minisys(type: Exec) {
-  dependsOn jcc_zipjar
-  workingDir 'src/main/java/_make'
-  
-  environment('TMPJAVAC', '../../../../build/javac_minisys')
-  environment('VERSION', version)
-  environment('TIME', "2020-03-24+02:02")  //reproducible with this old timestamp
-  //use the before built jar:
-  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
-  environment('CLASSPATH', 'xx')
-  environment('DEPLOY', '../../../../deploy/vishiaMinisys-')
-  environment('SRCPATH', '..')  
-  environment('MANIFEST', 'minisys.manifest')
-  environment('FILE1SRC', '@minisys.files')
-  
-  executable 'sh'
-  args '-c', './makejar.sh'
-}
-
-
-task jcc_main(type: Exec) {
-  dependsOn jcc_zipjar
-  workingDir 'src/main/java/_make'
-  
-  environment('TMPJAVAC', '../../../../build/javac')
-  environment('VERSION', version)
-  environment('TIME', version + "+" + versionNumber)
-  //use the before built jar:
-  environment('JAR_zipjar', '../../../../deploy/vishiaZipJar-'+version+'.jar')  
-  environment('CLASSPATH', 'xx')
-  environment('DEPLOY', '../../../../deploy/vishiaBase-')
-  environment('SRCPATH', '..')            //relative from workingDir  
-  environment('MANIFEST', 'vishiaBase.manifest')  //located in the workingDir
-  environment('SRC_ALL', '..')            //relative from workingDir
-  
-  executable 'sh'
-  args '-c', './makejar.sh'
+  args '-c', './+makejar_vishiaBase.sh'
 }
 
 
 
 
-task srcZip(type: Zip) {
+
+
+task XXXsrcZip(type: Zip) {
   dependsOn jcc_main
   dependsOn jcc_minisys
     archiveFileName = 'vishiaBase-'+version+'-source.zip'
@@ -135,7 +85,7 @@ task srcZip(type: Zip) {
 }
 
 
-asciidoctor {
+XXXasciidoctor {
   dependsOn srcZip
   sourceDir = file('src/docs/asciidoc')
   outputDir = file('.')  //create a dir html5
@@ -144,8 +94,8 @@ asciidoctor {
 
 
 test {                                                                                                 
-  //dependsOn srcZip
-  dependsOn asciidoctor
+  dependsOn jcc_zipjar
+  //dependsOn asciidoctor
   testLogging.showStandardStreams = true
   useJUnitPlatform {
     includeTags 'teststd'

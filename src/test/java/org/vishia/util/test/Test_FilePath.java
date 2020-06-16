@@ -6,13 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.vishia.util.CheckVs;
+//import org.junit.jupiter.api.Tag;
+//import org.junit.jupiter.api.Test;
+import org.vishia.testOrg.TestOrg;
+import org.vishia.util.FileFunctions;
 import org.vishia.util.FilePath;
-import org.vishia.util.StringFunctions;
 
 public class Test_FilePath
 {
@@ -63,54 +61,24 @@ public class Test_FilePath
   FilePath pVar_Base_LocalNameExt = new FilePath("&variable/base/path:local/path/name.ext");   
 
   
-  private boolean ok = true;
   
-  private void expect(CharSequence s1, CharSequence s2) {
-    int ok = StringFunctions.compare(s1, s2);
-    if(ok != 0) {
-      CharSequence msg = CheckVs.stackInfo("", 2, 1);
-      CheckVs.consoleErr("error @: %s: %s != %s", msg, s1, s2);
-      this.ok = false;
-    }
-  }
-  
-  public void test(){
-    
-    showTestoper();
-    StringBuilder buf = new StringBuilder();
-    CharSequence file, basepath, localdir, localfile;
-    try{
-      localdir = this.pLocalNameExt.localdir(buf, null, null, this.env);
-      basepath = this.pVarBaseLocal_LocalNameExt.localdir(this.env);
-      localdir = this.pVarBaseLocal_LocalNameExt.localdir(this.env);
-      localfile = this.pVarBaseLocal_LocalNameExt.localfile(this.env);
-      check(StringFunctions.equals(localdir, "varlocal/path/local/path"));
-      
-      localdir = this.pVarBaseLocal_Base_LocalNameExt.localdir(this.env);
-      check(StringFunctions.equals(localdir, "local/path"));
-      
-      localdir = this.pVarBaseLocal_Base_NameExt.localdir(this.env);
-      check(StringFunctions.equals(localdir, "."));
-      
-    } catch(NoSuchFieldException exc){
-      System.err.println(exc.getMessage());
-    }
-  }
-
 
   
-  @Test @Tag("teststd")
+  //@Test @Tag("teststd")
   void check_DriveAbsBaseLocalNameExt() {
-    FilePath fp = new FilePath("d:/base/path:local/path/name.ext");   
-    this.ok = true;
+    String testPath = "d:/base/path:local/path/name.ext";
+    TestOrg test = new TestOrg("check getting all components from a path " + testPath);
+    FilePath fp = new FilePath(testPath);   
     try {
-      expect(fp.localnameW(null), "local\\path\\name");
-      expect(fp.localname(null), "local/path/name");
-      expect(fp.localfile(null), "local/path/name.ext");
+      test.expect(fp.localdir(null), "local/path", false, "localdir()");
+      test.expect(fp.absbasepath(null), "d:/base/path", false, "absbasepath()");
+      test.expect(fp.localnameW(null), "local\\path\\name", false, "localnameW()");
+      test.expect(fp.localname(null), "local/path/name", false, "localname()");
+      test.expect(fp.localfile(null), "local/path/name.ext", false, "localfile()");
     } catch(NoSuchFieldException exc) {
-      Assert.assertTrue(true);  //should never thrown, it does not access local variables  
+      test.exception(exc);
     }
-    Assert.assertTrue(this.ok);
+    test.finish();
   }
   
   
@@ -120,25 +88,27 @@ public class Test_FilePath
    * For manually test select the correct directory where build.gradle is stored.
    * @throws NoSuchFieldException
    */
-  @Test @Tag("teststd")
+  //@Test @Tag("teststd")
   void testExpand() throws NoSuchFieldException {
-    showTestoper();
-    String sWildcardPath = "src/main/java:org/**/*.java"; //all java files.
+    TestOrg test = new TestOrg("FileFunctions.testExpand");
+    //showTestoper();
+    String sWildcardPath = "src/main/java/srcJava_vishiaBase:org/**/*.java"; //all java files in this SBOX
     FilePath pathWildcard = new FilePath(sWildcardPath); 
     File checkdir = new File(pathWildcard.absbasepath(null).toString());
     if(!(checkdir.exists())) {
       System.err.println("check testExpand cannot executed, change to an existing directory.");
-      Assert.assertTrue(false);
     }
     else {
       List<FilePath> dst = new LinkedList<FilePath>();
       pathWildcard.expandFiles(dst, null, null, null);
-      Assert.assertTrue(dst.size() > 100);  //should contain a lot of files, more than 300, test is ok if some files are found.
+      test.expect(dst.size() > 100, true, sWildcardPath + " contains more as 100 files");
     }
+    test.finish();
   }
   
   
   void testReplWildcard() throws NoSuchFieldException {
+    TestOrg test = new TestOrg("testReplWildcard");
     showTestoper();
     String sWildcardPath = "D:/vishia/ZBNF/srcJava_Zbnf:org/**/*.java";
     FilePath pathWildcard = new FilePath(sWildcardPath); 
@@ -149,17 +119,12 @@ public class Test_FilePath
     else {
       FilePath pathRepl = new FilePath("path/exmpl.java");
       CharSequence res = pathWildcard.absfileReplwildcard(pathRepl, null);
-      check("D:/vishia/ZBNF/srcJava_Zbnf/org/path/exmpl.java".contentEquals(res));  //should contain a lot of files, more than 300, test is ok if some files are found.
+      test.expect(res, "D:/vishia/ZBNF/srcJava_Zbnf/org/path/exmpl.java" , false, "faulty replacing");
+      //check("D:/vishia/ZBNF/srcJava_Zbnf/org/path/exmpl.java".contentEquals(res));  //should contain a lot of files, more than 300, test is ok if some files are found.
     }
+    test.finish();
   }
   
-  
-  private static void check(boolean ok) {
-    org.junit.Assert.assertTrue(ok);
-    if(!ok) {
-      //System.err.println(Assert.stackInfo("Test error in: ", 2, 1));
-    }
-  }
   
   private void showTestoper() {
     //System.out.print(Assert.stackInfo("Test: ", 2, 1));
@@ -171,16 +136,22 @@ public class Test_FilePath
    * @param noArgs
    */
   public static void main(String[] noArgs){ 
+    //to set the current dir to a determined directory the only way is to produce a file with that directory
+    // on a known path. This is done by call of +setWDtoTmp.bat or +setWDtoTmp.sh in this SBOX.
+    //The following routine reads this file and sets the current dir for the tests.
+    FileFunctions.setCurrdirFromFile("$(TMP)/WD_cmpnJava_vishiaBase.var");
+    TestOrg test = new TestOrg("Test_FilePath");
     Test_FilePath main = new Test_FilePath();
     try {
       main.check_DriveAbsBaseLocalNameExt();
       main.testReplWildcard();
       main.testExpand();
-      main.test(); 
     } catch(Exception exc) {  //all exceptions are unexpected. Not used for regular problems.
-      System.err.println("unexpected: " + exc.getMessage());
-      exc.printStackTrace(System.err);
+      test.exception(exc);
+      //System.err.println("unexpected: " + exc.getMessage());
+      //exc.printStackTrace(System.err);
     }
+    test.finish();
   }
   
 }

@@ -1,0 +1,13 @@
+=========================================================================
+Test_FilePath
+=========================================================================
+check getting all components from a path d:/base/path:local/path/name.ext
+ok
+=========================================================================
+testReplWildcard
+ok
+=========================================================================
+FileFunctions.testExpand
+  ok: src/main/java/srcJava_vishiaBase:org/**/*.java contains more as 100 files
+ok
+ok
