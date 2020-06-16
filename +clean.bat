@@ -1,5 +1,5 @@
 @echo off
 rmdir .gradle
 rmdir gradle
-rmdir build
-pause
+rmdir /S /Q build
+if not "%1"=="nopause" pause
