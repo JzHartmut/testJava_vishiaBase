@@ -1,0 +1,237 @@
+= srcJava_vishiaBase component build and test
+:toc:
+:sectnums:
+:sectlinks:
+
+
+Dr. Hartmut Schorrig, Germany in Europa, link:https://vishia.org[www.vishia.org]
+
+date: 2020-06-19
+
+== The mission
+
+The summary of Java sources as component "__srcJava_vishiaBase__" contains a lot of Java classes for different approaches. 
+Some of them build a system. Especially the link:../../../JZtxtcmd/html/JZtxtcmd.html[JZtxtcmd] tool can be used as stand alone tool or as ad-one for special tooling for several text conversion approaches. The JZtxtcmd can be tested as tool in sum, but a unit test for all the details in necessary.
+
+The build of the jar file for the _srcJava_vishiaBase_ component is done regarding the link:reproducibleJar.html[vishia...reproducibleJar] approach. Hence it is build with a simple shell script delivered in a zip file with the sources. No other tooling is necessary except a JDK for compilation. 
+
+There was some experience with gradle and Junit-test, but summary using gradle is a complex approach which is unecessary for this component.
+
+The unit-test for all classes is a widespread problem. Hence the tests are written for determined classes in specialized main routines. One main routine: org.vishia.testbase.Test#main is used for the testall (build test).
+
+Yet, 2020-06, only a few classes are included in this test. In the past the test was done usual as usage-test (on usage a tool with this sources) or with different special test routines only for special cases. Test was not in the main focus. It will be improved up to now for future.
+
+== The git archives and the file tree
+
+The file tree is a gradle-like file tree:
+
+ The_SBOX_for_TestJava_vishiaBase
+ +-.git (optional, not in Zip-files, it is TestJava_vishiaBase)
+ +-libs (downloaded external components)
+ +-build (it is a symbolic link, JUNCION for windows, to tmp
+ + src
+   +-main    
+   | +-java
+   |   +-srcJava_vishiaBase  
+   |     +-.git     (for the srcJava_visiaBase component)
+   |     +-_make
+   |     +-org.vihia...*.java  (The package tree of sources
+   +-test
+   | +-EclipsePj  (it is able to import)
+   | +-files      (some files as test input) 
+   | +-testResult_Ref  (some files as test output for comparison) 
+   | +-java 
+   |   +-_make          (make for test)
+   |   +-org....*.java  (package tree for test Java sources)
+   +-docs
+     +-asciidoc
+       +-... documentation of the srcJava_vishiaBase-component
+       
+There are two git archives on github:
+
+* link:https://github.com/JzHartmut/testJava_vishiaBase[]: This contains the file tree above, without content in `libs` and without `build`, and especially without content in `src/main/java/srcJava_vihiaBase`. It means it contains the test sources and the test environment.
+
+* link:https://github.com/JzHartmut/srcJava_vishiaBase[]: This is the versioned content of the delivered zip file for reproducible build of the `srcJava_vishiaBase.jar`. See link:https://www.vishia.org/Java/html5/source+build/src_Archive.html[].
+
+
+To clone from github you can use the following command for git:
+
+ git clone -b master https://github.com/JzHartmut/TestJava_vishiaBase.git
+ 
+It creates a pulled workingtree with .git archive into the sub directory `TestJava_vishiaBase`. Alternatively you can get a zip archive from the sources from github.
+
+The second git archive, for `srcJava_vishisBase` is cloned if `build.bat` or `build.sh` was executed in the `src/buildscripts` by invocation of the existing `src/main/java/+gitclone_srcJava_vishiaBase.sh` if the sources are not found. 
+Alternatively you can manually unzip the zip file of sources in `src/main/java`, creating the `src/main/java/srcJava_vishiaBase`.
+
+
+== Build and Test
+
+The source tree of `Testjava_vishiaBase` contains a directory
+
+ src/buildScripts
+ 
+Go into this directory and invoke either `build.bat` on MS-Windows or `build.sh`
+
+`build.bat` creates the necessary `build` directory as `mklink /JUNCTION` to a specified path inside the `%TMP%` directory for build results. It may be recommended to install a RAM disk and redirect the `TMP` environment variable to the RAM disk on Windows. The build process is faster. Your SSD hard disk will be treat with care. This is true for all build and temporary saved files.
+
+`build.bat` then invokes `build.sh` via `sh.exe` invocation. This `sh.exe` should be found in `PATH` if git is installed (via MinGW). All scripts are linux-shell scripts. You need an installation for a minimal linux environment on windows, which is already given if you use git. 
+
+`build.sh` creates the directory `build` as link to `$TMP/BuildJava_vishiaBase inside `+mkLinkBuild.sh` adequate as in Windows for Linux.
+
+`build.sh` invokes 
+
+ export BUILD="../../../../../build"
+ cd src/main/java/srcJava_vishiaBase/_make
+ ./+makejar_vishiaBase.sh 
+ cd ../../../../..
+
+to generate the 
+
+ build/deploy/vishiaBase*
+ 
+files as there was build on immediately invocation of this script. It means it builds the current version of srcJava_vishiaBase. Now you should check whether the check sum and binary content of the jar are adequate to a given version of the same files. The files, at least the ckecksum file, contains a date stamp in its name. The build is reproducable, it means the same sources produces exactly the same binary, see link:reproducibleJar.html[].
+
+After them with the same `src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh` script the `build/deploy/vishiaTestBase-YYYY-MM-DD.jar is created. 
+
+It means, the first and second test is, whether the sources are compieled error-free. It is true for the test classes too. 
+
+After them the `build.sh` script executes the main routine of
+
+ org.vishia.testBase.Test
+ 
+to execute all programmed tests. The result of test is written to 
+
+ build/testResult
+            +-Test.txt
+            +-Test.err
+
+You should compare this textual file with 
+
+ src/test/testResult_Ref
+            +-Test.txt
+ 
+to see whether the result is adequate.
+ 
+
+
+
+
+== Generate Javadoc
+
+For javadoc also the given generation base of a JDK is used. It is sufficient. Such as gradle is not necessary.
+
+The Javadoc generation is started in any Java source tree calling 
+
+ _make/+genjavadoc.sh
+ 
+Of course on windows this shouls be called with 
+
+ sh.exe -c '+genjavadoc.sh'
+ 
+This script invokes `-genjavadocbase.sh` which should be found in the environment. It invokes as core statements:
+
+ export ARGS="-Xdoclint:none -d $DSTDIR$DST -private -notimestamp ...
+    ... $LINKPATH -classpath $CLASSPATH -sourcepath $SRCPATH $SRC"
+ echo javadoc $ARGS
+ $JAVAC_HOME/bin/javadoc.exe $ARGS 1> $DSTDIR$DST/javadoc.rpt 2> $DSTDIR$DST/javadoc.err                                                       
+
+The `$DSTDIR` is set to the `$TMP/_javadoc` location (possible on RAM disk) because the generated documentation may be compared with the existing one (it is reproducible, the same sources generates the same doc). With the comparison it is possible to detect which is changed, for example to offer the changes in discussions, in a special revision description etc. if necessary. Of course the git archive contains the version history. But it may be possible that a bugfix do not change the javadoc, hence it should not be need to renewed. The generated javadoc contains explicitely cross references on interfaces (implementing classes) in text format, which elsewhere are only possible to detect by an database on an IDE (Eclipse - show cross references). Hence the comparison may be a point of interest. 
+An advantage of generation on RAM disk, comparison and copy only changed files is: There are a lot of files. If all are unnecessary written new (with same content), the SSD hard disk is burdened with more writing operations. It is better to generate to RAM, comparing and renewing only changed files.  
+
+It is possible to zip the whole javadoc. Hence it is more simple to upload it to a server and unzip there:
+
+ export cmpn=vishiaBase
+ echo docuSrcJava_$cmpn.zip
+ if test -f docuSrcJava_$cmpn.zip; then
+   rm -r docuSrcJava_$cmpn
+   rm -r docuSrcJavaPriv_$cmpn
+   unzip docuSrcJava_$cmpn.zip
+   rm docuSrcJava_$cmpn.zip
+ fi  
+
+The same lines exists for all other possible `cmpn` to replace the unpacked files on the server with the zip content. 
+
+
+== Test with modifications in an IDE (Eclipse)
+
+The test can be repeatedly executed respectively there sources can be integrated in an IDE (such as Eclipse) to study and modify test cases. The 
+
+ TestJava_vishiaBase/src/test/EclipsePj
+ 
+contains an Eclipse project which can be imported to any eclipse workspace. This can be used for tests of srcJava_vishiaBase. Adequate an Eclipse Project is contained in
+
+ TestJava_vishiaGui/src/test/EclipsePj
+
+which contains this sources, but the other sources too.
+
+
+=== Test organization and test outputs
+
+After some experience with Junit a more simple and effective system was found for tests. The class link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/TestOrg.html[org.vishia.util.TestOrg] contains the infrastructure. An real application example is:
+
+  void check_DriveAbsBaseLocalNameExt(TestOrg parent) {
+    String testPath = "d:/base/path:local/path/name.ext";
+    TestOrg test = new TestOrg("check getting all components from a path " + testPath, parent);
+    FilePath fp = new FilePath(testPath);   
+    try {
+      test.expect(fp.localdir(null), "local/pathxx", 7, "localdir()");
+      test.expect(fp.absbasepath(null), "d:/base/path", 7, "absbasepath()");
+      test.expect(fp.localnameW(null), "local\\path\\name", 7, "localnameW()");
+      test.expect(fp.localname(null), "local/path/name", 7, "localname()");
+      test.expect(fp.localfile(null), "local/path/name.ext", 7, "localfile()");
+    } catch(NoSuchFieldException exc) {
+      test.exception(exc);
+    }
+    test.finish();
+  }
+
+
+It tests whether the routines to select parts of a path works. 
+
+* An instance of `TestOrg` named `test` is created locally, This instance stores whether all tests are okay or at least one test failes. The given text description is outputted either one time before output a message from expect or only on finish(). It produces only one line for any test routine if desired.
+
+* The routine link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/TestOrg.html#expect-boolean-int-java.lang.String-[expect(condition, nVerbose, txt)] writes to the standard output (`System.out`) either:
+
+** ok: txt - The txt as message about the succesfully executed test (`condition == true`) if 'nVerbose` is <= the requested verbose level.  
+** Nothing is outputted if no error has occured and `condition == true`, and `nVerbose` is > the expected verbose level, it is the silent mode.
+
+** ERROR: txt @ package.path.Class.method(args); package.path ...
+** ... on error the txt message is outputted, but the exact position
+of the error in the sources files are supplemented.
+
+* The routine link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/TestOrg.html#expect-java.lang.CharSequence-java.lang.CharSequence-boolean-java.lang.String-[expect(s1, s2, ...)] compares the two CharSequences (often String) and writes additional the position of the difference on error, it can help to detect the problem without debugging. Often the problem is trivial. 
+
+* `test.finish()` writes a last "ok" or "ERROR" if all tests are ok or at least one has an error. 
+
+The title given on construction is only written before a test message is outputted. Elsewhere the title is shown only with 
+
+ ok: title
+ 
+on `test.finish()`.
+
+
+A nesting of test routines is supported: In the example above the `TestOrg` is instantiated with its `parent`. Then the title of all parents is written only if a test message is shown. Only on the last finish the first parent shows its message if all other is silent.
+
+With this system A lot of nested test routines can be executed. With invocation of this tests the user determines
+
+* whether only each main routine produces one line if all is okay (the protocoll what is tested)
+
+* Or some or any tests produce a line with its test case description.
+
+It is verbose or silent, according to the requirements of the user. 
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+

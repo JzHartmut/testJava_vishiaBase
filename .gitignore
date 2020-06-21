@@ -7,6 +7,6 @@ src/main/java
 build
 gradle
 deploy
-libs
 bin
+*.html
 

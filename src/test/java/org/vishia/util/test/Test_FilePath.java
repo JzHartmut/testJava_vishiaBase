@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-//import org.junit.jupiter.api.Tag;
-//import org.junit.jupiter.api.Test;
-import org.vishia.testOrg.TestOrg;
+import org.vishia.testBase.TestJava_vishiaBase;
 import org.vishia.util.FileFunctions;
 import org.vishia.util.FilePath;
+import org.vishia.util.TestOrg;
 
 public class Test_FilePath
 {
@@ -65,16 +64,16 @@ public class Test_FilePath
 
   
   //@Test @Tag("teststd")
-  void check_DriveAbsBaseLocalNameExt() {
+  void check_DriveAbsBaseLocalNameExt(TestOrg parent) {
     String testPath = "d:/base/path:local/path/name.ext";
-    TestOrg test = new TestOrg("check getting all components from a path " + testPath);
+    TestOrg test = new TestOrg("check getting all components from a path " + testPath, 2, parent);
     FilePath fp = new FilePath(testPath);   
     try {
-      test.expect(fp.localdir(null), "local/path", false, "localdir()");
-      test.expect(fp.absbasepath(null), "d:/base/path", false, "absbasepath()");
-      test.expect(fp.localnameW(null), "local\\path\\name", false, "localnameW()");
-      test.expect(fp.localname(null), "local/path/name", false, "localname()");
-      test.expect(fp.localfile(null), "local/path/name.ext", false, "localfile()");
+      test.expect(fp.localdir(null), "local/path", 7, "localdir()");
+      test.expect(fp.absbasepath(null), "d:/base/path", 7, "absbasepath()");
+      test.expect(fp.localnameW(null), "local\\path\\name", 7, "localnameW()");
+      test.expect(fp.localname(null), "local/path/name", 7, "localname()");
+      test.expect(fp.localfile(null), "local/path/name.ext", 7, "localfile()");
     } catch(NoSuchFieldException exc) {
       test.exception(exc);
     }
@@ -89,8 +88,8 @@ public class Test_FilePath
    * @throws NoSuchFieldException
    */
   //@Test @Tag("teststd")
-  void testExpand() throws NoSuchFieldException {
-    TestOrg test = new TestOrg("FileFunctions.testExpand");
+  void testExpand(TestOrg parent) throws NoSuchFieldException {
+    TestOrg test = new TestOrg("FileFunctions.testExpand", 2, parent);
     //showTestoper();
     String sWildcardPath = "src/main/java/srcJava_vishiaBase:org/**/*.java"; //all java files in this SBOX
     FilePath pathWildcard = new FilePath(sWildcardPath); 
@@ -101,14 +100,14 @@ public class Test_FilePath
     else {
       List<FilePath> dst = new LinkedList<FilePath>();
       pathWildcard.expandFiles(dst, null, null, null);
-      test.expect(dst.size() > 100, true, sWildcardPath + " contains more as 100 files");
+      test.expect(dst.size() > 100, 4, sWildcardPath + " contains more as 100 files");
     }
     test.finish();
   }
   
   
-  void testReplWildcard() throws NoSuchFieldException {
-    TestOrg test = new TestOrg("testReplWildcard");
+  void testReplWildcard(TestOrg parent) throws NoSuchFieldException {
+    TestOrg test = new TestOrg("testReplWildcard", 2, parent);
     showTestoper();
     String sWildcardPath = "D:/vishia/ZBNF/srcJava_Zbnf:org/**/*.java";
     FilePath pathWildcard = new FilePath(sWildcardPath); 
@@ -119,7 +118,7 @@ public class Test_FilePath
     else {
       FilePath pathRepl = new FilePath("path/exmpl.java");
       CharSequence res = pathWildcard.absfileReplwildcard(pathRepl, null);
-      test.expect(res, "D:/vishia/ZBNF/srcJava_Zbnf/org/path/exmpl.java" , false, "faulty replacing");
+      test.expect(res, "D:/vishia/ZBNF/srcJava_Zbnf/org/path/exmpl.java" , 6, "replacing");
       //check("D:/vishia/ZBNF/srcJava_Zbnf/org/path/exmpl.java".contentEquals(res));  //should contain a lot of files, more than 300, test is ok if some files are found.
     }
     test.finish();
@@ -135,17 +134,14 @@ public class Test_FilePath
    * No further arguments.
    * @param noArgs
    */
-  public static void main(String[] noArgs){ 
-    //to set the current dir to a determined directory the only way is to produce a file with that directory
-    // on a known path. This is done by call of +setWDtoTmp.bat or +setWDtoTmp.sh in this SBOX.
-    //The following routine reads this file and sets the current dir for the tests.
-    FileFunctions.setCurrdirFromFile("$(TMP)/WD_cmpnJava_vishiaBase.var");
-    TestOrg test = new TestOrg("Test_FilePath");
+  public static void main(String[] args){ 
+    TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();
+    TestOrg test = new TestOrg("Test_FilePath", 1, args); //    g("Test_FilePath", args);
     Test_FilePath main = new Test_FilePath();
     try {
-      main.check_DriveAbsBaseLocalNameExt();
-      main.testReplWildcard();
-      main.testExpand();
+      main.check_DriveAbsBaseLocalNameExt(test);
+      main.testReplWildcard(test);
+      main.testExpand(test);
     } catch(Exception exc) {  //all exceptions are unexpected. Not used for regular problems.
       test.exception(exc);
       //System.err.println("unexpected: " + exc.getMessage());

@@ -1,13 +1,16 @@
 =========================================================================
 Test_FilePath
-=========================================================================
 check getting all components from a path d:/base/path:local/path/name.ext
-ok
-=========================================================================
+  ok: localdir()
+  ok: absbasepath()
+  ok: localnameW()
+  ok: localname()
+  ok: localfile()
 testReplWildcard
-ok
-=========================================================================
+  ok: replacing
 FileFunctions.testExpand
   ok: src/main/java/srcJava_vishiaBase:org/**/*.java contains more as 100 files
-ok
-ok
+=========================================================================
+Test_OutTextPreparer
+test script with <:call:..>
+  ok: Test_OutTextPreparer_CallFor:testCall()

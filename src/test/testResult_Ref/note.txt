@@ -1,0 +1,2 @@
+All other files test.txt, *.err should be empty.
+test.txt is empty if no errors occurs because of ---TESTverbose:0

@@ -1,0 +1,1 @@
+The html result files in this dir are stored in https://www.vishia.org/Java/html5/ inclusively its subdir

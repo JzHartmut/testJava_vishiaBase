@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.vishia.util.OutTextPreparer;
 import org.vishia.util.StringFunctions;
+import org.vishia.util.TestOrg;
 
 public class Test_OutTextPreparer_CallFor
 {
@@ -99,29 +100,18 @@ public class Test_OutTextPreparer_CallFor
   }
 
 
-  static void check(boolean cond, String text) {
-    if(!cond) {
-      System.out.println("failed: " + text);
-    } else {
-      System.out.println("ok: " + text);
-    }
-  }
 
-
-
-
-
-  void testCall() throws IOException {
-    StringBuilder sb = new StringBuilder(1000);
+  void testCall(TestOrg parent) throws IOException {
+    TestOrg test = new TestOrg("test script with <:call:..>", 2, parent);
+    StringBuilder sb = new StringBuilder(500);
     OutTextPreparer.DataTextPreparer vars = otxCall.createArgumentDataObj();
     //vars.debugOtx = "otxIfColors";   //possibility to set a break point on a special command in the given script.
     //vars.debugIxCmd = 6;             //see usage for this variables. set debugIxCmd = 0 to stop in first cmd to view the this.cmd
-    vars.setArgument("dataColor", dataColor);        //The data class for access.
+    vars.setArgument("dataColor", this.dataColor);        //The data class for access.
     vars.setArgument("text1", "any test text");
     otxCall.exec(sb, vars);
-    System.out.println(sb);
-    int posOk = StringFunctions.compareChars(sb, 0, -1, resultExpected);
-    check(sb.toString().equals(resultExpected), "Test_OutTextPreparer_CallFor:testCall()");
+    test.expect(sb, resultExpected, 7, "Test_OutTextPreparer_CallFor:testCall()");
+    test.finish();
   }
 
 
@@ -138,17 +128,19 @@ public class Test_OutTextPreparer_CallFor
 
   public static void test(String[] args) {
     //DataAccess.debugIdent = "dataColor";  //possibility to set a data depending debug break
+    TestOrg test = new TestOrg("Test_OutTextPreparer", 1, args);
     try {
-      //The creation of the test instance may cause errors if the OutTextPreparer construction
+      //Note: The creation of the test instance may cause errors if the OutTextPreparer construction
       //fails because errors in the pattern. It is reported in C# in the calling level of this routine already 
-      //because the calling of this static routine has load and created the type already.
-      Test_OutTextPreparer_CallFor test = new Test_OutTextPreparer_CallFor();
+      //because the calling of this static routine is loaded and created the type already.
+      Test_OutTextPreparer_CallFor testObj = new Test_OutTextPreparer_CallFor();
       //nonsense: test.testClassic();
-      test.testCall();
+      testObj.testCall(test);
       
     } catch (Exception e) {
-      System.out.println("Exception: " + e.getMessage());
+      test.exception(e);
     }
+    test.finish();
   }
 
   
