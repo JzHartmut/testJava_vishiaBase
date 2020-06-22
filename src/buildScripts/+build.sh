@@ -11,10 +11,11 @@ find -name '*.sh' -exec chmod 777 {} \;
 src/buildScripts/+resolveDepsFromWWW.sh
 src/buildScripts/+mkLinkBuild.sh
 
-export BUILD="../../../../../build"
 cd src/main/java/srcJava_vishiaBase/_make
-find -name '*.sh' -exec chmod 777 {} \;
+find -name '*.sh' -exec chmod 777 {} \;  #again after clone the srcJava_vishiaBase
+export BUILD="../../../../../build"      #relative to src/.../_make
 ./+makejar_vishiaBase.sh 
+cd ../../../../..
 
 #Do not change the version on repeated build, and check the checksum and content of jar.
 #If it is equal, it is a reproduces build. The Version is important because it determines the timestamp
@@ -27,7 +28,6 @@ export VERSION="2020-06-22"
 export VishiaBaseJAR=build/deploy/vishiaBase-$VERSION.jar
 echo it has produced $VishiaBaseJAR
 
-cd ../../../../..
 #uses $VishiaBaseJAR as CLASSPATH and for jar builder
 
 

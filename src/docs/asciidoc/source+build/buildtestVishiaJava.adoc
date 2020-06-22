@@ -11,7 +11,7 @@ date: 2020-06-19
 == The mission
 
 The summary of Java sources as component "__srcJava_vishiaBase__" contains a lot of Java classes for different approaches. 
-Some of them build a system. Especially the link:../../../JZtxtcmd/html/JZtxtcmd.html[JZtxtcmd] tool can be used as stand alone tool or as ad-one for special tooling for several text conversion approaches. The JZtxtcmd can be tested as tool in sum, but a unit test for all the details in necessary.
+Some of them build a system. Especially the link:../../../JZtxtcmd/html/JZtxtcmd.html[JZtxtcmd] tool can be used as stand alone tool or as ad-one for special tooling for several text conversion approaches. The JZtxtcmd can be tested as tool in sum, but a unit test for all the details is necessary.
 
 The build of the jar file for the _srcJava_vishiaBase_ component is done regarding the link:reproducibleJar.html[vishia...reproducibleJar] approach. Hence it is build with a simple shell script delivered in a zip file with the sources. No other tooling is necessary except a JDK for compilation. 
 
@@ -44,12 +44,13 @@ The file tree is a gradle-like file tree:
    |   +-_make          (make for test)
    |   +-org....*.java  (package tree for test Java sources)
    +-docs
-     +-asciidoc
-       +-... documentation of the srcJava_vishiaBase-component
+   | +-asciidoc
+   |   +-... documentation of the srcJava_vishiaBase-component
+   +-buildScripts
        
 There are two git archives on github:
 
-* link:https://github.com/JzHartmut/testJava_vishiaBase[]: This contains the file tree above, without content in `libs` and without `build`, and especially without content in `src/main/java/srcJava_vihiaBase`. It means it contains the test sources and the test environment.
+* link:https://github.com/JzHartmut/testJava_vishiaBase[]: This contains the file tree above, without content in `libs` and without `build`, and especially without content in `src/main/java/srcJava_vihiaBase`. It means it contains the test sources, the test environment and the documentation.
 
 * link:https://github.com/JzHartmut/srcJava_vishiaBase[]: This is the versioned content of the delivered zip file for reproducible build of the `srcJava_vishiaBase.jar`. See link:https://www.vishia.org/Java/html5/source+build/src_Archive.html[].
 
@@ -80,8 +81,8 @@ Go into this directory and invoke either `build.bat` on MS-Windows or `build.sh`
 
 `build.sh` invokes 
 
- export BUILD="../../../../../build"
  cd src/main/java/srcJava_vishiaBase/_make
+ export BUILD="../../../../../build"
  ./+makejar_vishiaBase.sh 
  cd ../../../../..
 
@@ -91,9 +92,9 @@ to generate the
  
 files as there was build on immediately invocation of this script. It means it builds the current version of srcJava_vishiaBase. Now you should check whether the check sum and binary content of the jar are adequate to a given version of the same files. The files, at least the ckecksum file, contains a date stamp in its name. The build is reproducable, it means the same sources produces exactly the same binary, see link:reproducibleJar.html[].
 
-After them with the same `src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh` script the `build/deploy/vishiaTestBase-YYYY-MM-DD.jar is created. 
+After them with the same `src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh` script the `build/deploy/vishiaTestBase-YYYY-MM-DD.jar` is created. 
 
-It means, the first and second test is, whether the sources are compieled error-free. It is true for the test classes too. 
+The first and second test is, whether the sources are compiled error-free. Both for srcJava_vishiaBase and the test classes. 
 
 After them the `build.sh` script executes the main routine of
 
@@ -108,12 +109,9 @@ to execute all programmed tests. The result of test is written to
 You should compare this textual file with 
 
  src/test/testResult_Ref
-            +-Test.txt
+            +-TestVerbose.txt
  
-to see whether the result is adequate.
- 
-
-
+to see whether the result is adequate. The other files should be empty if the test is successfull. If it is not so, any problem is given. Then the Integrated Development Environment (IDE) for example Eclipse is necessary.
 
 
 == Generate Javadoc
@@ -219,6 +217,47 @@ With this system A lot of nested test routines can be executed. With invocation 
 * Or some or any tests produce a line with its test case description.
 
 It is verbose or silent, according to the requirements of the user. 
+
+
+
+
+== The compilation tools and reproducible build
+
+
+To get a deployment (here a jar file) three things are needed:
+
+* The sources
+* The tools to build
+* An operation platform
+
+The last one is usually a Windows- or Linux PC, or a Mac. 
+
+The tools to build are in this case only Java-JDK. There are several possibilities:
+
+* Versions of the tool from the same Vendor
+* The tool from other vendor.
+
+In this case usually Oracle-Java is one of the vendors, and OpenJdk. 
+
+It is tested: Tools from the same vendor with the same version, which runs on different platforms (Windows, Unix) produces a reproduces binary. It is a good message. Especially the details of the operation system are not influencing. 
+
+It can be also true: Tools with different versions of a main version produces the same reproduced binary, if the changes inside the tool version do not affect the functionality of the sources. Often only details are improved in new versions. 
+
+But it should be tested, whether another version affects the built binary. Hence it is neccessary that (usual on the same platform) different versions of a tool are installed, for example Oracle-JDK in some versions, Open-JDK etc. This is often possible, but not supported in the way of thinking "__The tool should be installed__".  It it is installed, it supplants another installation. Only one `javac` is found in the `PATH` if it is immediately called as command.
+
+Often tools can be present on the platform without installation. A delivering as zip-Archiv is available, expanding manually and copy to any location on the file system is possible. Then the `javac` can be called with its specific path. This is true for the Oracle-JDK. Some other tools are only delivered with an installer, but can be in fact copied after installation to another machine. 
+
+With this approach more as one version of the same tool can be present on one platform (the developer's PC).
+
+For the `javac` command on Oracles JDK it is true that the command call with path finds other files in its environment only with the calling path of the command itself. For other tools sometimes the system's `PATH` should be set temporary (in a script) to the tool location. 
+
+For compiling the srcJava_vishia... components a shell script `JAVAC_CMD.sh` is given in the sources. It checks and returns a command invocation line with full path for the `javac` command. This script can be enhanced and adapted for special approaches. If no special `javac` was found on dedicated paths this script returns only `javac`. It means 
+
+ export JAVAC="$($(dirname $0)/JAVAC_CMD.sh)"
+
+sets only with `javac` to `$JAVAC`, `javac` as command should be found in the system's `PATH` because of the correct installation of the only one tool. 
+
+As conclusion, with an installed JDK the compilation should find this `javac` command. But using an abbreviating existing JDK is possible. 
 
 
 

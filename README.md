@@ -2,6 +2,9 @@
 
 ## build
 
+See also https://www.vishia.org/Java/html5/source+build/buildtestVishiaJava.html#truethe-compilation-tools-and-reproducible-build
+
+
 use files in src/buildScripts
 
 * +adjustTimestamps.sh   ... to set the timestamps from originals (from .filelist)
