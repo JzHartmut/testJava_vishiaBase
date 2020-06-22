@@ -6,7 +6,7 @@
 ##NOTE -R only for all files in directory, does not run: chmod -R 777 *.sh  
 
 chmod 777 +resolveDepsFromWWW.sh
-+resolveDepsFromWWW.sh
+./+resolveDepsFromWWW.sh
 
 cd ../..
 find -name '*.sh' -exec chmod 777 {} \;
