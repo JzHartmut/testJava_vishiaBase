@@ -2,7 +2,7 @@
 .gitcommit
 _*.sh
 _resyncRepository.jz.cmd
-src/main/java
+src/main/java/srcJava_vishiaBase
 .gradle
 build
 gradle

@@ -3,36 +3,35 @@
 
 ##set all *.sh to executable for all
 ##do it firstly after clone from git or copy, the file properties will be retained
-cd ../..
-find -name '*.sh' -exec chmod 777 {} \;
 ##NOTE -R only for all files in directory, does not run: chmod -R 777 *.sh  
 
-src/buildScripts/+resolveDepsFromWWW.sh
+chmod 777 +resolveDepsFromWWW.sh
++resolveDepsFromWWW.sh
+
+cd ../..
+find -name '*.sh' -exec chmod 777 {} \;
+
+
 src/buildScripts/+mkLinkBuild.sh
 
-
-
-#export JAVAC_HOME=c:/Programs/Java/jdk1.8.0_211
-if test "$JAVAC_HOME" = ""; then export JAVAC_HOME=c:/Programs/Java/jdk1.8.0_241; fi
-#export JAVAC_HOME=/usr/share/JDK/jdk1.8.0_241
 
 export BUILD="../../../../../build"
 cd src/main/java/srcJava_vishiaBase/_make
 ./+makejar_vishiaBase.sh 
 
-#Note: check the result of the vishiaBaseJar-build, adjust the version in the script above if necessary
-#and correct the next line if necessary, in git-Versions.
-export VishiaBaseJAR=build/deploy/vishiaBase-2020-06-16.jar
-echo it has produced $VishiaBaseJAR
-
-cd ../../../../..
-#uses $VishiaBaseJAR as CLASSPATH and for jar builder
-
 #Do not change the version on repeated build, and check the checksum and content of jar.
 #If it is equal, it is a reproduces build. The Version is important because it determines the timestamp
 #and hence the checksum in the jar file. 
 #Set the version newly here to the current date if the sources are changed in jar and checksum.
-export VERSION="2020-06-16"
+export VERSION="2020-06-22"
+
+#Note: check the result of the vishiaBaseJar-build, adjust the version in the script above if necessary
+#and correct the next line if necessary, in git-Versions.
+export VishiaBaseJAR=build/deploy/vishiaBase-$VERSION.jar
+echo it has produced $VishiaBaseJAR
+
+cd ../../../../..
+#uses $VishiaBaseJAR as CLASSPATH and for jar builder
 
 
 export sepPath=":"
@@ -49,7 +48,8 @@ echo $SRCPATH
 # located from this workingdir as currdir for shell execution:
 export MANIFEST=src/test/java/_make/TestvishiaBase.manifest
 export SRC_ALL="src/test/java/org/vishia/testBase"
-##export SRC_ALL2="src/main/java/srcJava_vishiaBase"
+export SRC_ALL2=""
+export FILE1SRC=""
 
 export TMPJAVAC=build/Test_vishiaBase
 export DEPLOY=build/deploy/vishiaTestBase-$VERSION
