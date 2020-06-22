@@ -5,18 +5,15 @@
 ##do it firstly after clone from git or copy, the file properties will be retained
 ##NOTE -R only for all files in directory, does not run: chmod -R 777 *.sh  
 
-chmod 777 +resolveDepsFromWWW.sh
-./+resolveDepsFromWWW.sh
-
 cd ../..
 find -name '*.sh' -exec chmod 777 {} \;
 
-
+src/buildScripts/+resolveDepsFromWWW.sh
 src/buildScripts/+mkLinkBuild.sh
-
 
 export BUILD="../../../../../build"
 cd src/main/java/srcJava_vishiaBase/_make
+find -name '*.sh' -exec chmod 777 {} \;
 ./+makejar_vishiaBase.sh 
 
 #Do not change the version on repeated build, and check the checksum and content of jar.

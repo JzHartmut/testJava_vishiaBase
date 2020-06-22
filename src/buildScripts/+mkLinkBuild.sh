@@ -1,6 +1,6 @@
-#TMP should be exist propably under WIndows, it may exist under linux
-#Test whether it is Windows or Linux, mklink or ln are different
-if test -d build; then  ## -a -d .gradle ##and does not run ??
+cd $(dirname $0)/../..
+pwd
+if test -d build; then
   ##if build exists, it was executed already after first clone or copy.
   echo links exist                ##do nothing else
 elif test "$OS" = "Windows_NT"; then
@@ -8,7 +8,7 @@ elif test "$OS" = "Windows_NT"; then
   ##call windows batch from sh.exe script in Windows is not ok
   ##especially if $TMP will be used. $TMP is /tmp for the linux shell.
   ##It does not work in windows
-  echo ERROR build directory should be created using +mkLinkBuildGradle.bat in Windows
+  echo ERROR build directory should be created using +mkLinkBuild.bat in Windows
   echo it should be invoked manually.
   ##does not run because TMP: Use cmd.exe to execute as windows batch, elsewhere it is handled as shell script
   ##cmd.exe /K +mkLinkBuildGradle.bat
