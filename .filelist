@@ -30,6 +30,21 @@
 2020-06-16 19:27:07  x     vishiaBase-2020-06-16-source.zip         ::       1251.518 -0566038706 
 2020-06-16 19:27:06  x     vishiaBase-2020-06-16.jar                ::       1243.963  1213329423 
 2020-06-16 19:27:06  x     vishiaBase-2020-06-16.jar.MD5.txt        ::           . 95 -1067309199 
+2020-07-21 11:54:37  x     vishiaBase-2020-07-16.jar                ::       1246.890 -0255247992 
+2020-07-21 12:35:25  x     vishiaBase-2020-07-16.jar.MD5.txt        ::           .138 -1041511746 
+2020-07-21 14:11:27  x     vishiaBase-2020-07-21-source.zip         ::       1257.783 -1066270409 
+2020-07-22 18:27:14  x     vishiaBase-2020-07-22-source.zip         ::       1258.369  0638411655 
+2020-07-22 18:27:14  x     vishiaBase-2020-07-22.jar                ::       1247.360 -0152034185 
+2020-07-22 18:27:14  x     vishiaBase-2020-07-22.jar.MD5.txt        ::           .138 -2122241169 
+2020-07-23 21:42:06  x     vishiaBase-2020-07-23-source.zip         ::       1265.362  1085942451 
+2020-07-23 21:42:06  x     vishiaBase-2020-07-23.jar                ::       1257.390  1424407253 
+2020-07-23 21:42:06  x     vishiaBase-2020-07-23.jar.MD5.txt        ::           .138  1478696629 
+2020-08-07 16:26:26  x     vishiaBase-2020-08-02.jar                ::       1257.393  1262929453 
+2020-08-07 16:26:26  x     vishiaBase-2020-08-02.jar.MD5.txt        ::           .138  1778961996 
+2020-08-07 16:26:26  x     vishiaBase-2020-08-07-source.zip         ::       1266.768 -1670782957 
+2020-08-12 23:25:32  x     vishiaBase-2020-08-12-source.zip         ::       1266.883 -1755027066 
+2020-08-12 23:25:31  x     vishiaBase-2020-08-12.jar                ::       1257.493  0092220031 
+2020-08-12 23:25:31  x     vishiaBase-2020-08-12.jar.MD5.txt        ::           .138  1693389820 
 2020-03-22 23:34:26  x     vishiaMinisys-2020-03-20.jar             ::          4.272  1019975169 
 2020-03-22 23:34:26  x     vishiaMinisys-2020-03-20.jar.MD5.txt     ::           . 82 -0985587772 
 2020-03-23 18:51:41  x     vishiaMinisys-2020-03-23.jar             ::          4.272  0978648693 
@@ -40,6 +55,9 @@
 2020-04-06 23:57:31  x     vishiaMinisys-2020-04-04.jar.MD5.txt     ::           . 82  1642113007 
 2020-04-06 23:34:23  x     vishiaMinisys-2020-04-04.jar.zip         ::          5.798  1691729830 
 2020-04-06 23:02:19  x     vishiaMinisys-2020-04-04.jar1.zip        ::          5.798 -1477780379 
+2020-08-07 16:26:09  x     vishiaMinisys-2020-06-22.jar             ::         79.436  1688951033 
+2020-08-12 22:56:55  x     vishiaMinisys-2020-06-22.jar.MD5.txt     ::           .141  2064166088 
+2020-07-21 11:54:24  x     vishiaMinisys-2020-06-22.jar.zip         ::         79.436  1688951033 
 2020-04-06 22:30:10  x     vishiaZipJar-2020-03-04.jar              ::         52.392  2086305046 
 2020-04-06 22:30:10  x     vishiaZipJar-2020-03-04.jar.MD5.txt      ::           . 81  0137068869 
 2020-03-23 18:51:10  x     vishiaZipJar-2020-03-23.jar              ::         52.392  2086305046 
@@ -94,11 +112,12 @@
 ============================== src/main/java/srcJava_vishiaBase/ ===================================
 
 ============================== src/main/java/srcJava_vishiaBase/_make/ =============================
-2020-06-09 21:10:15  x     +genjavadoc.sh                           ::           .614 -1441310549 
-2020-06-22 18:39:27  x     +makejar_vishiaBase.sh                   ::          2.148  1281567544 
-2020-06-08 23:28:06  x     -genjavadocbase.sh                       ::          3.540  1802631315 
-2020-06-22 18:49:43  x     -makejar-coreScript.sh                   ::          3.377 -0738615406 
-2020-06-22 18:08:43  x     JAVAC_CMD.sh                             ::           .982 -0642947215 
+2020-07-24 18:15:36  x     +genjavadoc.sh                           ::           .535 -1443882296 
+2020-08-12 22:56:47  x     +makejar_vishiaBase.sh                   ::          2.751  0212542398 
+2020-07-24 18:43:52  x     -genjavadocbase.sh                       ::          4.131  0585689153 
+2020-07-21 12:34:48  x     -makejar-coreScript.sh                   ::          3.628  1772596121 
+2020-07-21 12:51:54  x     JAVAC_CMD.sh                             ::          1.064 -0769104566 
+2020-07-24 18:30:47  x     JAVAC_HOME.sh                            ::          1.166 -1351247325 
 2020-06-16 14:31:26  x     minisys.files                            ::           .133  1645922236 
 2020-03-17 23:16:43  x     minisys.manifest                         ::           . 65  1933756705 
 2020-03-17 09:15:21  x     vishiaBase.manifest                      ::           . 67  1361500741 
@@ -171,17 +190,18 @@
 2017-07-29 11:17:07  x     CfgData.java                             ::          3.560 -0509839928 
 2012-12-25 19:29:36  x     CheckAllDepFile.java                     ::          6.113  1270977477 
 2012-12-25 17:01:12  x     CheckData.java                           ::          4.951  0627506369 
-2019-03-31 16:16:48  x     CheckDependencyFile.java                 ::         47.748 -1404111554 
-2014-05-04 22:57:06  x     CheckDeps.java                           ::         12.379  0976591412 
+2020-07-23 20:07:26  x     CheckDependencyFile.java                 ::         48.201  2091541609 
+2020-07-23 21:31:58  x     CheckDeps.java                           ::          7.493 -0385606125 
+2020-07-23 18:57:23  x     CheckDeps_Old.java                       ::         12.395  0108102733 
 2012-12-25 15:33:10  x     DateTime.java                            ::          1.823  2018610045 
 2017-07-29 11:17:35  x     InfoFileDependencies.java                ::         19.000 -0848432233 
 2014-05-04 22:56:29  x     InputSrc.java                            ::          4.196  1587914190 
 2014-05-13 22:35:41  x     ObjectFileDeps.java                      ::          7.104 -1134084529 
 2017-05-08 20:31:49  x     ParserConfigFile.java                    ::          7.245 -0517457651 
-2013-01-03 19:36:18  x     package-info.java                        ::           .395 -2003396739 
+2020-07-23 18:57:23  x     package-info.java                        ::           .399  1943722203 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/cmd/ ====================
-2020-03-14 23:37:52  x     CmdExecuter.java                         ::         33.481 -0699844666 
+2020-07-22 16:39:50  x     CmdExecuter.java                         ::         34.162  1662975441 
 2018-09-22 20:52:01  x     CmdGetFileArgs_ifc.java                  ::          1.660 -2078197694 
 2017-04-03 21:47:02  x     CmdGetterArguments.java                  ::          2.483 -1182376375 
 2017-04-03 21:46:01  x     CmdQueue.java                            ::          3.905  1430471497 
@@ -189,12 +209,12 @@
 2013-02-11 20:02:26  x     Filecmd.java                             ::          7.182  0296091865 
 2017-09-13 08:06:08  x     JZtxtcmdAccessFileset.java               ::          6.650 -2055459211 
 2018-09-22 20:52:36  x     JZtxtcmdEngine.java                      ::          3.054 -0509879877 
-2020-03-14 23:37:36  x     JZtxtcmdExecuter.java                    ::        186.111 -1014901657 
+2020-07-23 10:47:59  x     JZtxtcmdExecuter.java                    ::        188.107  1174070699 
 2019-09-20 20:30:03  x     JZtxtcmdFilepath.java                    ::         16.175 -0391989336 
 2018-09-22 20:53:18  x     JZtxtcmdFileset.java                     ::          5.346  1547774762 
 2020-02-02 12:34:06  x     JZtxtcmdScript.java                      ::        113.481 -1919376674 
 2019-05-29 21:17:25  x     JZtxtcmdTester.java                      ::          9.595 -1222215183 
-2018-09-22 20:53:42  x     JZtxtcmdThread.java                      ::          4.865  1535102351 
+2020-07-23 10:48:30  x     JZtxtcmdThread.java                      ::          4.900  0431672573 
 2018-09-17 23:38:41  x     JZtxtcmdThreadData.java                  ::          2.262 -1378212364 
 2018-09-22 00:34:58  x     JZtxtcmdThreadQueue.java                 ::          3.607 -1856078465 
 2017-04-03 21:46:02  x     PrepareCmd.java                          ::         19.252 -1764914125 
@@ -226,7 +246,7 @@
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/fileLocalAccessor/ ======
 2020-03-31 15:45:21  x     FileAccessorLocalJava6.java              ::         30.137 -1618816760 
-2020-03-31 15:46:18  x     FileAccessorLocalJava7.java              ::         60.024 -1772650635 
+2020-10-03 11:08:21  x     FileAccessorLocalJava7.java              ::         60.781 -1126170897 
 2016-11-27 20:10:07  x     FileLocalAccessorCopyStateM.java         ::         54.632 -1973293307 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/fileLocalAccessor/test/ ===
@@ -236,7 +256,7 @@
 2020-03-31 15:44:52  x     FileAccessZip.java                       ::         16.875  0406548490 
 2017-09-15 21:38:48  x     FileCluster.java                         ::         23.437  1730001251 
 2017-09-15 09:41:51  x     FileMark.java                            ::          9.228 -1509550908 
-2020-03-31 16:17:24  x     FileRemote.java                          ::        150.671  1200837907 
+2020-10-03 11:05:39  x     FileRemote.java                          ::        150.868 -1289946990 
 2020-03-31 15:44:14  x     FileRemoteAccessor.java                  ::         13.806 -1572962593 
 2014-12-23 15:50:28  x     FileRemoteCallback.java                  ::           .522  1716092114 
 2016-12-27 20:06:54  x     FileRemoteCallbackCmp.java               ::         18.865 -1081659440 
@@ -250,13 +270,13 @@
 2015-05-25 22:50:41  x     TestFileCluster.java                     ::          1.745  1939760260 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/genJavaOutClass/ ========
-2020-02-09 23:05:01  x     GenJavaOutClass.java                     ::         23.458 -1655355582 
+2020-07-16 19:41:16  x     GenJavaOutClass.java                     ::         23.466 -0532734720 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/header2Reflection/ ======
 2019-01-03 14:23:29  x     BinOutPrep.java                          ::         16.411  1999847849 
 2018-12-27 18:22:42  x     BinOutShow.java                          ::          9.770  2018075799 
 2014-12-14 21:36:18  x     C2DataDeps.java                          ::         10.327 -0335989070 
-2019-05-31 11:28:01  x     CheaderParser.java                       ::         60.151 -0421256521 
+2020-08-12 23:24:01  x     CheaderParser.java                       ::         60.953 -0922040407 
 2015-06-06 07:01:42  x     CmdHeader2Reflection.java                ::          8.866  0445892408 
 2018-12-26 17:53:45  x     ExtReflection_Insp_h.java                ::          1.595 -0538466206 
 2018-12-27 11:49:18  x     Header2Reflection.java                   ::         82.856 -1926959000 
@@ -327,6 +347,7 @@
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/util/ ===================
 2019-10-26 22:01:54  x     AccessPolicy.java                        ::          1.093  1156331393 
 2020-06-16 16:04:56  x     Arguments.java                           ::         13.209  1575457414 
+2020-07-23 21:31:00  x     Arguments.java_new                       ::         13.517 -0150313183 
 2020-03-22 23:02:07  x     Assert.java                              ::          3.039 -1157511839 
 2020-06-21 13:26:10  x     CalculatorExpr.java                      ::        136.791  0318034252 
 2020-06-20 23:25:17  x     CheckVs.java                             ::         15.722 -1728861427 
@@ -334,7 +355,7 @@
 2014-04-19 23:17:41  x     Conversion.java                          ::          2.375  1227745384 
 2013-02-09 20:40:18  x     Copy.java                                ::           . 51  0836434438 
 2020-02-09 19:56:58  x     DataAccess.java                          ::        135.979 -1358887763 
-2019-06-21 09:28:58  x     DataShow.java                            ::         29.206  0163463218 
+2020-09-30 14:26:26  x     DataShow.java                            ::         29.278 -1783647085 
 2015-01-17 17:32:28  x     DateOrder.java                           ::          4.061  1657283238 
 2019-07-14 01:08:00  x     Debugutil.java                           ::          1.352 -1716398343 
 2013-11-24 19:10:50  x     Docu_UML_simpleNotation.java             ::          4.825 -0664458674 
@@ -359,7 +380,8 @@
 2019-12-20 20:54:41  x     IterableIndirect.java                    ::          1.369  0394683047 
 2013-12-01 14:57:42  x     IterableIterator.java                    ::           .445  0451977562 
 2019-10-31 16:56:40  x     IterableMapValue.java                    ::           .942 -1973877381 
-2019-12-20 20:22:01  x     IteratorArrayMask.java                   ::          1.343  0461920491 
+2020-09-02 13:01:36  x     IteratorArrayMask.java                   ::          1.388 -0127160055 
+2020-09-02 13:39:11  x     IteratorMask.java                        ::          1.257 -0092071276 
 2016-10-16 21:54:24  x     Java4C.java                              ::         16.527 -2096577833 
 2015-10-30 19:10:55  x     KeyCode.java                             ::         12.692  0729595176 
 2011-02-26 21:31:28  x     LeapSeconds.java                         ::          9.557 -0052069336 
@@ -371,7 +393,7 @@
 2012-11-17 19:54:54  x     ObjectValue.java                         ::          1.162 -2009175008 
 2015-02-07 13:01:18  x     OrderForList.java                        ::           .647 -1330679365 
 2015-02-07 12:41:42  x     OrderListExecuter.java                   ::           .350  1985661212 
-2020-06-21 13:23:22  x     OutTextPreparer.java                     ::         52.226 -1681312798 
+2020-07-25 08:47:01  x     OutTextPreparer.java                     ::         52.689 -1860223430 
 2020-06-21 21:19:38  x     OutputTwice.java                         ::           .854 -1967010122 
 2015-05-30 21:25:56  x     PathCheck.java                           ::          5.745  1219055304 
 2014-01-05 11:55:23  x     PipeRingBuffer.java                      ::          6.868 -1766035494 
@@ -394,15 +416,15 @@
 2020-03-22 19:48:19  x     StringCmp.java                           ::          5.062  0434603964 
 2020-03-14 18:59:29  x     StringFormatter.java                     ::         50.318 -0567263278 
 2020-06-21 22:59:56  x     StringFunctions.java                     ::         53.597 -1199695117 
-2019-10-19 22:49:54  x     StringFunctions_B.java                   ::         10.723 -1605753743 
+2020-07-23 10:47:17  x     StringFunctions_B.java                   ::         13.244  1245632870 
 2019-06-12 08:33:43  x     StringFunctions_C.java                   ::         14.549  0524182854 
-2020-05-09 22:56:47  x     StringPart.java                          ::        119.683 -0100641199 
+2020-06-28 22:14:40  x     StringPart.java                          ::        122.126 -1563317770 
 2014-06-14 12:02:17  x     StringPartAppend.java                    ::          5.482 -1907437228 
 2015-09-30 08:42:27  x     StringPartFromFile.java                  ::          2.812  0877476463 
 2020-02-15 09:33:21  x     StringPartFromFileLines.java             ::         26.630  1027370270 
 2020-02-13 20:19:55  x     StringPartScan.java                      ::         50.066  0225586968 
 2014-01-14 08:55:20  x     StringSeq.java                           ::          6.617 -1883922442 
-2020-06-21 21:48:28  x     TestOrg.java                             ::         11.710  2041820852 
+2020-08-29 16:12:48  x     TestOrg.java                             ::         11.708 -0683566770 
 2011-02-26 21:31:28  x     ThreadContext.java                       ::          2.353 -1963738349 
 2016-01-24 19:42:52  x     ThreadRun.java                           ::          9.693  1605710614 
 2016-03-13 09:36:36  x     Timeshort.java                           ::          4.646 -0882576216 
@@ -419,9 +441,9 @@
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/xmlReader/ ==============
 2020-02-09 14:05:17  x     GenXmlCfgJavaData.java                   ::         13.397 -2145113072 
-2019-08-18 13:28:03  x     XmlCfg.java                              ::         27.849 -1326807559 
+2020-06-28 23:00:33  x     XmlCfg.java                              ::         27.902 -0214803969 
 2020-02-09 13:48:44  x     XmlJzCfgAnalyzer.java                    ::         28.364  0086518356 
-2020-03-19 20:08:26  x     XmlJzReader.java                         ::         39.266 -1342710627 
+2020-07-16 20:01:37  x     XmlJzReader.java                         ::         40.442  0401422664 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/xmlSimple/ ==============
 2020-02-13 20:26:38  x     SimpleXmlOutputter.java                  ::         11.085 -1306988227 
@@ -435,7 +457,7 @@
 2012-03-17 08:57:20  x     package-info.java                        ::           .170  2015116723 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/zbnf/ ===================
-2019-12-09 00:26:11  x     GenZbnfJavaData.java                     ::         23.741 -0237785721 
+2020-07-16 19:52:25  x     GenZbnfJavaData.java                     ::         24.012 -0545891689 
 2019-12-09 00:23:35  x     Zbnf2Xml.java                            ::         21.296  0058479735 
 2019-10-08 22:01:36  x     ZbnfJavaOutput.java                      ::         81.873  1395895928 
 2017-03-26 15:42:34  x     ZbnfParseResultItem.java                 ::         12.178 -2019699139 
@@ -501,15 +523,15 @@
 2013-09-05 09:25:42  x     TestComparable.java                      ::          2.442 -1669836808 
 2019-08-26 10:16:29  x     TestDataAccess.java                      ::          9.282 -0846663368 
 2013-09-05 09:25:42  x     TestEnclosingSuper.java                  ::           .714  0258531046 
-2020-06-09 12:06:28  x     TestFileSystem.java                      ::          5.258 -0451330970 
+2020-10-03 00:50:59  x     TestFileSystem.java                      ::          6.045  1846387660 
 2017-05-05 21:23:49  x     TestIndexMultiTable.java                 ::          8.186  1941999328 
 2013-10-20 00:56:38  x     TestString67.java                        ::           .750  1482509348 
 2020-03-22 20:31:33  x     TestStringCmp.java                       ::          2.791  1933407263 
-2020-06-20 18:49:17  x     TestStringFunctions.java                 ::          1.976  1122521577 
+2020-07-22 15:40:10  x     TestStringFunctions.java                 ::          2.358 -1102962932 
 2013-11-09 22:54:20  x     TestTreeNodeBase.java                    ::          6.416 -0912081890 
 2020-06-16 16:15:00  x     Test_FileList.java                       ::           .674  1102814935 
 2020-06-21 00:17:36  x     Test_FilePath.java                       ::          6.257  1878374328 
-2020-06-21 13:35:38  x     Test_OutTextPreparer_CallFor.java        ::          5.797  1460432349 
+2020-08-15 21:16:15  x     Test_OutTextPreparer_CallFor.java        ::          5.842 -1960970376 
 2020-03-02 15:27:52  x     Test_ReadFromWeb.java                    ::           .859 -0302202852 
 2018-09-21 09:50:18  x     Test_StringFormatter.java                ::           .876 -1789819587 
 2020-03-22 21:30:12  x     Test_StringPart.java                     ::          1.712 -1128611874 

@@ -7,15 +7,27 @@ package org.vishia.util.test;
 
 import org.vishia.util.Assert;
 import org.vishia.util.StringFunctions;
+import org.vishia.util.StringFunctions_B;
 import org.vishia.util.TestOrg;
 
 public class TestStringFunctions
 {
   public static void main(String[] args){
+    test_checkMoreSameChars(args);
     test_comparePos(args);
     testCompare();
     test_indexOf();
   }
+  
+  
+  static void test_checkMoreSameChars ( String[] args) {
+    TestOrg test = new TestOrg("checkMoreSameChars", 2,  args);
+    boolean bNok = StringFunctions_B.checkMoreSameChars("{E:}E", "}xx", "{", "E", "{}");
+    test.expect(!bNok, 7, "exclusively returns false");  
+    test.finish();
+    
+  }
+  
   
   
   private static void testCompare()

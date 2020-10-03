@@ -1,6 +1,11 @@
 package org.vishia.util.test;
 
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributeView;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +13,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.vishia.util.Debugutil;
 import org.vishia.util.FileFunctions;
 import org.vishia.util.FileSystem;
 import org.vishia.util.StringFunctions;
@@ -16,9 +22,26 @@ public class TestFileSystem
 {
   public static void main(String[] args){
     TestFileSystem thiz = new TestFileSystem();
+    fileProperties();
     thiz.test_FileRead();
     test_normalizePath();
   }
+  
+  
+  
+  private static void fileProperties() {
+    try {
+      File file = new File("d:\\vishia\\Java\\Eclipse_Pj\\vishiaJavaL\\bin");
+      boolean bExist = file.exists();
+      Path pFile = FileSystems.getDefault().getPath("d:\\vishia\\Java\\Eclipse_Pj\\vishiaJavaL\\bin");
+      Path linkedPath = pFile.toRealPath();
+      BasicFileAttributeView attr = Files.getFileAttributeView(pFile, BasicFileAttributeView.class);
+      Debugutil.stop();
+    } catch(Throwable exc) {
+      System.err.println(exc.getMessage());
+    }
+  }
+  
   
   
   private static void test_normalizePath()

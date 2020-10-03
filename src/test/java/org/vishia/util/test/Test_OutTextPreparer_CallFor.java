@@ -20,16 +20,16 @@ public class Test_OutTextPreparer_CallFor
     public List<String> colors2 = new ArrayList<String>();
 
     public DataColor() {
-      colors1.add("white");
-      colors1.add("yellow");
-      colors1.add("red");
-      colors1.add("blue");
-      colors1.add("green");
+      this.colors1.add("white");
+      this.colors1.add("yellow");
+      this.colors1.add("red");
+      this.colors1.add("blue");
+      this.colors1.add("green");
     
-      colors2.add("cyan");
-      colors2.add("magenta");
-      colors2.add("gray");
-      colors2.add("black");
+      this.colors2.add("cyan");
+      this.colors2.add("magenta");
+      this.colors2.add("gray");
+      this.colors2.add("black");
     }
 
   } //class DataColor
