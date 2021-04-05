@@ -13,10 +13,19 @@ import org.vishia.util.TestOrg;
 public class TestStringFunctions
 {
   public static void main(String[] args){
-    test_checkMoreSameChars(args);
-    test_comparePos(args);
-    testCompare();
-    test_indexOf();
+    test_checkSameItem(args);
+//    test_checkMoreSameChars(args);
+//    test_comparePos(args);
+//    testCompare();
+//    test_indexOf();
+  }
+  
+  
+  static void test_checkSameItem ( String[] args) {
+    TestOrg test = new TestOrg("checkMoreSameChars", 2,  args);
+    boolean ok = true;
+    test.finish();
+    
   }
   
   
