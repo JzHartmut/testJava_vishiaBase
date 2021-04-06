@@ -3,6 +3,8 @@ package org.vishia.math.test;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.vishia.util.Debugutil;
+
 public class Test_cos16 {
 
   //final static short 0x7fff = 30240;
@@ -365,39 +367,70 @@ public class Test_cos16 {
   
   public static int[] createCosTable() {
     int[] table = new int[34];
-    //double dangle6 = Math.PI / 64 / 6 ;              // dangle for 1/4 and 3/4 exact point.
-    double dangle4 = Math.PI / 64 / 4 ;              // dangle for 1/4 and 3/4 exact point.
+    double dangle2 = Math.PI / 64 / 2 ;          // dangle for 1/4 and 3/4 exact point.
+
     double yemax = -1.0, yemin = 1.0;
+    double yp0 = Math.cos(- dangle2);            // first left point
     for(int ix = 0; ix < 34; ++ix) {
       double angle = ix* (Math.PI / 64);         // angle of the point.
-      double yp1 = Math.cos(angle + dangle4);
-      double yp3 = Math.cos(angle + 3*dangle4);
-      double dy = (yp3 - yp1) *2;                // gain between exact point on 1/4 and 3/4 of section
-      double yp = yp1 - dy/4;                    // The point to start the linear approximation.
-      if(yp > 0.999999) {                        //special problem cos, max value should be <= 0x7fff
-        yp = 0.99999;
-        dy = (yp3 - yp) * 1.3333334;
-      }
+      //double yp0 = Math.cos(angle - dangle2);
+      //double yp1 = Math.cos(angle - dangle4);
+      double yp2 = Math.cos(angle);
+      //double yp3 = Math.cos(angle + dangle4);
+      double yp4 = Math.cos(angle + dangle2);
+      //double dyold = (yp3 - yp1) *2;                // gain between exact point on 1/4 and 3/4 of section
+      double dy = yp4 - yp0;                     // gain for this segment from left to right point
+      //double ypold = yp1 + dy/4;                    // The point to start the linear approximation.
+      double yp0_ = yp2 - dy;
+      double yp4_ = yp2 + dy;
+      double yp0e = yp0 - yp0_;
+      double yp4e = yp4 - yp4_;
+      
+      double yp = yp2 + (yp0e + yp4e)/2/2;
+//      if(yp > 0.999999) {                        //special problem cos, max value should be <= 0x7fff
+//        yp = 0.99999;
+//        dy = (yp3 - yp) * 1.3333334;
+//      }
       double ypc = Math.cos(angle);
       double ye = yp - ypc;
       if(ye > yemax) { yemax = ye; }
       if(ye < yemin) { yemin = ye; }
-      short yi = (short)(yp * 0x8000);
-      if(yi <0) { 
-        yi = 0x7fff; 
-      }
+      int yi = (int)(yp * 0x8000);
       short dyi = (short)(dy * 0x8000);
+      if(ix == 32)
+        Debugutil.stop();
+      double yerrsum = 0;
+      short anglei0 = (short)(0x200 * ix);        // angle to test, the correct segment. 
+      
+      for(int angleix = -0x100; angleix < 0x0ff; ++angleix) {  // values calculated by this interpolation
+        short anglei = (short)(anglei0 + angleix);
+        int yi1 = yi + (((short)((anglei<<7) & 0xffff) * dyi + 0x8000)>>16);
+        double yif1 = yi1 / ((double)(0x8000));
+        double yf1 = Math.cos(anglei * (Math.PI / 0x8000));
+        double yerr = (yf1 - yif1) * 0x8000;
+        yerrsum += yerr;
+        anglei +=1;
+      }
+      double corrf = yerrsum / 0x200;            // div by nrofPoints summed. 
+      
+      short corr = (short)(corrf);      // converted ..1.0 => ..0x8000. 
+      yi += corr;                                //shift the supporting point for equal area (area error ==0)
+      
       int val = yi<<16 | (dyi & 0xffff);
       table[ix] = val;
+      yp0 = yp4;                                 // use the right point as left point for next segment.
     }
+    //corr first entry, known from cos values
+    int dycorr = 0x7fff - (table[0]>>16); 
+    table[0] = 0x7fff0000 + (-dycorr & 0xffff);  
     //
     //check the table
     int errimin = 0x8000; int errimax = -0x8000; 
     for(int angle = 0; angle <= 0x4000; angle += 0x10) {
-      int ix = angle >>9;
+      int ix = (angle + 0x100) >>9;
       int valTable = table[ix];
       int cosi = (valTable >> 16);
-      int cosid = (((angle & 0x1ff) * ((short)(valTable & 0xffff)))>>9);
+      int cosid = (short)(((short)((angle<<7) & 0xffff) * ((short)(valTable & 0xffff)))>>16);
       cosi += cosid;
       double cosf = Math.cos(angle * (Math.PI / 0x8000));
       int cosif = (int)(cosf * 0x8000);
