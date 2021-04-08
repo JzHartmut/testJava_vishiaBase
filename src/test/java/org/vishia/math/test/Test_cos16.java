@@ -366,41 +366,28 @@ public class Test_cos16 {
   
   
   public static int[] createCosTable() {
-    int[] table = new int[34];
-    double dangle2 = Math.PI / 64 / 2 ;          // dangle for 1/4 and 3/4 exact point.
+    int[] table = new int[65];
+    double dangle2 = Math.PI / 64 / 2 ;          // diff angle for 1/2 to left and right from point.
 
-    double yemax = -1.0, yemin = 1.0;
-    double yp0 = Math.cos(- dangle2);            // first left point
-    for(int ix = 0; ix < 34; ++ix) {
+    double yleft = Math.cos(- dangle2);          // first left point
+    for(int ix = 0; ix <= 64; ++ix) {
       double angle = ix* (Math.PI / 64);         // angle of the point.
-      //double yp0 = Math.cos(angle - dangle2);
-      //double yp1 = Math.cos(angle - dangle4);
-      double yp2 = Math.cos(angle);
-      //double yp3 = Math.cos(angle + dangle4);
-      double yp4 = Math.cos(angle + dangle2);
-      //double dyold = (yp3 - yp1) *2;                // gain between exact point on 1/4 and 3/4 of section
-      double dy = yp4 - yp0;                     // gain for this segment from left to right point
-      //double ypold = yp1 + dy/4;                    // The point to start the linear approximation.
-      double yp0_ = yp2 - dy;
-      double yp4_ = yp2 + dy;
-      double yp0e = yp0 - yp0_;
-      double yp4e = yp4 - yp4_;
-      
-      double yp = yp2 + (yp0e + yp4e)/2/2;
-//      if(yp > 0.999999) {                        //special problem cos, max value should be <= 0x7fff
-//        yp = 0.99999;
-//        dy = (yp3 - yp) * 1.3333334;
-//      }
-      double ypc = Math.cos(angle);
-      double ye = yp - ypc;
-      if(ye > yemax) { yemax = ye; }
-      if(ye < yemin) { yemin = ye; }
-      int yi = (int)(yp * 0x8000);
-      short dyi = (short)(dy * 0x8000);
+      double yp0 = Math.cos(angle);              // the exact supporting point
+      double yright = Math.cos(angle + dangle2);
+      double dy = yright - yleft;                // gain for this segment from left to right point
+      double yleft_ = yp0 - dy;
+      double yright_ = yp0 + dy;
+      double yleftErr = yleft - yleft_;          //error between linear approx. point and exact point
+      double yrightErr = yright - yright_;
+      double yp = yp0 + (yleftErr + yrightErr) /2/2;  //supporting point adjusted
+      //
+      int yi = (int)(yp * 0x8000);               //supporting point as integer.
+      short dyi = (short)(dy * 0x8000);          //gain as integer, as used later.
+      //
       if(ix == 32)
         Debugutil.stop();
-      double yerrsum = 0;
-      short anglei0 = (short)(0x200 * ix);        // angle to test, the correct segment. 
+      double yerrsum = 0;                        // check the sum of all abbreviation 
+      short anglei0 = (short)(0x200 * ix);       // angle to test, the correct segment. 
       
       for(int angleix = -0x100; angleix < 0x0ff; ++angleix) {  // values calculated by this interpolation
         short anglei = (short)(anglei0 + angleix);
@@ -418,11 +405,13 @@ public class Test_cos16 {
       
       int val = yi<<16 | (dyi & 0xffff);
       table[ix] = val;
-      yp0 = yp4;                                 // use the right point as left point for next segment.
+      yleft = yright;                                 // use the right point as left point for next segment.
     }
-    //corr first entry, known from cos values
+    //corr first and last entry, known from cos values
     int dycorr = 0x7fff - (table[0]>>16); 
     table[0] = 0x7fff0000 + (-dycorr & 0xffff);  
+    dycorr = 0x8000 - (table[64]>>16);  //note: calculated as positive number 
+    table[64] = 0x80000000 + (dycorr & 0xffff);  
     //
     //check the table
     int errimin = 0x8000; int errimax = -0x8000; 
@@ -442,6 +431,21 @@ public class Test_cos16 {
       System.out.printf("%3.3f %4X => %4X %4X %d\n", angle * (90.0f/0x4000), angle, cosi, cosif, dcos);
       if(dcos < errimin) { errimin = dcos; }
     }
+    
+    FileWriter wr = null;
+    try {
+      int[] cosTable2 = createCosTable();
+      wr = new FileWriter("T:/cosTable.c", false);
+      CreateTables_fix16Operations.writeCcodeTable(wr, cosTable2, "cosTable");
+      //writeCcodeTable(wr, arcTable, "arcsinTable");
+      wr.close();
+      wr = null;
+    }
+    catch(Exception exc) {
+      if(wr !=null) { try {wr.close(); } catch(IOException e3) {}}
+      System.err.println(exc.getMessage());
+    }
+
     return table;
   }
   
@@ -483,24 +487,6 @@ public class Test_cos16 {
     wr.append("};\n");
   }
   
-  
-  static void writeCcodeTable ( FileWriter wr, int[] table, String name ) 
-  throws IOException {
-    wr.append("\n\n");  
-    wr.append("static const uint32 ").append(name).append("[] = \n");
-    String sep = "{"; 
-    for(int ix = 0; ix < table.length; ++ix) {
-      int val = table[ix];
-      String sVal = Integer.toHexString(val);
-      if(sVal.length() >8) { sVal = sVal.substring(sVal.length()-4, sVal.length()); }  //without too much leading FFF 
-      if(sVal.length() <8) { sVal = "0000".substring(0, 8-sVal.length()) + sVal; }  //with leading 000 
-      //                                                   // wr line
-      wr.append(sep).append(" 0x").append(sVal)
-                     .append("  // ").append("" + (ix)).append("\n");
-      sep = ",";
-    }
-    wr.append("};\n");
-  }
   
   
   static void testatan2_16 ( ) {
@@ -545,22 +531,17 @@ public class Test_cos16 {
     }
   }
   
+
+  
+  
+  
+  
+  
   public final static void main(String[] args) {
     //testatan2_16();
     //test_cos16q_emC();
-    FileWriter wr = null;
-    try {
-      int[] cosTable2 = createCosTable();
-      wr = new FileWriter("T:/cosTable.c", false);
-      writeCcodeTable(wr, cosTable2, "cosTable");
-      //writeCcodeTable(wr, arcTable, "arcsinTable");
-      wr.close();
-      wr = null;
-    }
-    catch(Exception exc) {
-      if(wr !=null) { try {wr.close(); } catch(IOException e3) {}}
-      System.err.println(exc.getMessage());
-    }
+    CreateTables_fix16Operations.createSqrtTable();
+    //createCosTable();
  //   testTaylor2();
   }
 
