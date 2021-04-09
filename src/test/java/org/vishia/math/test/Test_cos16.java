@@ -436,7 +436,7 @@ public class Test_cos16 {
     try {
       int[] cosTable2 = createCosTable();
       wr = new FileWriter("T:/cosTable.c", false);
-      CreateTables_fix16Operations.writeCcodeTable(wr, cosTable2, "cosTable");
+      CreateTables_fix16Operations.writeCcodeTable(wr, cosTable2, 9, "cosTable");
       //writeCcodeTable(wr, arcTable, "arcsinTable");
       wr.close();
       wr = null;

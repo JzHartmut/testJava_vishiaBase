@@ -13,10 +13,21 @@ public class CreateTables_fix16Operations {
      double fn(double x); 
    }
   
+  /**Create a table for linear interpolation for any desired math operation
+   * @param bitsegm Number of bits for one segment of linear interpolation (step width dx)
+   * @param size Number of entries -1 in the table. The table get (size+1) entries, should be 16, 32, 64
+   * @param scalex Scaling for the x-value, this result is mapped to 0x10000 (the whole 16 bit range)
+   * @param scaley Scaling for y-value, this result of the operation is mapped to 0x8000.
+   * @param fn The math function as Lambda-expression
+   * @param name of the file and table as C const
+   * @param fixpoints array of some points [ix] [ yvalue] which should be exactly match
+   * @return The table.
+   */
   public static int[] createTable(int bitsegm, int size, double scalex, double scaley, MathFn fn, String name, int[][] fixpoints) {
     int[] table = new int[size+1];
     double dx2 = scalex/size/2.0 ;          // diff x for 1/2 to left and right from point.
     double yleft = fn.fn(-dx2);          // first left point
+    if(yleft >= 0.99997*scaley) { yleft = 0.99997*scaley; } 
     int ixFixpoints = 0;
     for(int ix = 0; ix <= size; ++ix) {
       double x = ix * scalex / size;  //max is 4.0
@@ -25,6 +36,14 @@ public class CreateTables_fix16Operations {
       double dy = yright - yleft;                // gain for this segment from left to right point
       double yleft_ = yp0 - dy;
       double yright_ = yp0 + dy;
+      if(  yleft_ >= 0.99997*scaley              //left point over driven, especially because reciprocal functions
+        && fixpoints[ixFixpoints][0] != ix) {    //But do not a correctur if a manual point is given. 
+        double yleftd_ = 0.99997*scaley - yleft_;
+        yleft_ = 0.99997*scaley;
+        yp0 += yleftd_ /2;  //prevent overdrive by calculation to left
+        dy = yright - yleft_;
+        yright = yright_; //prevernt yp correcture
+      } 
       double yleftErr = yleft - yleft_;          //error between linear approx. point and exact point
       double yrightErr = yright - yright_;
       double yp = yp0 + (yleftErr + yrightErr) /2/2;  //supporting point adjusted
@@ -40,7 +59,7 @@ public class CreateTables_fix16Operations {
           dyi += yid;
         } else {                                 // correct the point before:
           int ytz = table[ix-1];
-          int dytz = (ytz & 0xffff) + yid;       // adjust the gain to catch this point
+          int dytz = (ytz + yid) & 0xffff;       // adjust the gain to catch this point
           ytz = ((ytz + (yid<<15)) & 0xffff0000) | dytz; //and adjust the point with the half of yid
           table[ix-1] = ytz;
           yright += scaley * yid / 0x8000;       // adjust also the next left point to match with the corrected
@@ -58,7 +77,7 @@ public class CreateTables_fix16Operations {
     FileWriter wr = null;
     try {
       wr = new FileWriter("T:/" + name + "Table.c", false);
-      writeCcodeTable(wr, table, name + "Table");
+      writeCcodeTable(wr, table, 1<<bitsegm, name + "Table");
       //writeCcodeTable(wr, arcTable, "arcsinTable");
       wr.close();
       wr = null;
@@ -105,7 +124,7 @@ public class CreateTables_fix16Operations {
   
   
   
-  static void writeCcodeTable ( FileWriter wr, int[] table, String name ) 
+  static void writeCcodeTable ( FileWriter wr, int[] table, int dx, String name ) 
   throws IOException {
     wr.append("\n\n");  
     wr.append("static const uint32 ").append(name).append("[] = \n");
@@ -117,7 +136,8 @@ public class CreateTables_fix16Operations {
       if(sVal.length() <8) { sVal = "00000000".substring(0, 8-sVal.length()) + sVal; }  //with leading 000 
       //                                                   // wr line
       wr.append(sep).append(" 0x").append(sVal)
-                     .append("  // ").append("" + (ix)).append("\n");
+                    .append("  // " + (ix))
+                    .append("  ").append(Integer.toHexString(ix * dx)).append("\n");
       sep = ",";
     }
     wr.append("};\n");
@@ -126,7 +146,7 @@ public class CreateTables_fix16Operations {
 
 
   public static int[] createCosTable() {
-    int[][] fixpoints = { {0, 0x7FFF}, {32, 0x0}, {64, -0x8000} };
+    int[][] fixpoints = { {0, 0x7FFF}, {1, 0x7FD3}, {32, 0x0}, {64, -0x8000} };
     int[] table = createTable(9, 64, Math.PI, 1.0, (x)-> Math.cos(x), "cos", fixpoints);
     return table;
   }
@@ -138,10 +158,43 @@ public class CreateTables_fix16Operations {
   }
 
 
-  public static int[] createRsqrtTable() {
-    int[][] fixpoints = { {32, 0x4000} };
-    MathFn fn = (x) -> x <=0 ? 0 : 1.0/Math.sqrt(x);
-    int[] table = createTable(10, 64, 4.0, 2.0, fn, "rsqrt", fixpoints);
+  public static int[] createRsqrtTable4_32() {
+    int[][] fixpoints = { {8, 0x4000} };
+    MathFn fn = new MathFn() {
+      @Override public double fn(double x) {
+        if(x <=0.25003) { return 1.99993; }
+        //else if(x <=0.27) { return 1.9997; }
+        else {
+          double y = 1.0/Math.sqrt(x);
+          if(y >1.99993) { y = 1.99993; }
+          return y;
+        }
+      }
+    };
+    int[] table = createTable(11, 32, 4.0, 2.0, fn, "rsqrt", fixpoints);
+    return table;
+  }
+
+
+  
+  
+  /**Reciprocal square root till 0x7fff =^ 2.0 with 32 supporting points.
+   * @return
+   */
+  public static int[] createRsqrtTable2_32() {
+    int[][] fixpoints = { {16, 0x4000} };
+    MathFn fn = new MathFn() {
+      @Override public double fn(double x) {
+        if(x <=0.25003) { return 1.99993; }
+        //else if(x <=0.27) { return 1.9997; }
+        else {
+          double y = 1.0/Math.sqrt(x);
+          if(y >1.99993) { y = 1.99993; }
+          return y;
+        }
+      }
+    };
+    int[] table = createTable(10, 32, 2.0, 2.0, fn, "rsqrt2_32", fixpoints);
     return table;
   }
 
@@ -151,8 +204,8 @@ public class CreateTables_fix16Operations {
   public final static void main(String[] args) {
     //testatan2_16();
     //test_cos16q_emC();
-    //createSqrtTable();
-    //createRsqrtTable();
+    //createSqrtTable4_32();
+    //createRsqrtTable2_32();
     createCosTable();
  //   testTaylor2();
   }
