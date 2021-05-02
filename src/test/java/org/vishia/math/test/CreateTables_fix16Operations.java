@@ -6,24 +6,26 @@ import java.io.IOException;
 public class CreateTables_fix16Operations {
 
   
-  /**A functional interface is necessary for a lambda expression.
-   * It represents the type of expression.
-   * It does not define how to do, only the basic requirements. */
+  /**The functional interface for the operation as lambda expression.
+   */
    @FunctionalInterface interface MathFn {
      double fn(double x); 
    }
   
   /**Create a table for linear interpolation for any desired math operation
    * @param bitsegm Number of bits for one segment of linear interpolation (step width dx)
-   * @param size Number of entries -1 in the table. The table get (size+1) entries, should be 16, 32, 64
-   * @param scalex Scaling for the x-value, this result is mapped to 0x10000 (the whole 16 bit range)
+   * @param size Number of entries -1 in the table. 
+   *        The table get (size+1) entries, should be 16, 32, 64
+   * @param scalex Scaling for the x-value, 
+   *        this result is mapped to 0x10000 (the whole 16 bit range)
    * @param scaley Scaling for y-value, this result of the operation is mapped to 0x8000.
    * @param fn The math function as Lambda-expression
    * @param name of the file and table as C const
    * @param fixpoints array of some points [ix] [ yvalue] which should be exactly match
    * @return The table.
    */
-  public static int[] createTable(int bitsegm, int size, double scalex, double scaley, MathFn fn, String name, int[][] fixpoints) {
+  public static int[] createTable(int bitsegm, int size, double scalex, double scaley
+      , MathFn fn, String name, int[][] fixpoints) {
     int[] table = new int[size+1];
     double dx2 = scalex/size/2.0 ;          // diff x for 1/2 to left and right from point.
     double yleft = fn.fn(-dx2);          // first left point
@@ -51,18 +53,22 @@ public class CreateTables_fix16Operations {
       int yi = (int)(yp/scaley * 0x8000 + 0.5);  //supporting point as integer.
       short dyi = (short)(dy/scaley * 0x8000 + 0.5);   //gain as integer, as used later.
       if(fixpoints[ixFixpoints][0] == ix) {      // a fix point found, this should be the yi value.
-        int yid = fixpoints[ixFixpoints][1] - yi;// difference of correcture
         yi = fixpoints[ixFixpoints][1];
-        if(ix ==0) {                             // first point: correct the gain
-          dyi -= yid;                            // to reach the same end point of the segment
-        } else if(ix == size) {                  // last point: correct the gain
-          dyi += yid;
-        } else {                                 // correct the point before:
-          int ytz = table[ix-1];
-          int dytz = (ytz + yid) & 0xffff;       // adjust the gain to catch this point
-          ytz = ((ytz + (yid<<15)) & 0xffff0000) | dytz; //and adjust the point with the half of yid
-          table[ix-1] = ytz;
-          yright += scaley * yid / 0x8000;       // adjust also the next left point to match with the corrected
+        if(fixpoints[ixFixpoints].length >=3) {
+          dyi = (short)fixpoints[ixFixpoints][2];       // use given dyi from fixpoints
+        } else {
+          int yid = fixpoints[ixFixpoints][1] - yi;// difference of correcture
+          if(ix ==0) {                             // first point: correct the gain
+            dyi -= yid;                            // to reach the same end point of the segment
+          } else if(ix == size) {                  // last point: correct the gain
+            dyi += yid;
+          } else {                                 // correct the point before:
+            int ytz = table[ix-1];
+            int dytz = (ytz + yid) & 0xffff;       // adjust the gain to catch this point
+            ytz = ((ytz + (yid<<15)) & 0xffff0000) | dytz; //and adjust the point with the half of yid
+            table[ix-1] = ytz;
+            yright += scaley * yid / 0x8000;       // adjust also the next left point to match with the corrected
+          }
         }
         if( ++ixFixpoints >= fixpoints.length) { ixFixpoints -=1; } //a next exists or not
       }
@@ -151,9 +157,18 @@ public class CreateTables_fix16Operations {
     return table;
   }
 
+  public static int[] createArcsinTable() {
+    int[][] fixpoints = { {16, 0x4000} };
+    int[] table = createTable(10, 16, 1.0, Math.PI, (x)-> Math.asin(x), "asin", fixpoints);
+    return table;
+  }
+
   public static int[] createSqrtTable() {
-    int[][] fixpoints = { {8, 0x4000} };
-    int[] table = createTable(11, 32, 4.0, 2.0, (x)-> Math.sqrt(Math.abs(x)), "sqrt", fixpoints);
+    int[][] fixpoints = { 
+        {0, 0x0, 0x20c6},   //sqrt(0)==0, but high rise in 0 range.
+        //{1, 0x163e}, 
+        {8, 0x4000} };
+    int[] table = createTable(11, 32, 4.0, 2.0, (x)-> Math.sqrt(Math.abs(x)), "sqrt16_32", fixpoints);
     return table;
   }
 
@@ -204,6 +219,7 @@ public class CreateTables_fix16Operations {
   public final static void main(String[] args) {
     //testatan2_16();
     //test_cos16q_emC();
+    createSqrtTable();
     //createSqrtTable4_32();
     //createRsqrtTable2_32();
     createCosTable();
