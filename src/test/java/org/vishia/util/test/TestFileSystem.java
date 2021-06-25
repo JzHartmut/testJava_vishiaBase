@@ -13,20 +13,31 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.vishia.testBase.TestJava_vishiaBase;
 import org.vishia.util.Debugutil;
 import org.vishia.util.FileFunctions;
 import org.vishia.util.FileSystem;
 import org.vishia.util.StringFunctions;
+import org.vishia.util.TestOrg;
 
 public class TestFileSystem
 {
   public static void main(String[] args){
+    TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();
+    TestOrg test = new TestOrg("Test FileFunctions", 7, args);
     TestFileSystem thiz = new TestFileSystem();
+    test_GetDir(test);
     fileProperties();
     thiz.test_FileRead();
     test_normalizePath();
+    test_addFilesWithBasePath();
   }
   
+  
+  public static void test_GetDir(TestOrg parent) {
+    TestOrg test = new TestOrg("Test GetDir", 7, parent);
+  
+  }
   
   
   private static void fileProperties() {
@@ -106,17 +117,17 @@ public class TestFileSystem
   /**Test routine with examples to test {@link #normalizePath(String)}. */
   public static void test_addFilesWithBasePath(){
     CharSequence result;
-    File dir = new File(".");  //it is the current dir, but without absolute path.
+    File dir = new File(".");                    // it is the current dir, but without absolute path.
     File dirAbs = dir.getAbsoluteFile();
-    File parent = FileSystem.getDir(dir);   //builds the real parent. It depends on the start directory of this routine.
-    File grandparent = FileSystem.getDir(parent);
+    File parent = FileSystem.getDir(dir);        // builds the real parent. 
+    File grandparent = FileSystem.getDir(parent);// It depends on the start directory of this routine.
     String sParent = parent.getPath().replace("\\", "/");  //the path
     int posSlash = sParent.lastIndexOf('/');
     String sNameParent = sParent.substring(posSlash +1);
     String searchPath = sNameParent + "/**/*";
     List<FileFunctions.FileAndBasePath> files = new ArrayList<FileFunctions.FileAndBasePath>();
     FileSystem.addFilesWithBasePath(grandparent, searchPath, files);
-    searchPath = sNameParent + "/..:**/*";
+    searchPath = sNameParent + "/..:**/*";       // This means the whole file tree of the parent
     files.clear();
     FileSystem.addFilesWithBasePath(parent, searchPath, files);
   }  

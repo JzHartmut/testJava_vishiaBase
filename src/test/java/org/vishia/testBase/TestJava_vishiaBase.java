@@ -16,11 +16,20 @@ public class TestJava_vishiaBase {
   
   
   public static boolean setCurrDir_TestJava_vishiaBase() {
-    final File currdir = new File(".").getAbsoluteFile().getParentFile();
-    final File testfile = new File(currdir, "src/main/java/srcJava_vishiaBase/_make");
+    //assume that the project is inside the testJava_vishiaBase tree;
+    File basedir = new File(".").getAbsoluteFile();
+    //final File testfile = new File(currdir, "src/main/java/srcJava_vishiaBase/_make");
+    
+    while( basedir !=null && !(new File(basedir, "src/main/java/srcJava_vishiaBase/_make").exists())) {
+      basedir = basedir.getParentFile();
+    }
+    if(basedir !=null) {
+      System.setProperty("user.dir", basedir.getAbsolutePath());
+      return true;
+    }
     final String currdir2 = System.getProperty("user.dir");
     final File testfile2 = new File(currdir2, "src/main/java/srcJava_vishiaBase/_make");
-    if(testfile.exists() && testfile2.exists()) return true;
+    if(testfile2.exists()) return true;
     
     //to set the current dir to a determined directory the only way is to produce a file with that directory
     // on a known path. This is done by call of +setWDtoTmp.bat or +setWDtoTmp.sh in this SBOX.
