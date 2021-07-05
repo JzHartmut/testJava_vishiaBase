@@ -1,0 +1,266 @@
+
+D:\vishia\Java\cmpnJava_vishiaBase>call +clean_mkLinkBuild.bat
+
+D:\vishia\Java\cmpnJava_vishiaBase>echo off
+called: .\+clean_mkLinkBuild.bat
+Verbindung erstellt für build <<===>> t:\tmp\Test_vishiaBase\build
+D:\vishia\Java\cmpnJava_vishiaBase
+Drücken Sie eine beliebige Taste . . .
+=========================================================================
+execute src/buildScripts/+resolveDepsFromWWW.sh
+test using $0: dirname $0 outputs the dir path
+src/buildScripts
+cd to the cmpn directory:
+/d/vishia/Java/cmpnJava_vishiaBase
+this shell script gets the srcJava_vishiaBase core sources
+clone srcJava_vishiaBase tag 2020-07-01 from github if necessary ...
+srcJava_vishiaBase already exists, not cloned
+=========================================================================
+execute src/buildScripts/+mkLinkBuild.sh
+/d/vishia/Java/cmpnJava_vishiaBase
+links exist
+=========================================================================
+execute ./+makejar_vishiaBase.sh
+ ... generates the vishiaBase.jar from srcJava_vishiaBase core sources
+
+====== javac ================================================
+execute ./-makejar-coreScript.sh
+... compile java and generate jar with binary-compatible content.
+DSTNAME = vishiaMinisys
+pwd=/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+BUILD_TMP = ../../../../../build
+VERSIONSTAMP = 2021-07-05
+TIMEinJAR = 2021-07-01+00:00
+SRC_ALL =
+SRC_ALL2 =
+FILE1SRC = @minisys.files
+RESOURCEFILES =
+SRCPATH = .. - search path sources for javac
+CLASSPATH = xx - search path jars for javac
+JAR_zipjar = ../../../../../build/vishiaMiniSys//binjar - jar file for jar/zip generation
+TMPJAVAC = ../../../../../build/vishiaMiniSys/ - temporary files while compilation
+JARFILE = ../../../../../build/deploy/vishiaMinisys-2021-07-05.jar - generated jar
+MD5FILE = ../../../../../build/deploy/vishiaMinisys-2021-07-05.jar.MD5.txt - generated MD5 text file
+SRCZIPFILE = vishiaBase-2021-07-05-source.zip - generated sozrce.zip file
+JAVAC_HOME = c:/Programs/Java/jdk1.8.0_241/
+JAVAC = c:/Programs/Java/jdk1.8.0_241//bin/javac
+
+Output to: ../../../../../build/deploy/vishiaMinisys
+===============================================================
+compile javac
+/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+javac -encoding UTF-8 -d ../../../../../build/vishiaMiniSys//binjar -cp xx -sourcepath .. @minisys.files
+Note: ..\org\vishia\util\FileFunctions.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+build jar
+pwd=/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+java -cp ../../../../../build/vishiaMiniSys//binjar org.vishia.zip.Zip -o:../../../../../build/deploy/vishiaMinisys-2021-07-05.jar -manifest:minisys.manifest -sort -time:2021-07-01+00:00 ../../../../../build/vishiaMiniSys//binjar:**/*.class
+Zip routine from Java made by HSchorrig, 2013-02-09 - 2020-06-09
+-o:../../../../../build/deploy/vishiaMinisys-2021-07-05.jar
+-manifest:minisys.manifest
+-sort
+-time:2021-07-01+00:00
+../../../../../build/vishiaMiniSys//binjar:**/*.class
+org.vishia.util.Zip: timestamp = 2021-07-01+00:00 (yyyy-MM-dd+hh:mm z)
+org.vishia.util.Zip: write zip file to ..\..\..\..\..\build\deploy\vishiaMinisys-2021-07-05.jar
+jar-file with timestamp
+  +  : ../../../../../build/vishiaMiniSys//binjar:**/*.class
+ files:72
+output MD5 checksum
+ok ../../../../../build/deploy/vishiaMinisys-2021-07-05.jar
+
+====== javac ================================================
+execute ./-makejar-coreScript.sh
+... compile java and generate jar with binary-compatible content.
+DSTNAME = vishiaBase
+pwd=/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+BUILD_TMP = ../../../../../build
+VERSIONSTAMP = 2021-07-05
+TIMEinJAR = 2021-07-01+00:00
+SRC_ALL = ..
+SRC_ALL2 =
+FILE1SRC =
+RESOURCEFILES =
+SRCPATH = .. - search path sources for javac
+CLASSPATH = xx - search path jars for javac
+JAR_zipjar = ../../../../../build/deploy/vishiaMinisys-2021-07-05.jar - jar file for jar/zip generation
+TMPJAVAC = ../../../../../build/vishiaBase - temporary files while compilation
+JARFILE = ../../../../../build/deploy/vishiaBase-2021-07-05.jar - generated jar
+MD5FILE = ../../../../../build/deploy/vishiaBase-2021-07-05.jar.MD5.txt - generated MD5 text file
+SRCZIPFILE = vishiaBase-2021-07-05-source.zip - generated sozrce.zip file
+JAVAC_HOME = c:/Programs/Java/jdk1.8.0_241/
+JAVAC = c:/Programs/Java/jdk1.8.0_241//bin/javac
+
+Output to: ../../../../../build/deploy/vishiaBase
+===============================================================
+source-set all files = ..
+compile javac
+/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+javac -encoding UTF-8 -d ../../../../../build/vishiaBase/binjar -cp xx -sourcepath .. @../../../../../build/vishiaBase/sources.txt
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+build jar
+pwd=/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+java -cp ../../../../../build/deploy/vishiaMinisys-2021-07-05.jar org.vishia.zip.Zip -o:../../../../../build/deploy/vishiaBase-2021-07-05.jar -manifest:vishiaBase.manifest -sort -time:2021-07-01+00:00 ../../../../../build/vishiaBase/binjar:**/*.class
+Zip routine from Java made by HSchorrig, 2013-02-09 - 2020-06-09
+-o:../../../../../build/deploy/vishiaBase-2021-07-05.jar
+-manifest:vishiaBase.manifest
+-sort
+-time:2021-07-01+00:00
+../../../../../build/vishiaBase/binjar:**/*.class
+org.vishia.util.Zip: timestamp = 2021-07-01+00:00 (yyyy-MM-dd+hh:mm z)
+org.vishia.util.Zip: write zip file to ..\..\..\..\..\build\deploy\vishiaBase-2021-07-05.jar
+jar-file with timestamp
+  +  : ../../../../../build/vishiaBase/binjar:**/*.class
+ files:904
+output MD5 checksum
+ok ../../../../../build/deploy/vishiaBase-2021-07-05.jar
+/d/vishia/Java/cmpnJava_vishiaBase/src/main/java/srcJava_vishiaBase/_make
+java -cp ../../../../../build/deploy/vishiaMinisys-2021-07-05.jar org.vishia.zip.Zip -o:../../../../../build/deploy/vishiaBase-2021-07-05-source.zip -sort ../..:**/*
+Zip routine from Java made by HSchorrig, 2013-02-09 - 2020-06-09
+-o:../../../../../build/deploy/vishiaBase-2021-07-05-source.zip
+-sort
+../..:**/*
+org.vishia.util.Zip: write zip file to ..\..\..\..\..\build\deploy\vishiaBase-2021-07-05-source.zip
+  +  : ../..:**/*
+ files:355
+test and correct the bom file: JZtxtcmd corrBom.jzTc ../../../../../../libStd ../../../../../build/deploy vishiaBase 2021-07-05
+ vishiaBase: D:/vishia/Java/cmpnJava_vishiaBase/build/deploy => ../../../../../../libStd/vishiaBase-2021-07-05.jar
+MD5=#9d368de1629dd9fd6ea82c5b628aa6d6#
+
+MD5curr=#9d368de1629dd9fd6ea82c5b628aa6d6#
+========================================================================== 0
+BOM not changed, unchanged MD5
+======= success ==========================================================
+test and correct the bom file: JZtxtcmd corrBom.jzTc ../../../../../../libStd ../../../../../build/deploy vishiaMinisys 2021-07-05
+ vishiaMinisys: D:/vishia/Java/cmpnJava_vishiaBase/build/deploy => ../../../../../../libStd/vishiaMinisys-2021-07-05.jar
+MD5=#788fb987dbf85e5e8d9fa9631e7f8952#
+
+MD5curr=#788fb987dbf85e5e8d9fa9631e7f8952#
+========================================================================== 0
+BOM not changed, unchanged MD5
+======= success ==========================================================
+it has produced build/deploy/vishiaBase-2021-07-05.jar
+src/test/java
+
+====== javac ================================================
+execute src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh
+... compile java and generate jar with binary-compatible content.
+DSTNAME = vishiaTestBase
+pwd=/d/vishia/Java/cmpnJava_vishiaBase
+BUILD_TMP = build
+VERSIONSTAMP = 2021-07-05
+TIMEinJAR = 2021-07-01+00:00
+SRC_ALL = src/test/java/org/vishia/testBase
+SRC_ALL2 =
+FILE1SRC =
+RESOURCEFILES =
+SRCPATH = src/test/java - search path sources for javac
+CLASSPATH = build/deploy/vishiaBase-2021-07-05.jar - search path jars for javac
+JAR_zipjar = build/deploy/vishiaBase-2021-07-05.jar - jar file for jar/zip generation
+TMPJAVAC = build/Test_vishiaBase - temporary files while compilation
+JARFILE = build/deploy/vishiaTestBase-2021-07-05.jar - generated jar
+MD5FILE = build/deploy/vishiaTestBase-2021-07-05.jar.MD5.txt - generated MD5 text file
+SRCZIPFILE = - generated sozrce.zip file
+JAVAC_HOME = c:/Programs/Java/jdk1.8.0_241/
+JAVAC = c:/Programs/Java/jdk1.8.0_241//bin/javac
+
+Output to: build/deploy/vishiaTestBase
+===============================================================
+source-set all files = src/test/java/org/vishia/testBase
+compile javac
+/d/vishia/Java/cmpnJava_vishiaBase
+javac -encoding UTF-8 -d build/Test_vishiaBase/binjar -cp build/deploy/vishiaBase-2021-07-05.jar -sourcepath src/test/java @build/Test_vishiaBase/sources.txt
+build jar
+pwd=/d/vishia/Java/cmpnJava_vishiaBase
+java -cp build/deploy/vishiaBase-2021-07-05.jar org.vishia.zip.Zip -o:build/deploy/vishiaTestBase-2021-07-05.jar -manifest:src/test/java/_make/TestvishiaBase.manifest -sort -time:2021-07-01+00:00 build/Test_vishiaBase/binjar:**/*.class
+Zip routine from Java made by HSchorrig, 2013-02-09 - 2020-06-09
+-o:build/deploy/vishiaTestBase-2021-07-05.jar
+-manifest:src/test/java/_make/TestvishiaBase.manifest
+-sort
+-time:2021-07-01+00:00
+build/Test_vishiaBase/binjar:**/*.class
+org.vishia.util.Zip: timestamp = 2021-07-01+00:00 (yyyy-MM-dd+hh:mm z)
+org.vishia.util.Zip: write zip file to build\deploy\vishiaTestBase-2021-07-05.jar
+jar-file with timestamp
+  +  : build/Test_vishiaBase/binjar:**/*.class
+ files:7
+output MD5 checksum
+ok build/deploy/vishiaTestBase-2021-07-05.jar
+/d/vishia/Java/cmpnJava_vishiaBase
+java -cp build/deploy/vishiaBase-2021-07-05.jar org.vishia.zip.Zip -o:build/deploy/ -sort src/test/java/org/vishia/testBase/..:**/*
+Zip routine from Java made by HSchorrig, 2013-02-09 - 2020-06-09
+-o:build/deploy/
+-sort
+src/test/java/org/vishia/testBase/..:**/*
+org.vishia.util.Zip: write zip file to build\deploy
+build\deploy (Zugriff verweigert)
+=========================================================
+=========================================================
+=========================================================
+TEST
+=========================================================
+=========================================================
+================================================================================
+has compiled all sources, vishiaBase and test, to
+java -cp build/deploy/vishiaTestBase-2021-07-05.jar;build/deploy/vishiaBase-2021-07-05.jar org.vishia.testBase.Test
+Test output:
+Test FileFunctions.readFile(file, dst, len) of all org.vishia.util: 0,000000 ms
+
+================================================================================
+java -cp build/deploy/vishiaTestBase-2021-07-05.jar;build/deploy/vishiaBase-2021-07-05.jar org.vishia.testBase.Test ---TESTverbose:7
+Test output:
+=========================================================================
+Test_FilePath
+check getting all components from a path d:/base/path:local/path/name.ext
+  ok: localdir()
+  ok: absbasepath()
+  ok: localnameW()
+  ok: localname()
+  ok: localfile()
+testReplWildcard
+  ok: replacing
+FileFunctions.testExpand
+  ok: src/main/java/srcJava_vishiaBase:org/**/*.java contains more as 100 files
+Test FileFunctions.readFile(file, dst, len) of all org.vishia.util: 0,000000 ms
+=========================================================================
+Test FileFunctions
+test_normalizePath
+  ok: ../path//../file => ../file
+  ok: ../path/file/. => ../path/file
+  ok: ../path/../. => ..
+  ok: ../path//../file => ../file
+  ok: ../path//../**/file => ../**/file
+  ok: ..\path\\..\file => ../file
+  ok: /../path//../file => /../file
+  ok: ./path//file/ => path/file/
+  ok: path/./../file => file
+  ok: D:/test/test1/.. => D:/test
+  ok: D:/test/test1/../.. => D:/
+  ok: D:/test///././.././test1/.. => D:/
+  ok: D:/test/.. => D:/
+  ok: path/file/..:sub/**/*.java => path:sub/**/*.java
+  ok: path/file/..:**/*.java => path:file/**/*.java
+  ok: path/file/.:**/*.java => path/file:**/*.java
+  ok: path/file:./**/*.java => path/file:**/*.java
+  ok: path/..:file => file
+  ok:  =>
+  ok:  =>
+  ok:  =>
+  ok: D:\vishia\Java\..\Java => D:/vishia/Java
+test_addFilesWithBasePath
+  ok: number of files in /src/test/jztc >=1
+  ok: number of files in /src/test/jztc >=1
+  ok: number of files in /src/test/jztc >=1
+  ok: number of files in /src/test/jztc >=1
+=========================================================================
+Test_OutTextPreparer
+test script with <:call:..>
+  ok: Test_OutTextPreparer_CallFor:testCall()
+
+to check result compare build/testResult/Test.txt build/testResult/TestVerbose.txt with src/test/testResult_Ref/TestVerbose.txt src/test/testResult_Ref/note.txt
+-- end ---------------------------------------------------------------------------
+ctrl-C for exit, other key: repeat build
+Drücken Sie eine beliebige Taste . . .

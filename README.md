@@ -2,7 +2,7 @@
 
 ## build
 
-See also https://www.vishia.org/Java/html5/source+build/buildtestVishiaJava.html#truethe-compilation-tools-and-reproducible-build
+See also https://www.vishia.org/Java/html/source+build/buildtestVishiaJava.html
 
 
 use files in src/buildScripts

@@ -1,34 +1,96 @@
-= srcJava_vishiaBase component build and test
+= cmpnJava_vishia... component build and test
 :toc:
 :sectnums:
 :sectlinks:
 
+cpp: C++
+:cp: C/++
+
+* see also link:src_Archive.html[]
+* link:../../index.html[]
+
 
 Dr. Hartmut Schorrig, Germany in Europa, link:https://vishia.org[www.vishia.org]
 
-date: 2020-06-19
+
 
 == The mission
 
-The summary of Java sources as component "__srcJava_vishiaBase__" contains a lot of Java classes for different approaches. 
-Some of them build a system. Especially the link:../../../JZtxtcmd/html/JZtxtcmd.html[JZtxtcmd] tool can be used as stand alone tool or as ad-one for special tooling for several text conversion approaches. The JZtxtcmd can be tested as tool in sum, but a unit test for all the details is necessary.
+The summary of Java sources as component "__srcJava_vishiaBase__" contains 
+a lot of Java classes for different approaches. 
+Some of them build a system. Especially the 
+link:../../../JZtxtcmd/html/JZtxtcmd.html[JZtxtcmd] tool can be used 
+as stand alone tool or as ad-one for special tooling for several text conversion approaches. 
+The JZtxtcmd can be tested as tool in sum, but a unit test for all the details is necessary.
 
-The build of the jar file for the _srcJava_vishiaBase_ component is done regarding the link:reproducibleJar.html[vishia...reproducibleJar] approach. Hence it is build with a simple shell script delivered in a zip file with the sources. No other tooling is necessary except a JDK for compilation. 
+The build of the jar file for the _srcJava_vishiaBase_ component is done 
+regarding the link:reproducibleJar.html[vishia...reproducibleJar] approach. 
+Hence it is build with a simple shell script delivered in a zip file with the sources. 
+No other tooling is necessary except a JDK for compilation. 
 
-There was some experience with gradle and Junit-test, but summary using gradle is a complex approach which is unecessary for this component.
+There was some experience with gradle and Junit-test, but summary 
+using gradle is a complex approach which is unecessary for this component.
 
-The unit-test for all classes is a widespread problem. Hence the tests are written for determined classes in specialized main routines. One main routine: org.vishia.testbase.Test#main is used for the testall (build test).
+The unit-test for all classes is a widespread problem. 
+Hence the tests are written for determined classes in specialized main routines. 
+One main routine: org.vishia.testbase.Test#main is used for the testall (build test).
 
-Yet, 2020-06, only a few classes are included in this test. In the past the test was done usual as usage-test (on usage a tool with this sources) or with different special test routines only for special cases. Test was not in the main focus. It will be improved up to now for future.
+Yet, 2021-06, only a few classes are included in this test. 
+In the past the test was done usual as usage-test (on usage a tool with this sources) 
+or with different special test routines only for special cases. 
+Test was not in the main focus. It will be improved up to now for future.
 
+== Getting jar and sources from deploy archive
+
+For applications only the jar files of the main sources are necessary. That can be gotten
+with a "bill of material" approach, see link:src_Archive.html[]. 
+The sources are beside the jar files. Newer jars and sources are stored in
+
+link:../../deploy[vishia.org/Java/deploy].
+
+[#gitarchive]
 == The git archives and the file tree
+
+You find git archives of the sources also in github, helpful to see the version history: 
+
+link:https://github.com/JzHartmut/[]:
+
+* link:https://github.com/JzHartmut/srcJava_vishiaBase[]: The sources to the `vishiaBase.jar` 
+* link:https://github.com/JzHartmut/testJava_vishiaBase[]: It is the cmpnJava_vishiaBase
+including all tests and also the documentation. 
+It refers `srcJava_vishiaBase` as subproject in an own directory `src/main/Java`. 
+* link:https://github.com/JzHartmut/srcJava_vishiaRun[]: 
+The sources are also used in `vishiaGui.jar` 
+* link:https://github.com/JzHartmut/srcJava_vishiaGui[]: 
+The sources to the `vishiaGui.jar` 
+* link:https://github.com/JzHartmut/testJava_vishiaGui[]: It is the cmpnJava_vishiaGui
+including all tests and also the documentation. 
+It refers `srcJava_vishiaGui` as subproject in an own directory `src/main/Java`. 
+
+To clone from github you can use the following command for git:
+
+ git clone -b master https://github.com/JzHartmut/TestJava_vishiaBase.git
+ 
+adequate for `vishiaGui`.
+
+It creates a pulled workingtree with .git archive into the sub directory `TestJava_vishiaBase`. 
+Alternatively you can get a zip archive from the sources from github.
+
+The second git archive, for `srcJava_vishisBase` is cloned 
+if `build.bat` or `build.sh` was executed in the `src/buildscripts` 
+by invocation of the existing `src/main/java/+gitclone_srcJava_vishiaBase.sh` 
+if the sources are not found. 
+Alternatively you can manually unzip the zip file of sources in `src/main/java`, 
+creating the `src/main/java/srcJava_vishiaBase`. Adequate is done for `vishiaGui`.
+
 
 The file tree is a gradle-like file tree:
 
+----
  The_SBOX_for_TestJava_vishiaBase
  +-.git (optional, not in Zip-files, it is TestJava_vishiaBase)
  +-libs (downloaded external components)
- +-build (it is a symbolic link, JUNCION for windows, to tmp
+ +-build (it should be a symbolic link, JUNCION for windows, to tmp
  + src
    +-main    
    | +-java
@@ -47,56 +109,211 @@ The file tree is a gradle-like file tree:
    | +-asciidoc
    |   +-... documentation of the srcJava_vishiaBase-component
    +-buildScripts
+----
        
-There are two git archives on github:
-
-* link:https://github.com/JzHartmut/testJava_vishiaBase[]: This contains the file tree above, without content in `libs` and without `build`, and especially without content in `src/main/java/srcJava_vihiaBase`. It means it contains the test sources, the test environment and the documentation.
-
-* link:https://github.com/JzHartmut/srcJava_vishiaBase[]: This is the versioned content of the delivered zip file for reproducible build of the `srcJava_vishiaBase.jar`. See link:https://www.vishia.org/Java/html5/source+build/src_Archive.html[].
-
-
-To clone from github you can use the following command for git:
-
- git clone -b master https://github.com/JzHartmut/TestJava_vishiaBase.git
- 
-It creates a pulled workingtree with .git archive into the sub directory `TestJava_vishiaBase`. Alternatively you can get a zip archive from the sources from github.
-
-The second git archive, for `srcJava_vishisBase` is cloned if `build.bat` or `build.sh` was executed in the `src/buildscripts` by invocation of the existing `src/main/java/+gitclone_srcJava_vishiaBase.sh` if the sources are not found. 
-Alternatively you can manually unzip the zip file of sources in `src/main/java`, creating the `src/main/java/srcJava_vishiaBase`.
 
 
 == Build and Test
 
-The source tree of `Testjava_vishiaBase` contains a directory
+=== Only build the vishiaBase.jar and vishiaGui.jar
 
- src/buildScripts
+Build of only the `vishiaBase.jar` and `vishiaGui.jar` files is possible 
+only with a version from the srcJava_... archives or from the `...source.zip` file 
+in the link:../../deploy[].  
+beside the `vishiaBase-....jar`.
+That approach is described in link:src_Archive.html[].
+
+
+=== Get sources for test, Using IDE
+
+The sources as in chapter above link:#gitarchive[] described can be gotten 
+either with the git archive from github or as zip from github. 
+Presumed it is gotten as zip, as also available from link:../../deploy[],
+their `cmpnJava...source.zip[]`.
+
+The zip of the `testJava_vishiaBase` should be unziped. In its root is contained
+
+ build.sh
+ build.bat
  
-Go into this directory and invoke either `build.bat` on MS-Windows or `build.sh`
+Starting this gets the sources for `srcJava_vishiaBase` from github 
+and starts the build process. But it may be better to get the sources manually 
+(from github, from  link:../../deploy[], via zip) and place them to
 
-`build.bat` creates the necessary `build` directory as `mklink /JUNCTION` to a specified path inside the `%TMP%` directory for build results. It may be recommended to install a RAM disk and redirect the `TMP` environment variable to the RAM disk on Windows. The build process is faster. Your SSD hard disk will be treat with care. This is true for all build and temporary saved files.
+ src/main/java/srcJava_vishiaBase
+ 
+The maybe necessary git archives can be assigned later too. 
+I recommend using a mirror location for the archive, using a `.git` file, see chapter above.
 
-`build.bat` then invokes `build.sh` via `sh.exe` invocation. This `sh.exe` should be found in `PATH` if git is installed (via MinGW). All scripts are linux-shell scripts. You need an installation for a minimal linux environment on windows, which is already given if you use git. 
+You find an *Eclipse IDE project* in 
 
-`build.sh` creates the directory `build` as link to `$TMP/BuildJava_vishiaBase inside `+mkLinkBuild.sh` adequate as in Windows for Linux.
+ src/test/EclipsePj
+ 
+Using this you can study the sources with all details, compiling and test.
+
+If you have copied and unziped the `src/main/java/srcJava_vishiaBase` calling
+
+ build.bat
+ build.sh
+ 
+compiles, tests via shell script, shows the results on output. 
+It creates the `vishiaBase.jar` in the build directory.  
+The both shown scripts calls
+
+ src/buildScripts/build.*
+ 
+which contains the real stuff.  
+
+=== build folder as temporary
+
+You should start `build.bat` in Windows. It calls 
+
+ +clean_mkLinkBuild.bat
+ 
+This file deletes an existing `build` folder and creates a so named '_Junction_' 
+in windows to the `%TMP%\Test_vishiaBase\build` location. 
+The `TMP` environment variable is usual given, but it will be created if not given. 
+It should refer a location in the file system for temporaries, 
+the same as in the `/tmp/...` folder in Unix (Linux) systems. 
+It may be recommended to install a RAM disk and redirect the `TMP` environment variable 
+to the RAM disk on Windows. 
+The build process is faster. 
+Your SSD hard disk will be treat with care. 
+This is true for all build and temporary saved files.
+I uses this approach and clean the `TMP` folder on any reboot of the PC since some years.
+There was never a problem with lost or 'important' data for the Windows OS
+though this folder might contain important thinks (look like important). 
+
+- But it works with a normal tmp folder on your hard disk too.
+ 
+If you are on Linux, `build.sh` does adequate. 
+It calls `src/buildScripts/+mkLinkBuild.sh` and this script removes an existing `build` folder 
+and creates a symbolic link to `$TMP/BuildJava_vishiaBase` where a non existing `TMP`
+is set to `/tmp`. 
+
+
+=== build.sh, using shell scripts, Java-JDK
+
+`build.bat` then invokes `build.sh` via `sh.exe` invocation. 
+This `sh.exe` should be found in `PATH` if git is installed (via MinGW). 
+All scripts are linux-shell scripts. 
+You need an installation for a minimal linux environment on windows, 
+which is already given if you use git. 
+The same can be done with any gcc (GNU compiler) collections. 
+In other words, a shell execution environment should be available to everybody 
+who is trying to compile something.
+
+The decision writing the core generating scripts in a Linux shell instead Windows-batch
+offers the compatibility to Linux. It is familiar to use shell scripts also in Windows
+for development. 
+
+The second necessary one is a JDK, Java Developer Kit, of course. 
+It is not necessary to have it installed, it is sufficient that it is present 
+on the PC platform. You can have several versions of JDK at the same time, from Oracle, 
+or OpenJDK.
+
+=== Compile srcJava_vishiaBase to vishiaBase.jar
 
 `build.sh` invokes 
 
- cd src/main/java/srcJava_vishiaBase/_make
- export BUILD="../../../../../build"
- ./+makejar_vishiaBase.sh 
- cd ../../../../..
+----
+## (Re-)Compile the vishiaBase.jar to .../build
+cd src/main/java/srcJava_vishiaBase/_make
+find -name '*.sh' -exec chmod 777 {} \;  # again after clone the srcJava_vishiaBase
+export VERSIONSTAMP=$(date -I)           # It determines the name of the files.
+export BUILD_TMP="../../../../../build"  # relative to src/.../_make
+./+makejar_vishiaBase.sh 
+cd ../../../../..
+----
 
-to generate the 
+That is the same as the immediately invocation of `./+makejar_vishiaBase.sh`
+only with the `srcJava_vishiaBase` source tree, 
+but with two outside set environment variables. 
 
- build/deploy/vishiaBase*
+* `BUILD_TMP` determines `build` as destination. 
+In stand alone calling this is set to a proper TMP location if it is not set on call.
+
+* `VERSIONSTAMP` is the suffix for the file names. 
+The definition with the current date allows generation of daily files. 
+Independent of this definition, the `VERSIONinJAR` time stamp in the jar files 
+is used as given in the versioned `+makejar_vishiaBase.sh` compiling script.
+It means the files will be re-generated with the same binary content,
+see link:src_Archive.html#rebuild[].
+
+The generated jar is stored in and used from
+
+ build/deploy/vishiaBase-2021-07-05.jar
  
-files as there was build on immediately invocation of this script. It means it builds the current version of srcJava_vishiaBase. Now you should check whether the check sum and binary content of the jar are adequate to a given version of the same files. The files, at least the ckecksum file, contains a date stamp in its name. The build is reproducable, it means the same sources produces exactly the same binary, see link:reproducibleJar.html[].
+with the daily time stamp. 
 
-After them with the same `src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh` script the `build/deploy/vishiaTestBase-YYYY-MM-DD.jar` is created. 
 
-The first and second test is, whether the sources are compiled error-free. Both for srcJava_vishiaBase and the test classes. 
+
+=== Build test files
+
+The test for the srcJava_vishiaBase sources is stored in the file tree
+
+ src/test/java/org/vishia/....
+ 
+It is linked as folder also in the Eclipse project, beside `src/main/java/srcJava_vishiaBase/org/vishia`
+
+The `build.sh` uses the same 
+
+ src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh
+ 
+to compile this sources to an extra jar:
+
+ build/deploy/vishiaTestBase-2021-07-05.jar 
+
+To do so, some environment variable are set adequate the approach in 
+`+makejar_vishiaBase.sh`:
+
+----
+export VishiaBaseJAR=build/deploy/vishiaBase-$VERSIONSTAMP.jar
+export CLASSPATH=$VishiaBaseJAR
+# located from this workingdir as currdir for shell execution:
+export SRCPATH="src/test/java"
+echo $SRCPATH
+export MANIFEST=src/test/java/_make/TestvishiaBase.manifest
+export SRC_ALL="src/test/java/org/vishia/testBase"                                                                                                               
+export SRC_ALL2=""
+export FILE1SRC=""
+
+export TMPJAVAC="build/Test_vishiaBase"
+export DSTNAME="vishiaTestBase"
+export JAR_zipjar=$VishiaBaseJAR
+export BUILD_TMP="build"
+export TIMEinJAR="2021-07-01+00:00"
+
+#now run the compilation of the tests:
+src/main/java/srcJava_vishiaBase/_make/-makejar-coreScript.sh
+----
+
+=== Execute the test
+
+The first and second test is, whether the sources are compiled error-free. 
+Both for srcJava_vishiaBase and the test classes. 
 
 After them the `build.sh` script executes the main routine of
+
+----
+  java -cp $BUILD_TMP/deploy/$DSTNAME-$VERSIONSTAMP.jar$sepPath$VishiaBaseJAR 
+  org.vishia.testBase.TestJava_vishiaBase 
+  1> build/testResult/Test.txt 2> build/testResult/Test.err
+----
+
+This is one line of course. The test results are written in the shown files.
+This files are shown in the command window:
+
+----
+  echo Test output:
+  cat build/testResult/Test.err
+  cat build/testResult/Test.txt
+----
+
+But also stored for evaluation. 
+
+
+== Test concept
 
  org.vishia.testBase.Test
  
@@ -106,13 +323,7 @@ to execute all programmed tests. The result of test is written to
             +-Test.txt
             +-Test.err
 
-You should compare this textual file with 
-
- src/test/testResult_Ref
-            +-TestVerbose.txt
- 
-to see whether the result is adequate. The other files should be empty if the test is successfull. If it is not so, any problem is given. Then the Integrated Development Environment (IDE) for example Eclipse is necessary.
-
+  ... yet TODO
 
 == Generate Javadoc
 

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Test;
 import org.vishia.mainCmd.PrintStreamAdapter;
 import org.vishia.mainCmd.PrintStreamBuffer;
 import org.vishia.minisys.GetWebfile;
@@ -18,7 +16,6 @@ public class TestGetWebfile {
   
   PrintStream outSys;
   
-  @Test
   public void cmdGetWebfile() {
     System.out.println("==== cmdGetWebfile()");
     File dir = new File("build/testMinisys");
@@ -35,7 +32,6 @@ public class TestGetWebfile {
     System.setOut(outSys);  //important, elsewhere all other check outputs are written to this buffer.
     System.out.println(outBuffer);
     //
-    Assert.assertTrue(this.bOk);
   }
   
   

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 import org.vishia.util.FileFunctions;
 import org.vishia.zip.Zip;
 
@@ -12,7 +12,7 @@ public class Test_Zip {
 
   
   
-  @Test
+//  @Test
   public void testJar() {
     
     try {

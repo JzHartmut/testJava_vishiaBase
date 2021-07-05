@@ -1,52 +1,148 @@
-= Archive of Java jar and sources
+= Archive of Java jar and sources, re-compile
 :toc:
 :sectnums:
 :sectlinks:
 :cpp: C++
+:cp: C/++
 
-== versionArchive
+* see also link:buildtestVishiaJava.html[]
+* link:../../index.html[]
 
-The version archive at link:https://www.vishia.org/Java/Download/versionArchive[https://www.vishia.org/Java/Download/versionArchive]
-contains per version the jar-Files as runable libraries and their sources. 
+Dr. Hartmut Schorrig, Germany in Europa, link:https://vishia.org[www.vishia.org]
+
+== Loading necessary jar files - Bill of Material approach
+
+
+If you take a critical look at the common practice of loading libraries, binaries 
+and other tool files, it looks like this:
+
+* The tool has any internal list which files are necessary. 
+* There are big archives, where to find the files (`mavenCentral()` or such)
+* The files are downloaded in a universal location. Often this is the home location for the user, but often sometimes hidden (not obviously).
+
+Then if an internet connection is missing, the question may pop up: 
+"The tool does not run" - maybe because of another user login,
+or because a function is used the first time, or an update request was stored
+but not executed. 
+
+This approach has the following disadvantages:
+
+* 1) The list which files are used in which version, it is an internal list. 
+* 2) Often the dependencies are complex. One file needs another file, loads it 
+from internet, and ready & run. It means there is not a central list with all 
+necessary files, the loading lists are dispersed. 
+* 3) The location to which the files are downloaded is a system decision. 
+Because the system cannot decide, it is stored in the user's private tree, 
+there often in not obviously sub directories. 
+* 4) Because the whole process of getting files is not obviously, 
+there are many files in the user's location, unknown whether they are necessary 
+for which tool. 
+* 5) Only because space on a hard disk is usual enough the problem of "__my disk is full__" 
+does not occur. 
+* 6) Tools need an internet connection to run, any time it is possible that a missing file 
+should be gotten from internet. It is not sure that the computer can run without internet. 
+The slogan "__A computer needs an Internet connection at all times__" is not kosher!
+
+An article:
+
+link:https://softwareengineering.stackexchange.com/questions/331817/self-contained-projects-gradle-maven-dependencies-offline[]
+
+describes some difficulties.
+
+There is an interesting article from a german jounal:
+
+link:https://www.embedded-software-engineering.de/risiken-bei-open-source-software-warum-eine-bill-of-materials-sinnvoll-ist-a-709931[]
+
+It describes a similar situation. From this article I'm inspired to work precisely with a BOM.
+
+The other approach is: The content of the downloaded and used material should be disclosed.
+It means, the sources should be available, AND: translation of the sources should produce
+the same content as given in the binary files. Only then it is obviously that the sources
+are adequate the used binaries. This is the approach of 
+link:reproducibleJar.html[]. The reproducible build is a very important approach, 
+but often neglected. See chapter link:#rebuild[Source integrity, regenerate jar-files]
+
+
+== The Bill of material file to load components 
+
+Hence in some applications where my jar files and also some executables for Windows or Linux are necessary, I work with a file (example, file bomVishiaJava.txt in link:../../../StimuliSel/html/StimuliSel.html[]):
+
+----
+#Format: filename.jar@URL ?!MD5=checksum
+
+#The minisys is part of the git archive because it is need to load the other jars, MD5 check
+vishiaMinisys.jar@https://www.vishia.org/Java/Download/versionArchive/vishiaMinisys-2020-12-26.jar  ?!MD5=b9d161df7a45d343954bc4ee7158dd14
+
+#It is need for the organization of the generation.
+vishiaBase.jar@https://www.vishia.org/Java/deploy/vishiaBase-2021-06-21.jar  ?!MD5=1c6130af923f671477e3bc9fa77a5749
+
+#It is need for the GUI to select test cases.
+vishiaGui.jar@https://www.vishia.org/Java/deploy/vishiaGui-2021-06-21.jar  ?!MD5=e80818ec469d58e3cb9d84c809d13255
+
+org.eclipse.swt.win32.win32.x86_64.jar@https://www.vishia.org/Java/Download/SWT/org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar  ?!MD5=06c8adb06c0be6136a29f8cb1cb98469
+
+#socketcmd.exe for windows
+socketcmd.exe@https://www.vishia.org/emc/deploy/socketcmd-2021-06-21.exe ?!MD5=00f273e6c1c724f166c4772e17f3220f
+----
+
+The broken lines in this document are really one line! This file is executed with `load.bat`:
+
+----
+set SCRIPTDIR=%~d0%~p0
+
+java -cp %SCRIPTDIR%/vishiaMinisys.jar org.vishia.minisys.GetWebfile @%SCRIPTDIR%/bomVishiaJava.txt %SCRIPTDIR%/
+----
+
+or as shell-script `load.sh` with:
+
+----
+SCRIPTDIR=$(dirname "$0")
+
+java -cp $SCRIPTDIR/vishiaMinisys.jar org.vishia.minisys.GetWebfile @$SCRIPTDIR/bomVishiaJava.txt $SCRIPTDIR/
+----
+
+The used function to load is written in Java and contained in the `vishiaMinisys.jar`. 
+Only this file, approximately with 80 kByte, should be a part of the tool download package 
+beside some textual files etc. of the tool. 
+All other executable, jar and libs can be downloaded.
+
+If you have downloaded the file there are stored in exactly this location (usual `libs`),
+and the software run without internet connection. 
+
+== Download location and reproducible build
+
+
+The version archive at link:https://www.vishia.org/Java/deploy[https://www.vishia.org/Java/deploy]
+contains per version the jar-Files as run able libraries and their sources. 
 Additionally an MD5.txt-file is given. For example:
 
- vishiaBase-2020-03-17-source.zip
- vishiaBase-2020-03-17.jar
- vishiaBase-2020-03-17.jar.MD5.txt
- vishiaGui-2020-03-17-source.zip
- vishiaGui-2020-03-17.jar
- vishiaGui-2020-03-17.jar.MD5.txt
- org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar  
- 
-This file set, for example with time stamp `2020-03-17` are the complete
-run and source set for vishia Gui applications. 
-For the JZtxtcmd usage the `vishiaBase...` is sufficient.
+----
+vishiaBase-2021-06-21-source.zip	2021-06-22 10:41	1.4M	 
+vishiaBase-2021-06-21.jar	        2021-06-22 10:41	1.4M	 
+vishiaBase-2021-06-21.jar.MD5.txt	2021-06-22 10:41	138	 
+vishiaGui-2021-06-21-source.zip	    2021-06-22 10:41	707K	 
+vishiaGui-2021-06-21.jar	        2021-06-22 10:41	938K	 
+vishiaGui-2021-06-21.jar.MD5.txt	2021-06-22 10:41	135	 
+----
 
-To run, of course only the `*.jar` are necessary.
+The used `*.jar` file is given in the bill of material, see previous chapter. 
+Beside you find the sources. From the sources the binaries (here jars) are newly able to build. 
 
-== Download jar-archives on demand
+You can decide by yourself to use newer versions as in the currently build of materials preferred.
+That is your experience. Maybe you need newer features of a tool, they are contained
+in the newer jars, but the currently deployment of the tool use yet only the older sources
+in its bill of material. Usual newer versions should be compatible to older ones. 
+It means you can use the newer version. But nobody guarantees that is really proper.
+You need existing new features, you can try by yourself. You can compare the sources 
+which changes are really done. You can try usage, report found errors, all that helps
+to improve. 
 
-Applications should load dedicated content from internet. 
-It is not proper to load automatically complex depending sources 
-in temporary folder on the PC, which are not obviously. 
-To simply load a jar archive the 
+Last not least you can fix found errors by yourself, maybe (should be ) with adequate feedback. 
 
- vishiaMinisys-2020-03-17.jar
- 
-respectively `vishiaMinisys.jar` may be part of the distribution,
-it is only less kByte. With them 
 
- java -cp vishiaMinisys.jar org.vishia.minisys.GetWebfile 
-   https://www.vishia.org/Java/Download/versionArchive/vishiaGui-2020-03-17.jar 
-   dstdir/vishiaGui.jar -md5:20bb021cc8ccd05fb5630b5fce4f803d -strict
-   
-(written as one command line) can be called to get this jar file. 
-The MD5 code is part of the getter. It checks the downloaded file
-and removes it after check if the MD5 safety check code is not matching 
-(`-strict`)-option. 
-Because of this command line to load is part of a software version 
-the MD5 check code is version controlled. It is not possible to slip any bad content.
      
+     
+[#rebuild]     
 == Source integrity, regenerate jar-files
 
 It is possible to re-generate the jar file with the exact same content,
@@ -68,47 +164,232 @@ on the PC platform. You can have several versions of JDK at the same time,
 from Oracle, or OpenJDK. 
 
 Therefore the environment variable `JAVAC_HOME`  should be set to that directory,
-which contains a `bin/javac`. That is a may be necessary adaption. 
-One can recognize which JDK was used in the origin development environment.
+which contains a `bin/javac`. This environment variable can be set by the system,
+if a JDK is preferred. If it is not set then the file 
 
- #this file is the user-adapt-able frame for makejar_vishiaBase.sh
- #edit some settings if there are different form default.
-
- export TMPJAVAC=$TMP/javac_vishiaBase/build/javac
- export JAVAC_HOME=c:/Programs/Java/jdk1.8.0_211
+ _make\JAVAC_HOME.sh
  
- #Output files
- export JARFILE=../vishiaBase-$VERSION.jar
- export MD5FILE=../vishiaBase-$VERSION.jar.MD5.txt
+is called. This file can/should be adapted by the user to select the correct location 
+of the JDK. For Linux compilation sometime `JAVAC_HOME` is not present but `javac` 
+is possible as command because the JDK/bin is in the systems's PATH. 
+That is proper and regarded in the script. 
 
-It doesn't matter which directory is used for temporary storage.
-The `TMP` variable should be known. 
-With this setting the output files are written beside the sources, it may be ok,
-elsewhere change it.
+=== Generate vishiaBase.jar
 
-The rest of settings are correct for the version. 
+If you only re-generate from a given version, you should not adapted the 
+`+makejar_vishiaBase.sh` file. 
+The regenerated files are marked with the current date as version stamp,
+The results of the compilation after execute `+makejar_vishiaBase.sh` are written to:
 
- export CLASSPATH=xx
- export VERSION=2020-03-17
- # located from this workingdir as currdir for shell execution:
- export SRCPATH=..
- export MANIFEST=vishiaBase.manifest
- # FILE1SRC=../org/vishia/jztxtcmd/JZtxtcmd.java
- export SRC_ALL=..
+* `%TMP%\BuildJava_vishiaBase\deploy` or `/tmp/BuildJava_vishiaBase/deploy`, 
+all temporary files are written beside `/tmp/.../deploy` in `/tmp/.../vishiaBase*` 
+and `/tmp/.../vishiaMiniSys`.
+I recommend using a RAM-disk for that temporaries, save space and time. 
 
- #now run the common script:
- ./makejar.sh
+The new generated `vishiaBase.jar` and `vishiaMinisys.jar` is compared with the existing ones.
+This is done by searching a "BOM" file `bomVishiaJava.txt` (_Bill of material_) in: 
 
-The `makejar.sh`-script cotains the compiler and jar execution with that
-script variables. The binary comparability of the generated jar file is achieved by
-using `touch` for the file time stamps and by definition of an dedicated manifest file
-instead auto-creation inside the jar tool. It is the option `M` versus `m`. See inside there.
+* `../../../../../../libstd` if this location is existing
+* or to `../../jars` beside the `srcJava_vishiaBase` source tree, 
+whereby this folder is created automatically because it may be necessary 
+for compilation of the other components.
 
-To compile Java files which have dependencies, this dependencies are resolved by jar-Files
-which are named in the `CLASSPATH`:
+----
+2021-07-04  22:02    <DIR>          deploy
+2021-07-04  22:02    <DIR>          jars
+2021-07-04  22:01    <DIR>          srcJava_vishiaBase
+----
+
+If the `bomVishiaJava.txt` is found, the stored MD5 check sum there is compared
+with the new created MD5 check sum. If it is identically, nothing is done. 
+The re-generation has produces the same content. 
+
+If the `bomVishiaJava.txt` is not found, a new one is created. 
+This is true especially if  `../../jars` beside the `srcJava_vishiaBase` is created newly.
+If the MD5 is changed, then a `bomVishiaJava_new.txt` is created with the new information.
+This file can be compared simple, and the originally `bomVishiaJava.txt` can be changed,
+but only manually in responsibility from the developer or maintainer which want to have
+this new version. The generation of the new `bomVishiaJava_new.txt` is done 
+with the JZtxtcmd script `corrBom.jzTc` running the new compiled `vihiaBase.jar`. 
+It means if some functionally things are faulty in the new generated jar, 
+it may crash. But that should be corrected anyway (using an IDE such as Eclipse).  
+
+It the binary content respectively the MD5 is changed, then
+found files `vishiaBase.jar` and `vishiaMinisys.jar` are copied
+to `vishia..old.jar` to have a compare and fall back, 
+and the new generated files are stored as `vishiaBase.jar` respectively `vishiaMinisys.jar`.
+It means for other usages the new compiled files are immediately present "_ready to use_"
+to check its behavior in the context. 
+
+The user should clarify to its own responsibility using the new `bomVishiaJava.txt`
+and removing the old `vishia..old.jar` maybe after comparison. 
+
+If the MD5 is changed then the new generated files jar with time stamp 
+and also the `...-source.zip` and a `...txt.md5` files 
+are copied to a found 
+
+* `../../deploy` beside the `srcJava_vishiaBase` component 
+* `../../../../../../deploy`, that is usual beside the `cmpnJava_vishiaBase`
+for generation from the build & test, see link:buildtestVishiaJava.html[], 
+then the files are stored there too. 
+* You can compare and copy the files also manually from the `/tmp/BuildJava_vishiaBase/deploy`
+to any other proper location.
+
+If the binary content is really changed, then you should set the `TIMEinJAR_...`
+to a prominent timestamp in the `_make/+makejar_vishiaBase.sh` file.
+That may be also a version identifier for the version to deploy in the near future. 
+The files in the jar gets this timestamp. The timestamp influences the MD5 check sum,
+that's way you should not change it if the sources are unchanged.
+
+----
+## Use this timestamp for file in jars, influences the MD5 check:
+export TIMEinJAR_MINISYS="2021-07-01+00:00"
+export TIMEinJAR_VISHIABASE="2021-07-01+00:00"   
+----
+
+This is the basic to generate a new version. You should compile newly 
+and commit the sources and the deployment (in contact with the maintainer or in your
+own responsibility using this as open source). 
 
 
+*Comparison of the result files*
 
+The content of the jar and the MD5 check sum can be compared with older (pre- or given) versions.
+That is the essential result of the reproduced build. 
+That can be done by binary comparison or by comparison of the generated MD5 checksum
+with an existing version, especially with the last versions 
+with the other version (date-) identifier on the file names. 
+If the sources are unchanged the binaries and the MD5 should be the same.
+Then you can ignore the new version with the current date and use the given versions.
 
+If you expect "nothing should be changed" but you see binary differences,
+then you can compare the content of the generated jar file with the older given jar file 
+for all class files. 
+A jar file is really a zip file. You can add the `.zip` extension additional to the 
+jar extension  (results in `.jar.zip`) to open as zip and compare with any file comparer tool.
+I recommended using the Total Commander (link:https://www.ghisler.com[]). It enables too
+opening a `...jar` immediately as zip without additional effort. 
+Maybe you should firstly dissolve the `.jar` connection in Windows to execute as java, often not necessary.
+With the Total Commander you can use the function "Synchronize Dirs". 
+After file comparison in the jar or jar.zip you see which files are changed, 
+in conclusion you can see which sources are changed. 
+A maybe unnecessary change can be improved, for example writing a changed comment
+in the same line instead using an additional one, recompile and compare. 
+It is possible to have new sources especially with improved comments
+with unchanged compiling result, a good feature for maintaining the sources.
+
+Changes in software may influence the binaries of `vishiaBase.jar` but left unchanged
+binaries of `vishiaMinisys.jar` if that used sources are unchanged.  
+
+=== Generate vishiaGui.jar
+
+The `srcJava_VishiaGui/_make/makejar_vishiaGui.sh` needs the `vishiaBase.jar` to compile,
+additional a proper SWT library jar file and maybe (future development) `vishiaRun.jar`.
+If you re-generate the `srcJava_vishiaGui` calling the `_make/+makejar_vishiaGui.sh` script
+either you may compile `srcJava_vishiaBase/_make/+makejar_vishiaBase.sh` immediately before
+(if both are checked or changed) or you should have a proper `vishiaBase.jar` to use.
+
+----
+2021-07-01  22:49    <DIR>          jars
+2021-07-01  22:42    <DIR>          srcJava_vishiaBase
+2021-07-01  22:48    <DIR>          srcJava_vishiaGui
+2021-07-01  22:48    <DIR>          srcJava_vishiaRun
+----
+
+This is a snapshot from files for compiling all. The `srcJava_..` files comes from the 
+`vishia,,,-2021-mm-dd-source.zip` from the deploy directory. All are assembled one beside the other. 
+
+The folder `jars` contains:
+----
+2021-07-01  22:49               328 bomVishiaJava.txt
+2021-01-04  09:35         2.445.585 org.eclipse.swt.win32.win32.x86_64.jar
+----
+
+This files are copied from another location, especially the `swt.jar` should be given. 
+
+Now firstly `srcJava_vishiaBase/_make/+makejar_vishiaBase.sh` should be compiled. 
+This creates the necessary `jars/vishiaBasejar`. 
+Then `srcJava_vishiaGui/_make/+makejar_vishiaGui.sh` can be compiled.  
+It uses the `vishiaBase.jar` and the SWT library and produces `vishiaGui.jar`.
+
+The content of the `bomVishiaJava.txt` is also adapted or supplemented.
+
+To compile a correct version of `vishiaGui.jar` with expected content and MD5 checking
+with unmodified `srcJava_vishiaGui` sources, you can also use other `vishiaBase.jar` or `...swt.jar`
+than the original ones. The content of that used jars can be different. 
+Especially for example a Windows-32 SWT or a Linux SWT can be used, 
+or an older or newer Version from `vishiaBase.jar`. 
+If the calling and using conditions to all used classes and operations (signatures) 
+are unchanged between this versions, only details of the implementation are different, 
+then the byte code of the vishiaGui.jar and consequently the MD5 checksum is not influenced.
+This is similar to mixing {cp} files when the headers are unchanged, 
+only the implementation is different. 
+In {cp}, the content of the compiled objects is the same if the headers used provide the same definitions. 
+The own Objects are also independent of the implementation of the used components.
+
+So this means that the `vishiaGui.jar` is compatible and usable with these different versions.
+If you want to pair some jar files, you can use this compilation to
+check if this pairing is possible. This is a nice feature to mix versions of jars.
+
+As in `+makejar_vishiaBase.sh` (chapter above) in `+makejar_vishiaGui.sh` 
+it is necessary or possible to change the date for the created `vishiaGui.jar`:
+
+ export VERSION="2021-07-01"
  
+You can define the date of the used `vishiaBase.jar` if you want to use a special one
+from the deploy archive where more as one are given:
+
+ export VERSION_VISHIABASE="2021-07-01"
+ 
+If you left this setting empty, then a `vishiaBase.jar` without date stamp is searched.
+This is done in the following directories:
+
+* `../../../../../../deploy/vishiaBase-VERSION_VISHIABASE.jar`: 
+Deploy directory beside the `cmpnJava...` folder, see link:buildtestVishiaJava.html[]
+* `../../deploy/vishiaBase-VERSION_VISHIABASE.jar`: Possible deploy directory 
+beside the  `srcJava...` folder.
+* `../../jars/vishiaBase.jar`: This approach, `jars` folder beside `srcJava...`
+* `../../../../../../libstd/vishiaBase.jar`: `libstd` folder beside `cmpnJava...`
+which contains the last valid version (without date stamp)
+* `../../../../../../libs/vishiaBase.jar`: alternative `libs` folder.
+
+The first two locations are tested whether it contain the file with the given version.
+The last three locations may contain the files without date stamp. 
+
+The same folder search paths are used for the other jar files too:
+
+----
+# SWT for Windows-64 it is a copy of the used jar, see bom
+# comment or uncomment for alternative swt.jar
+#export JAR_SWT=""  ##left empty if unversioned should be used
+export JAR_SWT="org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar"
+#export JAR_SWT="org.eclipse.swt.win32.win32.x86_3.5.1.v3555a.jar"   ##32 bit SWT
+#export JAR_SWT=LINUX-TODO
+----
+
+This specifies the versioned SWT jar to use. 
+The commented lines help fast select another version.
+This versioned jars are searched in the both `deploy` folder. 
+It they are not found (especially because the version is not defined, 
+then the following unversioned jars are searched in the following order:
+
+* `../../jars/org.eclipse.swt.win32_x86_64.jar`
+* `../../jars/org.eclipse.swt.win32_x86_32.jar`
+* `../../jars/org.eclipse.swt.gtk.linux.x86_64.jar`
+* `../../../../../../libstd/org.eclipse.swt*` ... same order
+* `../../../../../../libs/org.eclipse.swt*` ... same order
+
+This helps compiling for Windows (64 bit and 32 bit) and Linux, the found SWT is used. 
+
+The compiling of `srcJava_vishiaGui/_make/+makejar_vishiaGui.sh` uses also a 
+* `srcJava_vishiaRun/...` beside the `srcJava_vishiaGui` or
+* `cmpJava_vishiaRun/...` beside the `cmpnJava_vishiaGui` (see link:buildtestVishiaJava.html[])
+
+because the source path is enhanced to it. It means, the `vishiaGui.jar` 
+contains all depending sources of `srcJava_vishiaRun`. 
+Then an extra `vishiaRun.jar` is not necessary, but possible for special cases.
+
+In the same manner as for `vishiaBase.jar` the `bomVishiaJava.txt` is adjusted 
+with the MD5 and date of the stored `vishiaGui.jar` to have anyway an versioned access
+from the `deploy` directories.
 
