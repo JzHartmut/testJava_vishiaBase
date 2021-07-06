@@ -8,6 +8,8 @@
 if test -f ../../src/buildScripts/+build.sh; then cd ../..; fi
 find -name '*.sh' -exec chmod 777 {} \;
 
+## Echo the libstd is the destination of jar and bom files.
+if test ! -d ../libstd; then mkdir ../libstd; fi
 
 src/buildScripts/+resolveDepsFromWWW.sh
 src/buildScripts/+mkLinkBuild.sh

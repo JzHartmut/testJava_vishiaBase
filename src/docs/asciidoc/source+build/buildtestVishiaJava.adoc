@@ -3,7 +3,7 @@
 :sectnums:
 :sectlinks:
 
-cpp: C++
+:cpp: C++
 :cp: C/++
 
 * see also link:src_Archive.html[]
@@ -43,13 +43,18 @@ Test was not in the main focus. It will be improved up to now for future.
 == Getting jar and sources from deploy archive
 
 For applications only the jar files of the main sources are necessary. That can be gotten
-with a "bill of material" approach, see link:src_Archive.html[]. 
+with a "bill of material" approach.
+
+See link:src_Archive.html[]. 
+
 The sources are beside the jar files. Newer jars and sources are stored in
 
 link:../../deploy[vishia.org/Java/deploy].
 
 [#gitarchive]
 == The git archives and the file tree
+
+=== Github
 
 You find git archives of the sources also in github, helpful to see the version history: 
 
@@ -83,6 +88,7 @@ if the sources are not found.
 Alternatively you can manually unzip the zip file of sources in `src/main/java`, 
 creating the `src/main/java/srcJava_vishiaBase`. Adequate is done for `vishiaGui`.
 
+=== The file tree
 
 The file tree is a gradle-like file tree:
 
@@ -113,6 +119,139 @@ The file tree is a gradle-like file tree:
        
 
 
+=== Save versions in zip and using a mirror git location
+
+In the beginning of git it was the modern hype that the git archive files are
+in the same working tree as the real working files. 
+That was the _new concept_ compared to older systems, 
+where the version management was in a special, mostly network location. 
+
+Later, git has introduced a calling argument 
+
+ git '--git-dir=D:/path/to/.git'
+
+This argument can/should be given on any command line git invocation. 
+That is not problematic if this calls are done inside a GUI.
+
+Using for example Tortoise-Git as GUI works with a file with the name `.git` 
+and the following content:
+
+ gitdir: D:/path/to/.git
+ 
+Hence it is possible to use another location for the git archive than the working tree.
+
+What has that for advantage:
+
+* The `.git` archive location has also a working tree. 
+But this working tree is the content or representation of the archive for one version.
+You can change the version with `git checkout` or such 
+and compare the really used working tree with different versions. 
+Any operation on the git archive does not influence the files on your really working tree.
+For the approach `.git` archive immediately beside the working tree 
+you should save any working versions as 'scratch commit' inside the archive
+if you want to checkout another one to compare somewhat outside a git GUI. 
+That effort is unnecessary. It is more simple and more obviously to have two locations,
+your really working files and the current content of the git archive for selected versions.  
+
+* Independent of the content in the '_mirror_' working tree beside the `.git` repository
+you have your really used files in your specific working location. 
+But you can always compare or reconcile it with the Git archive, 
+using the `--git-dir=D:/path/to/.git` possibility or the small `.git` file 
+with `gitdir: D:/path/to/.git` content in the same kind as the `.git` archive 
+is immediately beside. 
+If you checkout another version in the Git archive tree, 
+the files in the archive (mirror) location are changed, but you don't need them. 
+You see the difference to that version immediately from your working tree. 
+Additionally you can compare immediately the files on both locations, or for example
+search (text search) a comment, identifier or such one in all files. 
+
+* It is not possible to destroy your work content by an uncontrolled action
+on the Git archive. 
+
+* Last but not least: You can simple zip your working content to get a safety copy
+independent of working with Git. If you have `.git` in your working tree,
+you should exlude the `.git` dir which is effort, or you get the whole archive 
+(a lot of Megabytes and maybe internal information) in a zip. 
+...But the zip of a working tree has a second problem: Many temporary files.
+This problem is also possible to solve by a `cleanAll.bat` concept. 
+Temporaries can be cleaned. The Git archive cannot be cleaned. Thats why it is better
+it is outside. 
+
+* A further possibility is given: You can have more as one working tree 
+related to the same Git version archive. For example you can make some experiences, 
+Think about commit or not, think about a side branch, but you can do it one after another.
+You need not manage (merge) more archives. 
+More as one Git archive and the merge capability is a nice feature for teamwork,
+but if it is necessary though you don't want to do so it is an additional effort.
+If you have more as one Git archive for a simple thing, 
+you may confused by too much side branches, squash merges etc. 
+It is more simple to have some working trees, not commit any little change,
+and think about side branches and variants on file level, not on merging effort. 
+You may want to avoid too many variants.
+
+Using a mirror location is similar the older approach to version management,
+but it is not a worse approach.  
+
+How to uses this approach:
+
+* Clone the repository to a prominent location on your hard drive, 
+on my PC this is `D:\GitArchive\D\vishia\Java_Archives`
+
+ git clone -b master https://github.com/JzHartmut/testJava_vishiaBase.git
+
+* Create shell script files for pull (get the newest version) and push (commit your stuff)
+inside the `testJava_vishiaBase` folder:
+
+* `D:\GitArchive\D\vishia\Java_Archives\testJava_vishiaBase\_pushGithub.sh` on my PC.
+The commented line is to remove a tag to shift it. 
+Shifting a tag is an important approach if the binary result is not changed 
+(the tag refers to a ready to use, it is the binary) 
+and improvement of some comments, build scripts, documentation and such one:
+
+----
+eval $(ssh-agent -s)
+ssh-add ~/.ssh/github.key
+#git push 'git@github.com:JzHartmut/testJava_vishiaBase' :2020-06-22
+git push 'git@github.com:JzHartmut/testJava_vishiaBase' master --tag
+----
+
+* To push of course you should have access rights. You can use this approach as pattern 
+also for your own repositories.
+
+* Pull is adequate, see git documentations.
+
+* Clone independently the other repository. It does not (should not) need 
+inside the tree (than in the original), it is beside, on my PC. 
+See the snapshot:
+
+** all archive folder are parallel, simple to maintenance.
+
+----
+ Verzeichnis von D:\GitArchive\D\vishia\Java_Archives
+
+2021-07-06  09:30    <DIR>          .
+2021-07-06  09:30    <DIR>          ..
+2021-07-06  00:16    <DIR>          srcJava_vishiaBase
+2020-02-15  14:53    <DIR>          srcJava_vishiaBase2019-08b
+2021-07-05  20:10    <DIR>          srcJava_vishiaGui
+2021-06-17  22:32    <DIR>          srcJava_vishiaRun
+2021-07-05  22:02    <DIR>          testJava_vishiaBase
+2021-06-21  17:39    <DIR>          testJava_vishiaGui
+----
+
+
+* write the `.git` files inside your working tree:
+
+** On my PC on `D:\vishia\Java\cmpnJava_vishiaBase\.git`:
+
+ gitdir: D:/GitArchive/D/vishia/Java_Archives/testJava_vishiaBase/.git
+ 
+** And the nested repository link on `D:\vishia\Java\cmpnJava_vishiaBase\src\main\java\srcJava_vishiaBase\.git`:
+
+ gitdir: D:/GitArchive/D/vishia/Java_Archives/srcJava_vishiaBase/.git 
+
+You see a living snapshot which may help on your own work.
+
 == Build and Test
 
 === Only build the vishiaBase.jar and vishiaGui.jar
@@ -129,7 +268,7 @@ That approach is described in link:src_Archive.html[].
 The sources as in chapter above link:#gitarchive[] described can be gotten 
 either with the git archive from github or as zip from github. 
 Presumed it is gotten as zip, as also available from link:../../deploy[],
-their `cmpnJava...source.zip[]`.
+and there `cmpnJava...source.zip`.
 
 The zip of the `testJava_vishiaBase` should be unziped. In its root is contained
 
@@ -184,7 +323,7 @@ I uses this approach and clean the `TMP` folder on any reboot of the PC since so
 There was never a problem with lost or 'important' data for the Windows OS
 though this folder might contain important thinks (look like important). 
 
-- But it works with a normal tmp folder on your hard disk too.
+But you can work with a normal tmp folder on your hard disk too.
  
 If you are on Linux, `build.sh` does adequate. 
 It calls `src/buildScripts/+mkLinkBuild.sh` and this script removes an existing `build` folder 
@@ -199,7 +338,7 @@ This `sh.exe` should be found in `PATH` if git is installed (via MinGW).
 All scripts are linux-shell scripts. 
 You need an installation for a minimal linux environment on windows, 
 which is already given if you use git. 
-The same can be done with any gcc (GNU compiler) collections. 
+The same can be done with any gcc (GNU compiler) collections, for example Cygwin. 
 In other words, a shell execution environment should be available to everybody 
 who is trying to compile something.
 
@@ -250,7 +389,7 @@ with the daily time stamp.
 
 === Build test files
 
-The test for the srcJava_vishiaBase sources is stored in the file tree
+The test java sources for the srcJava_vishiaBase are stored in the file tree
 
  src/test/java/org/vishia/....
  
