@@ -1138,11 +1138,14 @@
 ============================== src/docs/ ===========================================================
 
 ============================== src/docs/asciidoc/ ==================================================
-2021-06-29 00:26:40  x     genHtml.bat                              ::           .370  1858589308 
+2021-07-09 00:02:40  x     genHtml.bat                              ::           .525  1112318852 
 2020-06-19 20:56:53  x     note.txt                                 ::           .105  2141704631 
 
+============================== src/docs/asciidoc/Java_C/ ===========================================
+2021-07-09 09:15:14  x     DataExchange_C.adoc                      ::          5.365  1314938002 
+
 ============================== src/docs/asciidoc/source+build/ =====================================
-2021-07-06 10:34:26  x     buildtestVishiaJava.adoc                 ::         26.847 -1672497871 
+2021-07-06 11:08:42  x     buildtestVishiaJava.adoc                 ::         27.169  0124640584 
 2020-06-22 22:58:02  x     buildtestVishiaJava.html                 ::         53.283  0024038437 
 2020-04-07 00:27:22  x     reproducibleJar.adoc                     ::         32.196  1306092889 
 2021-07-06 10:41:42  x     src_Archive.adoc                         ::         19.557 -0507971040 
@@ -1216,13 +1219,6 @@
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/byteData/reflection_Jc/ ===
 2014-11-13 20:42:33  x     Reflection_Jc.java                       ::          6.121  0585073510 
-
-============================== src/main/java/srcJava_vishiaBase/org/vishia/byteData/test/ ==========
-2015-03-07 11:54:22  x     ExampleByteDataAccessBase.java           ::          3.123  1254005485 
-2015-04-12 15:46:10  x     ExampleStringOrInt.java                  ::          3.389 -0921815301 
-2015-04-12 15:50:28  x     TestByteDataAccessBase.java              ::          2.805  1533500220 
-2015-08-09 16:57:46  x     TestByteDataAccessChildren.java          ::          2.037 -0169531137 
-2015-04-12 17:59:34  x     TestInspcDatagram.java                   ::           . 79 -1925730693 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/charset/ ================
 2019-12-28 21:00:31  x     ASCII7bit.java                           ::           .259 -1978969531 
@@ -1565,6 +1561,17 @@
 ============================== src/test/java/org/ ==================================================
 
 ============================== src/test/java/org/vishia/ ===========================================
+
+============================== src/test/java/org/vishia/byteData/ ==================================
+
+============================== src/test/java/org/vishia/byteData/test/ =============================
+2021-07-09 12:17:02  x     ExampleByteDataAccessBase.java           ::          3.281 -1416733572 
+2021-07-09 12:16:54  x     ExampleStringOrInt.java                  ::          3.547 -1792347189 
+2021-07-09 09:37:21  x     Exmpl_ByteDataAccess.java                ::           .467  2002122215 
+2021-07-09 12:17:05  x     TestByteDataAccessBase.java              ::          2.997  0650000601 
+2021-07-09 12:16:17  x     TestByteDataAccessChildren.java          ::          2.229 -0196472767 
+2015-04-12 17:59:34  x     TestInspcDatagram.java                   ::           . 79 -1925730693 
+2021-07-09 12:17:59  x     Test_ByteDataAccess.java                 ::           .477  0653707662 
 
 ============================== src/test/java/org/vishia/ctrl/ ======================================
 

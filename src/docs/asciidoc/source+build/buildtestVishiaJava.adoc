@@ -211,8 +211,22 @@ and improvement of some comments, build scripts, documentation and such one:
 ----
 eval $(ssh-agent -s)
 ssh-add ~/.ssh/github.key
-#git push 'git@github.com:JzHartmut/testJava_vishiaBase' :2020-06-22
-git push 'git@github.com:JzHartmut/testJava_vishiaBase' master --tag
+## comment/uncomment TAGNEW and TAGDEL if necessary
+TAGNEW="2021-07-01"
+TAGTXT="build bom"
+##TAGDEL=$TAGNEW
+if test -v TAGDEL; then
+  git tag -d $TAGDEL
+  git tag
+  #Note:   --tags :tag   means, remove the tag
+  git push 'git@github.com:JzHartmut/srcJava_vishiaBase' master --tags :$TAGDEL
+fi
+if test -v TAGNEW; then
+  git tag -a $TAGNEW -m "$TAGTXT"
+  echo ----------------
+  git tag
+fi  
+git push 'git@github.com:JzHartmut/testJava_vishiaBase' master --tags
 ----
 
 * To push of course you should have access rights. You can use this approach as pattern 
