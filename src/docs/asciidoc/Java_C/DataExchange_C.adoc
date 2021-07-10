@@ -107,6 +107,12 @@ hence the JIT compiler can optimize the machine code.
 A derived class for a given data C-`struct` or fix mapping can/should be generated, 
 not written manually. It reduce effort if many similar structs are necessary.
 
+You need know two things:
+
+* The data are stored anyway in a `byte[]` array. This is used for data exchange.
+* An derived instance of ByteDataAccessBase is only an accessor. 
+The Accessor and the data are joined with the assign operation.
+
 == Tree of different data parts
 
 This is offered in link:../../../Jc/html/ByteDataAccess.html[]. 
