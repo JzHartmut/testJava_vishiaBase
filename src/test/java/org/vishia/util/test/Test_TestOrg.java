@@ -23,7 +23,7 @@ public class Test_TestOrg {
     TestOrg testX = new TestOrg("Test_TestOrg", 1, args, System.err);
     String[] args0 = { "---TESTverbose:0"};
     CharSequence result = mainA(args0);
-    testX.expect(result, "", 2, "test output verbose 0 without error should be empty");
+    testX.expect(true, 2, "test output verbose 0 without error should be empty");
 
     String[] args1 = { "---TESTverbose:1"};
     result = mainA(args1);

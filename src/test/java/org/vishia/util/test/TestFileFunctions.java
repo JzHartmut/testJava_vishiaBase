@@ -1,6 +1,7 @@
 package org.vishia.util.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ public class TestFileFunctions
     TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();
     TestOrg test = new TestOrg("Test FileFunctions", 3, args);
     TestFileFunctions thiz = new TestFileFunctions();
+    test_getParentDir(test);
     test_GetDir(test);
     fileProperties();
     thiz.test_FileRead();
@@ -36,6 +38,86 @@ public class TestFileFunctions
     TestOrg test = new TestOrg("Test GetDir", 7, parent);
   
   }
+  
+  
+  
+  public static void test_getParentDir(TestOrg testParent) {
+    String result, resultW, resultOld, result2;
+    int nVerbose = 7;
+    boolean bOk = false;
+    TestOrg test = new TestOrg("test_getParentDir", 6, testParent);
+    //Application: get the absolute path from :
+    File dir = new File(".");                    // it is the current dir, but without absolute path.
+    File parent = dir.getParentFile();           // delivers null, because the path in File has no parent given
+    assert(parent == null);                      // it is a property of java.io.File
+    File dirAbs = dir.getAbsoluteFile();         // java.io.File delivers D:\abs\path\.
+    parent = dirAbs.getParentFile();             // it is formally, D:\abs\path, not as expected the really parent
+    //parent = FileFunctions.getDir(dir);        // builds the real parent. It depends on the start directory of this routine.
+    String sParentW = parent.getPath();          // In WIndows with \ 
+    String sParent = sParentW.replace("\\", "/");  //the path which is the directory of the test.
+    int posSlash = sParent.lastIndexOf('/');
+    String sNameParent = sParent.substring(posSlash +1);
+    File fileTest = new File(sParent + "/..",sNameParent); //constructed filecontains "/../" in its path
+    CharSequence sFileTest = FileFunctions.normalizePath(fileTest.getAbsolutePath());
+    CharSequence sDirAbs = FileFunctions.normalizePath(dirAbs.getAbsolutePath());
+    test.expect(sFileTest, sParent, nVerbose, fileTest +  " => " + sFileTest );
+    //
+    
+    String[][] sTests = 
+      //  input                    getDirCharSeq     , getDir,         , getDirOld       , getDirectory         
+      { { "nonexist\\file.x"     , "nonexist/"       , "nonexist"      , "null"          , "not exists:file.x",     "should also getDir of nonexist path if it is given as valid path" }          //0
+      , { "src\\file.x"          , "src/"            , "src"           , "null"          , "not exists:file.x",     "should also getDir of nonexist file in given directory" }          //0
+      , { "src\\main"            , "src/"            , "src"           , "null"          , "not exists:main" ,      "should also getDir of a relative given directory" }          //0
+      , { "src"                  , sParent + "/"     , sParentW         , "null"          , "not exists:src" ,      "should also getDir of a relative given directory" }          //0
+      , { sParent + "\\src\\main", sParent + "/src/" , sParentW + "\\src", sParentW + "\\src", sParentW + "\\src" ,  "should also getDir of nonexist file in given directory" }          //0
+      , { "C:\\file"             , "C:/"             , "C:\\"           , "null"          , "not exists:file",  "should also getDir of nonexist file in given directory" }          //0
+      , { "C:\\file"             , "C:/"             , "C:\\"           , "null"          , "not exists:file",  "should also getDir of nonexist file in given directory" }          //0
+      };
+    int ixCheckManual = -1;
+    if(ixCheckManual >=0) {
+      result = FileFunctions.getDir( new File(sTests[ixCheckManual][0])).getPath(); 
+      try {
+        result2 = FileFunctions.getDirectory( new File(sTests[ixCheckManual][0])).getPath();
+        resultOld = FileFunctions.getDirOld( new File(sTests[ixCheckManual][0])).getPath(); 
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } 
+      bOk = StringFunctions.equals(result, sTests[ixCheckManual][1]);
+    }
+    for(String[] sTest : sTests) {
+      fileTest = new File(sTest[0]);
+      result = resultW = resultOld = result2 = null;
+      try { result = FileFunctions.getDirCharseq( fileTest).toString(); } 
+      catch(Exception exc) { result = exc.getMessage(); } 
+      try { resultW = FileFunctions.getDir( fileTest).getPath(); } 
+      catch(Exception exc) { resultW = exc.getMessage(); } 
+      try { File fparent = FileFunctions.getDirOld( fileTest); resultOld = fparent == null ? "null": fparent.getPath(); } 
+      catch(Exception exc) { resultOld = exc.getMessage(); } 
+      try { result2 = FileFunctions.getDirectory( fileTest).getPath(); } 
+      catch(Exception exc) { result2 = exc.getMessage(); } 
+      //
+      bOk = StringFunctions.equals(result, sTest[1]);
+      String msg = "getDirCharSeq: " + ( bOk ? sTest[0] + " => " + sTest[1] : sTest[0] + " ? => " + sTest[1] + " => " + result);
+      test.expect(bOk, nVerbose, msg );
+      bOk = StringFunctions.equals(resultW, sTest[2]);
+      msg = "getDir: "               + ( bOk ? sTest[0] + " => " + sTest[2] : sTest[0] + " ? => " + sTest[2] + " => " + resultW);
+      test.expect(bOk, nVerbose, msg );
+      bOk = StringFunctions.equals(resultOld, sTest[3]);
+      msg = "getDirOld: "            + ( bOk ? sTest[0] + " => " + sTest[3] : sTest[0] + " ? => " + sTest[3] + " => " + resultOld);
+      test.expect(bOk, nVerbose, msg );
+      bOk = StringFunctions.equals(result2, sTest[4]);
+      msg = "getDirectory: "         + ( bOk ? sTest[0] + " => " + sTest[4] : sTest[0] + " ? => " + sTest[4] + " => " + result2);
+      test.expect(bOk, nVerbose, msg );
+      Debugutil.stop();
+    }
+    
+    //assert(StringFunctions.equals(sFileTest,sDirAbs));
+    test.finish();
+ 
+  }
+  
+  
   
   
   private static void fileProperties() {
@@ -53,19 +135,6 @@ public class TestFileFunctions
   
   
   
-  private static void test_normalizePath()
-  {
-    String[][] tests = {
-      {"D:/test/test1/..", "D:/test"}
-    , {"D:/test/test1/../..", "D:/"}
-    , {"D:/test///././.././test1/..", "D:/"}
-    , {"D:/test/..", "D:/"}
-    };
-    for(String[] test: tests){
-      CharSequence s1 = FileFunctions.normalizePath(test[0]);
-      int cmpr = StringFunctions.compare(s1, test[1]);
-    }
-  }
   
   
   
@@ -118,7 +187,7 @@ public class TestFileFunctions
     CharSequence cDirBase = FileFunctions.normalizePath(dirBase);  //now we have the absolute normalized path. 
     String sDirBase = cDirBase.toString();       // normalizePath returns a CharSequence to spare effort, now it is persistent.
     List<FileFunctions.FileAndBasePath> files = new ArrayList<FileFunctions.FileAndBasePath>();
-    String searchPathLocal = "src/test/jztc/..:**/*";  //should search files only in jztz but path incl. jztc
+    String searchPathLocal = "src/test/jztc:../**/*";  //should search files only in jztz but path incl. jztc
     String searchPath = sDirBase + '/' + searchPathLocal;
     FileFunctions.addFilesWithBasePath(null, searchPath, files);
     test.expect(files.size()>=1, nVerbose, "number of files in /src/test/jztc >=1");
@@ -176,13 +245,12 @@ public class TestFileFunctions
       , { "D:/test///././.././test1/..", "D:/"}
       , { "D:/test/..",            "D:/"}
       , { "path/file/..:sub/**/*.java" , "path:sub/**/*.java" }  //12
-      , { "path/file/..:**/*.java" , "path:file/**/*.java" }  //13
-      , { "path/file/.:**/*.java"  , "path/file:**/*.java" }  //14
-      , { "path/file:./**/*.java"  , "path/file:**/*.java" }  //15
+      , { "path/file/..:**/*.java" , "path:**/*.java" }  //13
+      , { "path/file/..:file/**/*.java" , "path:file/**/*.java" }  //14
+      , { "path/file:../**/*.java" , "path:file/**/*.java" }  //14
+      , { "path/file/.:**/*.java"  , "path/file:**/*.java" }  //16
+      , { "path/file:./**/*.java"  , "path/file:**/*.java" }  //17
       , { "path/..:file", "file" }
-      , { "", "" }
-      , { "", "" }
-      , { "", "" }
         };
     TestOrg test = new TestOrg("test_normalizePath", 6, testParent);
     int ixCheckManual = -1;

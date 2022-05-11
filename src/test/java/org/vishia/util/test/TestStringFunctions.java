@@ -13,9 +13,9 @@ import org.vishia.util.TestOrg;
 public class TestStringFunctions
 {
   public static void main(String[] args){
-    test_checkSameItem(args);
+//    test_checkSameItem(args);
 //    test_checkMoreSameChars(args);
-//    test_comparePos(args);
+    test_comparePos(args);
 //    testCompare();
 //    test_indexOf();
   }

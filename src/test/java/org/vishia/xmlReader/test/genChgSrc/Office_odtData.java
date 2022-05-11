@@ -1,4 +1,4 @@
-package org.vishia.xmlReader.test;
+package org.vishia.xmlReader.test.genChgSrc;
 
 import java.util.ArrayList;
 import java.util.List;

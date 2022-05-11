@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- written with org.vishia.xmlSimple.SimpleXmlOutputter -->
+<xmlinput:root xmlns:xmlinput="www.vishia.org/XmlReader-xmlinput" >
+  <xmlinput:cfg xmlinput:data="!new_root()"  xmlinput:class="root" >
+    <BillOfMaterial xmlinput:data="!new_BillOfMaterial()"  xmlinput:class="BillOfMaterial"  xmlns:bom="www.vishia.org/XmlSeqWriter/ExampleBom" >
+      <bom:entry bom:count="!@bom_count"  bom:footprint="!@bom_footprint"  bom:ordernumber="!@bom_ordernumber"  bom:part="!@bom_part"  bom:value="!@bom_value"  xmlinput:list=""  xmlinput:data="!new_bom_entry(bom_count,bom_footprint,bom_ordernumber,bom_part,bom_value)"  xmlinput:class="bom_entry" >!set_text(text)</bom:entry>
+    </BillOfMaterial>
+  </xmlinput:cfg>
+</xmlinput:root>

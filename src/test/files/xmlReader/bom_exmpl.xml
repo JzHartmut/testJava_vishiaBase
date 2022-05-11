@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BillOfMaterial xmlns:bom="www.vishia.org/XmlSeqWriter/ExampleBom">
+  <bom:entry bom:part="R" bom:value="3k3" bom:footprint="1206" bom:ordernumber="123456-789" bom:count="23">some resistors</bom:entry>
+  <bom:entry bom:part="R" bom:value="490 Ohm" bom:footprint="1206" bom:ordernumber="123433-789" bom:count="5">some other resisitors
+verbose description</bom:entry>
+  <bom:entry bom:part="C" bom:value="4n7" bom:footprint="1206" bom:ordernumber="123abc-789" bom:count="17"></bom:entry>
+</BillOfMaterial>

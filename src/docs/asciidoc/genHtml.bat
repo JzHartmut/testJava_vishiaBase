@@ -1,10 +1,10 @@
 :loop
-echo generating buildtestVishiaJava
-::call D:\vishia\Java\Asciidoc\asciidoctorj-2.5.1\bin\asciidoctorj.bat source+build/buildtestVishiaJava.adoc -D ../../../../html/source+build
-echo generating src_Archive
-::call D:\vishia\Java\Asciidoc\asciidoctorj-2.5.1\bin\asciidoctorj.bat source+build/src_Archive.adoc -D ../../../../html/source+build
-echo generating DataExchange_C
-call ..\..\..\..\Asciidoc\asciidoctorj-2.5.1\bin\asciidoctorj.bat Java_C/DataExchange_C.adoc -D ../../../../html/Java_C
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat source+build/buildtestVishiaJava.adoc ../../../../html/source+build
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat source+build/src_Archive.adoc ../../../../html/source+build
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat Java_C/DataExchange_C.adoc ../../../../html/Java_C
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat RWTrans/RWTrans.adoc ../../../../html/RWTrans
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat RWTrans/XmlJzReader.adoc ../../../../html/RWTrans
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat RWTrans/ZbnfParser.adoc ../../../../html/RWTrans
 echo done
 pause
 goto :loop

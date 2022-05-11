@@ -1,0 +1,30 @@
+<?ZBNF-www.vishia.org version="1.0" encoding="iso-8859-1" ?>
+
+##tag::start[]
+$setLinemode.
+
+BillOfMaterial::=
+  <*|order-number?>          ##skip over all characters until string "order-number"
+
+  order-number : <#?order/@part1>\.<#?order/@part2>\.<#?order/@part3> \n  ##its a three-part number. NOTE: . must be written \.
+  date : <date> \n           ##date have its own syntax.
+##end::start[]
+##tag::mid[]
+  <*|---?><*\n?>\n           ##skip over all until ---- and than until newline,than accept newline.
+  { <position> \n }
+  <*|---?><*\n?>             ##skip over all until ---- and than until newline.
+  [{ \n}] \e                 ##skip over all newline, than end of file is expected.
+.
+##end::mid[]
+##tag::rest[]
+##NOTE: Notes to the syntax of input text:
+##The fields amount and code are red as number, whitespaces before and behind were skipped.
+##But the description is not terminated by chars, but it is a maximum of chars.
+##The description is stored with white spaces on end.
+##The value is also a block without any terminating chars, else a line end with possible carrige return.
+##
+position::= <#?amount> <#?code> <16*?description>  <*\r\n?value> .
+
+date::= <*\r\n?date>.
+##end::rest[]
+

@@ -1,0 +1,18 @@
+Bill of material
+================
+
+order-number: 134.23.14
+date:febr-16-2008
+
+amount  code     description     value
+---------------------------------------------
+  21    1234567  Resistor        3.9 kOhm/5%
+  12    1234537  Resistor        1.8 kOhm/2%
+   5    1234237  Resistor        2.7 kOhm/2%
+   7    1234557  Resistor         10 kOhm/5%
+   1    1234127  Resistor        120 Ohm/1%
+   2    1234897  Resistor        630 Ohm/1%
+  34    1235771  capacitor        47 nF
+  12    1235781  capacitor       100 nF
+   5    1235791  capacitor       4.7 uF
+---------------------------------------------
