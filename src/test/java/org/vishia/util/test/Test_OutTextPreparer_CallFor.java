@@ -9,6 +9,7 @@ import java.util.List;
 import org.vishia.util.OutTextPreparer;
 import org.vishia.util.StringFunctions;
 import org.vishia.util.TestOrg;
+import org.vishia.util.Writer_Appendable;
 
 public class Test_OutTextPreparer_CallFor
 {
@@ -103,14 +104,14 @@ public class Test_OutTextPreparer_CallFor
 
   void testCall(TestOrg parent) throws IOException {
     TestOrg test = new TestOrg("test script with <:call:..>", 2, parent);
-    StringBuilder sb = new StringBuilder(500);
+    Writer_Appendable sb = new Writer_Appendable(new StringBuilder(500));
     OutTextPreparer.DataTextPreparer vars = otxCall.createArgumentDataObj();
     //vars.debugOtx = "otxIfColors";   //possibility to set a break point on a special command in the given script.
     //vars.debugIxCmd = 6;             //see usage for this variables. set debugIxCmd = 0 to stop in first cmd to view the this.cmd
     vars.setArgument("dataColor", this.dataColor);        //The data class for access.
     vars.setArgument("text1", "any test text");
     otxCall.exec(sb, vars);
-    test.expect(sb, resultExpected, 7, "Test_OutTextPreparer_CallFor:testCall()");
+    test.expect(sb.getContent(), resultExpected, 7, "Test_OutTextPreparer_CallFor:testCall()");
     test.finish();
   }
 

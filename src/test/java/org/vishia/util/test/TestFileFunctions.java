@@ -88,7 +88,7 @@ public class TestFileFunctions
     for(String[] sTest : sTests) {
       fileTest = new File(sTest[0]);
       result = resultW = resultOld = result2 = null;
-      try { result = FileFunctions.getDirCharseq( fileTest).toString(); } 
+      try { result = FileFunctions.getDirCharseq( fileTest, null).toString(); } 
       catch(Exception exc) { result = exc.getMessage(); } 
       try { resultW = FileFunctions.getDir( fileTest).getPath(); } 
       catch(Exception exc) { resultW = exc.getMessage(); } 

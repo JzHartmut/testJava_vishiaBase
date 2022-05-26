@@ -94,13 +94,13 @@ It was an important question in the 1980th and 1990th if processor power was les
 == Usages
 
 
-This link:ZbnfParser.html[] was used firstly for parsing C language header and C files
-to translate to Java code: link:../../../Java2C/index.html[]. 
-Secondly I have used reflection for C/++ programming. To create the code
-of the reflection file, the parser was used with the same syntax as for Java2C translation. 
+This link:ZbnfParser.html[] was used firstly for parsing Java language files
+to translate to C code: link:../../../Java2C/index.html[]. 
+Secondly I have used it for parsing C/++ header files to generate reflection for C/++ programming. 
 See ../../../Inspc/html/Reflect.html[].
 
-Later all texts which I have parsed uses this parser.
+Later all texts which I have parsed uses this parser 
+Especially also the link:RWtrans.html#JZtxtcmd[] work also with this parser.
 
 The parser was written independently of other known parser principles.
 It works with a textual given syntax and does not need deep depending packages.
@@ -114,6 +114,13 @@ The parser is used also in some professional projects.
 
 [#ExmplSyntax]
 == Example for a ZBNF syntax file, how to get
+
+You can write the syntax for any syntactically evaluable text simply manually
+by viewing and thinking about the text syntax.  
+But sometime some experience or study of given patterns are usefull.
+
+=== Example Bill of material
+
 
 As example a bill of material should be used. This may be given in any special format,
 in this case in a simple list maybe from older tools.
@@ -210,6 +217,28 @@ The syntax component for `<date>` is very simple, it parses only all till newlin
 It's only an example.
 
 
+=== Example variable declaration in C/++ or Java
+
+Also in C and {cpp} as in Java the variable declarations can be written in form
+
+ int a,b,c;
+ 
+This are three variable, three parse results, all variable are from type `int`.
+The type is of course semantically part of the variable. 
+The definition line itself is not interesting, the variable definition by its own is it.
+The variable definition is semantically exact the same as:
+
+ int a;
+ int b;
+ int c;
+ 
+The application must not make a difference between both writing forms.
+
+The syntax definition as part of ...TODO
+
+
+
+
 [#ExmplJavaData]
 == Example storage class for data, how to get
 
@@ -219,7 +248,7 @@ It's only an example.
 include::../../../../src/test/java/org/vishia/zbnf/test/Test_Bom_Zbnf.java[tag=genDstClassForBom]
 ----
 
-This operation shows how from the generation of destination classes can invoked
+This operation shows how generation of destination classes can be invoked
 from Java, and also as command line with Java. The arguments of `main(String[] args)`
 are identically. 
 

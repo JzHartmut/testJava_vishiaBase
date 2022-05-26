@@ -1,6 +1,6 @@
 echo this shell script gets the srcJava_vishiaBase core sources
 cd `dirname $0`  ##script directory as current
-VERSION_TAG="2020-07-09"
+VERSION_TAG="2022-05-26"
 echo clone srcJava_vishiaBase tag $VERSION_TAG from github if necessary ...
 if ! test -d srcJava_vishiaBase; then
   echo for the present clone the srcJava_vishiaBase with tag "$VERSION_TAG" as 'detached head':

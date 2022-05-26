@@ -30,6 +30,7 @@ Later, from 1982 till 1985, Basic language becomes familiar and I have written
 a system with Basic, also possible to edit on the fly storing a meta machine code.
 It may be seen as similar to a byte code as in Java. 
 
+[#Zbnf]
 == Zbnf Parser
 
 In that time I want to write a complete and complex parser
@@ -69,6 +70,7 @@ then it is used.
 
 The parser is used also in some professional projects.
 
+[#JZtxtcmd]
 == JZtxtcmd
 
 JZtxtcmd is a script language with its interpreter to generate texts from Java data
@@ -102,6 +104,7 @@ Of course, the link:ZbnfParser.html[] was used from beginning.
 Some ideas were introduces for text presentation, indentation, special character
 and some other detail.  
 
+[#OutTextPreparer]
 == OutTextPreparer
 
 The 
@@ -115,6 +118,7 @@ The OutTextPreparer is a simple class which can be used to output texts
 which are generated from given templates. The templates can be simple influenced
 from user decisions. It is more simple as a complex JZtxtcmd script. 
 
+[#XmlWr]
 == XML Writing, SimpleXMLOutputter
 
 Firstly I have used link:https://en.wikipedia.org/wiki/JDOM[], see also 
@@ -144,6 +148,7 @@ The data are not stored before output in a XML-proper node structure.
 The data can present in any structure, independent of XML.
 The `XmlSeqWriter` writes XML content step by step with given data.
 
+[#XmlRead]
 == XML Reading
 
 First I have used a library from Xerxes to read XML files. But it was sometimes
