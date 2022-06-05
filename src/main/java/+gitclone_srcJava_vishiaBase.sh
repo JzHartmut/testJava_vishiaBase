@@ -1,13 +1,16 @@
 echo this shell script gets the srcJava_vishiaBase core sources
 cd `dirname $0`  ##script directory as current
-VERSION_TAG="2022-05-26"
+##VERSION_TAG="2022-05-31"
 echo clone srcJava_vishiaBase tag $VERSION_TAG from github if necessary ...
 if ! test -d srcJava_vishiaBase; then
-  echo for the present clone the srcJava_vishiaBase with tag "$VERSION_TAG" as 'detached head':
-  echo git clone https://github.com/JzHartmut/srcJava_vishiaBase.git -b $VERSION_TAG
-  #git clone https://github.com/JzHartmut/srcJava_vishiaBase.git -b $VERSION_TAG
-  #Note comment with VERSION_TAG, uncomment next, to get the proper last stored version 
-  git clone https://github.com/JzHartmut/srcJava_vishiaBase.git
+  if test $VERSION_TAG ==""; then
+    git clone https://github.com/JzHartmut/srcJava_vishiaBase.git
+  else
+    echo clone the srcJava_vishiaBase with tag "$VERSION_TAG" as 'detached head':
+    echo git clone https://github.com/JzHartmut/srcJava_vishiaBase.git -b $VERSION_TAG
+    git clone https://github.com/JzHartmut/srcJava_vishiaBase.git -b $VERSION_TAG
+    #Note comment with VERSION_TAG, uncomment next, to get the proper last stored version 
+  fi
   cd srcJava_vishiaBase
   pwd
   echo touch all files with the timestamp in .filelist:
