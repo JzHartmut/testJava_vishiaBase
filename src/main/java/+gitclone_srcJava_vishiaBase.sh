@@ -9,7 +9,6 @@ if ! test -d srcJava_vishiaBase; then
     echo clone the srcJava_vishiaBase with tag "$VERSION_TAG" as 'detached head':
     echo git clone https://github.com/JzHartmut/srcJava_vishiaBase.git -b $VERSION_TAG
     git clone https://github.com/JzHartmut/srcJava_vishiaBase.git -b $VERSION_TAG
-    #Note comment with VERSION_TAG, uncomment next, to get the proper last stored version 
   fi
   cd srcJava_vishiaBase
   pwd

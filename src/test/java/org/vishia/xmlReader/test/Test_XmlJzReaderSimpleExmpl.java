@@ -17,8 +17,8 @@ public class Test_XmlJzReaderSimpleExmpl {
 
   public static void main(String[] args) {
     TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();
-    analyzeXmlCfg_BomExmpl();
-    genJavaClasses();
+    //analyzeXmlCfg_BomExmpl();
+    //genJavaClasses();
     readTheBom();
   }
   
