@@ -2,6 +2,7 @@ package org.vishia.xmlReader.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.vishia.cmd.JZtxtcmdTester;
 import org.vishia.odg.data.XmlForOdg;
@@ -85,6 +86,7 @@ public class Test_Office_odgData {
 
     
     File testFile = new File("D:/vishia/spe/SPE-card/FPGA/src/main/oodg/content.xml");
+    File testFileodg = new File("D:/vishia/spe/SPE-card/FPGA/src/main/oodg/moduls_SpeA_a.odg");
     File fout1 = new File("T:/testXmlRead-a.xml");
     File foutData = new File("T:/testXmlRead-data.html");
     
@@ -106,9 +108,13 @@ public class Test_Office_odgData {
         XmlForOdg_Zbnf data = new XmlForOdg_Zbnf();
         xmlReader.setDebugStopTag("text:span");
         xmlReader.openXmlTestOut(fout1);
-        xmlReader.readXml(testFile, data, cfg);
+        xmlReader.readZipXml(testFileodg, "content.xml", data);
         JZtxtcmdTester.dataHtml(data.dataXmlForOdg, foutData);
-        evaluateData(data.dataXmlForOdg);
+        XmlForOdg odg = data.dataXmlForOdg;
+        odg.prepareData();
+        for(Map.Entry<String, XmlForOdg.Module> emdl: odg.idxAllModule.entrySet()) {
+          System.out.print(emdl.getValue().showMdlAggregations());
+        }
         Debugutil.stop();
         //System.out.println(data.get_BillOfMaterial().toString()); //set breakpoint here to view data
       } catch (IOException | NoSuchFieldException e) {
@@ -117,47 +123,6 @@ public class Test_Office_odgData {
 
   }
   
-  
-  void evaluateData(XmlForOdg data) {
-    XmlForOdg.Office_document_content doc = data.get_office_document_content();
-    XmlForOdg.Office_body body = doc.get_office_body();
-    XmlForOdg.Office_automatic_styles styles = doc.get_office_automatic_styles();
-    styles.prepStyles();
-    XmlForOdg.Office_drawing drawing = body.get_office_drawing();
-    XmlForOdg.Draw_page page = drawing.get_draw_page();
-    for(XmlForOdg.Draw_g group:  page.get_draw_g()) {      // general: a module is inside a group
-      System.out.println("== group");
-      for(XmlForOdg.Draw_frame textFrame: group.get_draw_frame()) {
-        String text = null;
-        String drawStyle = textFrame.get_draw_style_name();
-        String drawTextStyle = textFrame.get_draw_text_style_name();
-        String id = textFrame.get_draw_id();
-        String drawStyleParent = styles.idxStyle.get(drawStyle);
-        String drawTextStyleParent = styles.idxStyle.get(drawTextStyle);
-        
-        XmlForOdg.Text_p textp = textFrame.get_draw_text_box().get_text_p();
-        if(textp !=null) {
-          XmlForOdg.Text_span textspan = textp.get_text_span();
-          if(textspan !=null) {
-            text = textspan.get_text();
-          } else {
-            text = textp.get_text_s();
-//            System.out.println("text:frame without text:span");
-          }
-        }
-        System.out.println("  " + text + ":" + drawStyleParent + "/" + id);
-      }
-    }
-    for(XmlForOdg.Draw_connector con:  page.get_draw_connector()) {      // general: a module is inside a group
-      String style = con.get_draw_style_name();
-      String start = con.get_draw_start_shape();
-      String startpoint = con.get_draw_start_glue_point();
-      String end = con.get_draw_end_shape();
-      String endpoint = con.get_draw_end_glue_point();
-      System.out.println("== connector" + " " + start + "." + startpoint + " -->" + end + "." + endpoint);
-    }
-    Debugutil.stop();
-  }
   
   
   

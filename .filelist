@@ -291,9 +291,9 @@
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/odg/ ====================
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/odg/data/ ===============
-2022-06-25 11:14:42  x     XmlForOdg.java                           ::          7.614 -1760399856 
-2022-06-25 11:14:03  x     XmlForOdg_Base.java                      ::         35.728  2062829306 
-2022-06-25 12:54:18  x     XmlForOdg_Zbnf.java                      ::         94.841 -1949776376 
+2022-06-26 23:42:47  x     XmlForOdg.java                           ::         24.880  0690013720 
+2022-06-26 20:32:44  x     XmlForOdg_Base.java                      ::         35.979  1440162804 
+2022-06-26 20:34:20  x     XmlForOdg_Zbnf.java                      ::         94.979  1083372517 
 
 ============================== src/main/java/srcJava_vishiaBase/org/vishia/parseJava/ ==============
 2022-05-15 13:25:58  x     JavaParser.java#                         ::          5.923  0777948094 
@@ -559,7 +559,7 @@
 ============================== src/test/java/org/vishia/xmlReader/test/ ============================
 2020-05-08 12:10:01  x     TestReadMsc15Cfg.java                    ::          5.170  0755245190 
 2020-01-01 23:43:57  x     TestReadOdc.java                         ::          2.395 -0317369375 
-2022-06-25 13:05:29  x     Test_Office_odgData.java                 ::          6.959 -1223056130 
+2022-06-26 23:25:38  x     Test_Office_odgData.java                 ::          5.342  0406659568 
 2021-10-15 21:50:33  x     Test_Office_odtData.java                 ::          1.104  0087703531 
 2022-06-08 22:52:27  x     Test_XmlJzReaderSimpleExmpl.java         ::          2.287 -1911107168 
 2021-10-04 14:29:51  x     package-info.java                        ::           . 76 -1660201068 
