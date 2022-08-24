@@ -1,1 +1,0 @@
-src/buildScripts/+build.sh
