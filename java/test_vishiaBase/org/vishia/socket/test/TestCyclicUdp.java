@@ -4,16 +4,10 @@ import java.nio.charset.Charset;
 
 import org.vishia.byteData.ByteDataAccessSimple;
 import org.vishia.byteData.ByteDataSymbolicAccess;
+import org.vishia.byteData.ByteDataSymbolicAccess.Variable;
 import org.vishia.communication.SocketCommSimple;
 
-/**This class is used to feed the GUI ViewCgf application with any non graphic application which transmits the data.
- * It is an replacement for test instead an embedded solution telegram transmission.
- * @author hartmut
- *
- */
-public class TestSimpleUdpSocket {
-
-  
+public class TestCyclicUdp {
   /**Version and history
    * <ul>
    * <li>2012-08 created
@@ -26,7 +20,7 @@ public class TestSimpleUdpSocket {
   
   int rxCt = 0;
   
-  int waitMainloop_ms = 20;
+  int waitMainloop_ms = 120;
 
   final SocketCommSimple so = new SocketCommSimple();
   
@@ -44,7 +38,7 @@ public class TestSimpleUdpSocket {
   float dw2 = (float)(Math.PI) / 1000.0f, my2 = 2.0f;
   
   /**Byte buffer for a transmission telegram.  */
-  byte[] txData = new byte[0x200];  
+  byte[] txData = new byte[0x40];  
   
   ByteDataAccessSimple dataAccess = new ByteDataAccessSimple(this.txData, true);  //bit endian
   
@@ -54,7 +48,7 @@ public class TestSimpleUdpSocket {
   
   ByteDataSymbolicAccess.Variable time_msAfter1970 = this.txDataAccess.new Variable("msAfter1970", "msAfter1970", 0x18, 'J', 0);
   
-  TestSimpleUdpSocket(){
+  TestCyclicUdp(){
     this.txDataAccess.assignData(this.txData, 0);
     this.dataAccess.setIntVal(0x10, 2, 0x1f0);             // the length info on begin of the data
   }
@@ -64,14 +58,16 @@ public class TestSimpleUdpSocket {
     this.bRun = true;
     boolean b69 = false;
 //    int addr = b69? 0xc0a80345 : 0xc0a80344;  //192.168.3.69
-    int addr = 0xc0a80344; //0x7f000001;  //127.0.0.1 localhost
-    int port = 0xa003;
+    int addr = 0xc0a80345;                       // use a dedicated network card with this configured address on the PC 
+    //int addr = 0x7f000001;  //127.0.0.1 localhost
+    int port = 0xa005;                           // any free port todo search
     this.so.open(addr, port);
     
 
     //addr = b69? 0xc0a80344 : 0xc0a80345;  //192.168.3.68
-    addr = 0xc0a80345; //0x7f000001;  //127.0.0.1 localhost
-    port = 0xeab3;
+    addr = 0xc0a8033f;                           // the dst network card in this network 
+    //addr = 0x7f000001;  //127.0.0.1 localhost
+    port = 0xeab5;                               //receiver port
     this.so.setDst(addr, port);
     rxThread.start();
   }
@@ -109,10 +105,10 @@ public class TestSimpleUdpSocket {
   Runnable runRx = new Runnable() {
 
     @Override public void run () {
-      while(TestSimpleUdpSocket.this.bRun) {
+      while(TestCyclicUdp.this.bRun) {
         rxStep();
       }
-      TestSimpleUdpSocket.this.bFinished = true;
+      TestCyclicUdp.this.bFinished = true;
     }
   };
   
@@ -132,7 +128,7 @@ public class TestSimpleUdpSocket {
   
   
   public static void main ( String[] args) {
-    TestSimpleUdpSocket thiz = new TestSimpleUdpSocket();
+    TestCyclicUdp thiz = new TestCyclicUdp();
     thiz.init(args);
     thiz.mainLoop();
   }

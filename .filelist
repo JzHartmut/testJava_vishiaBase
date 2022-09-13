@@ -63,7 +63,8 @@
 ============================== java/test_vishiaBase/org/vishia/socket/ =============================
 
 ============================== java/test_vishiaBase/org/vishia/socket/test/ ========================
-2022-08-26 20:20:08  x     TestSimpleUdpSocket.java                 ::          3.303 -1287143321 
+2022-09-09 18:29:33  x     TestCyclicUdp.java                       ::          3.887  0602929592 
+2022-09-08 23:52:45  x     TestSimpleUdpSocket.java                 ::          3.807 -0855766801 
 
 ============================== java/test_vishiaBase/org/vishia/testBase/ ===========================
 2021-06-24 20:56:30  x     TestJava_vishiaBase.java                 ::          1.903 -1857159127 
