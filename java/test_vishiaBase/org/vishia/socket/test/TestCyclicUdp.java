@@ -65,7 +65,7 @@ public class TestCyclicUdp {
     
 
     //addr = b69? 0xc0a80344 : 0xc0a80345;  //192.168.3.68
-    addr = 0xc0a8033f;                           // the dst network card in this network 
+    addr = 0xc0a80447;                           // the dst network card in this network 
     //addr = 0x7f000001;  //127.0.0.1 localhost
     port = 0xeab5;                               //receiver port
     this.so.setDst(addr, port);

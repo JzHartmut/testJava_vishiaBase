@@ -89,7 +89,7 @@ public class TestTreeNodeBase
     Iterator<ExampleNode<String>> iter = root.iterChildren();
     while(iter.hasNext()){
       ExampleNode<String> node = iter.next();
-      if(node.data !=null && node.data.equals("B1")){
+      if(node.nd_data !=null && node.nd_data.equals("B1")){
         iter.remove();  //try to remove the current node.
       }
     }
@@ -127,7 +127,7 @@ public class TestTreeNodeBase
     StringBuilder u = new StringBuilder();
     String next = "";
     for(ExampleNode<String> node: parent){
-      u.append(next).append(node.data !=null ? node.data : node.getKey());
+      u.append(next).append(node.nd_data !=null ? node.nd_data : node.getKey());
       next = "->";
       if(node.hasChildren()){
         u.append("[").append(printTree(node)).append("]");
@@ -163,9 +163,9 @@ public class TestTreeNodeBase
     
     @Override public String toString(){
       StringBuilder u = new StringBuilder(30);
-      if(prev !=null) { u.append(prev.key).append("<-"); }
-      u.append(key);
-      if(next !=null) { u.append("->").append(next.key); }
+      if(nd_prev !=null) { u.append(nd_prev.nd_key).append("<-"); }
+      u.append(nd_key);
+      if(nd_next !=null) { u.append("->").append(nd_next.nd_key); }
       return u.toString();
     }
   }
@@ -208,9 +208,9 @@ public class TestTreeNodeBase
     
     @Override public String toString(){
       StringBuilder u = new StringBuilder(30);
-      if(prev !=null) { u.append(prev.key).append("<-"); }
-      u.append(key);
-      if(next !=null) { u.append("->").append(next.key); }
+      if(nd_prev !=null) { u.append(nd_prev.nd_key).append("<-"); }
+      u.append(nd_key);
+      if(nd_next !=null) { u.append("->").append(nd_next.nd_key); }
       return u.toString();
     }
   }

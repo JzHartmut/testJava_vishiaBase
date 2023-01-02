@@ -60,11 +60,17 @@
 ============================== java/test_vishiaBase/org/vishia/minisys/test/ =======================
 2021-06-28 13:26:43  x     TestGetWebfile.java                      ::          1.322 -1213739428 
 
+============================== java/test_vishiaBase/org/vishia/serial/ =============================
+
+============================== java/test_vishiaBase/org/vishia/serial/test/ ========================
+2022-09-23 22:49:22  x     SerComm.java                             ::          1.716  0338989016 
+2022-09-25 13:24:56  x     Serial1Test.java                         ::           .793 -2029687521 
+
 ============================== java/test_vishiaBase/org/vishia/socket/ =============================
 
 ============================== java/test_vishiaBase/org/vishia/socket/test/ ========================
-2022-09-09 18:29:33  x     TestCyclicUdp.java                       ::          3.887  0602929592 
-2022-09-08 23:52:45  x     TestSimpleUdpSocket.java                 ::          3.807 -0855766801 
+2022-11-04 09:08:57  x     TestCyclicUdp.java                       ::          3.887 -1591582693 
+2022-09-26 23:32:38  x     TestSimpleUdpSocket.java                 ::          3.818  2133629210 
 
 ============================== java/test_vishiaBase/org/vishia/testBase/ ===========================
 2021-06-24 20:56:30  x     TestJava_vishiaBase.java                 ::          1.903 -1857159127 
@@ -82,7 +88,7 @@
 2021-10-04 14:29:49  x     TestString67.java                        ::           .716 -2110130983 
 2021-06-28 13:28:41  x     TestStringCmp.java                       ::          2.593  1759622778 
 2021-12-19 21:31:22  x     TestStringFunctions.java                 ::          2.569 -1793058717 
-2021-10-04 14:29:58  x     TestTreeNodeBase.java                    ::          6.197 -0119365067 
+2022-10-22 14:12:17  x     TestTreeNodeBase.java                    ::          6.251 -1815065009 
 2020-06-16 16:15:00  x     Test_FileList.java                       ::           .674  1102814935 
 2020-06-21 00:17:36  x     Test_FilePath.java                       ::          6.257  1878374328 
 2022-02-09 12:11:13  x     Test_OutTextPreparer_CallFor.java        ::          5.924  0710601795 
@@ -94,7 +100,7 @@
 2021-10-05 16:30:55  x     Test_TestOrg.java                        ::         12.119 -1089999205 
 2021-06-28 16:36:31  x     Test_Zip.java                            ::          1.335  1321700147 
 2021-06-27 18:03:26  x     Test_all_util.java                       ::           .227  1044123507 
-2022-01-11 22:11:43  x     WriteUTF8.java                           ::           .910  1973947063 
+2022-12-05 08:59:15  x     WriteUTF8.java                           ::           .910  0944219038 
 
 ============================== java/test_vishiaBase/org/vishia/util/testOrg/ =======================
 2022-06-05 23:11:48  x     Test_TestOrg.java                        ::           .516  0713477194 

@@ -65,13 +65,13 @@ public class TestSimpleUdpSocket {
     boolean b69 = false;
 //    int addr = b69? 0xc0a80345 : 0xc0a80344;  //192.168.3.69
     int addr = 0xc0a80344; //0x7f000001;  //127.0.0.1 localhost
-    int port = 0xa003;
+    int port = 0xeab3; //0xa003;
     this.so.open(addr, port);
     
 
     //addr = b69? 0xc0a80344 : 0xc0a80345;  //192.168.3.68
     addr = 0xc0a80345; //0x7f000001;  //127.0.0.1 localhost
-    port = 0xeab3;
+    port = 0xeab6;
     this.so.setDst(addr, port);
     rxThread.start();
   }
@@ -83,7 +83,7 @@ public class TestSimpleUdpSocket {
   
   
   void rxStep() {
-    byte[] rxBuffer = new byte[100];
+    byte[] rxBuffer = new byte[1500];
     
     int zRx = this.so.rx(rxBuffer);
     if(zRx >0) {

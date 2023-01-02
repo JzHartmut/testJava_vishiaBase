@@ -3,7 +3,7 @@ package org.vishia.util.test;
 
 import java.io.IOException;
 
-import org.vishia.util.FileWriter;
+import org.vishia.util.FileAppend;
 import org.vishia.util.StringFormatter;
 
 
@@ -16,7 +16,7 @@ public class WriteUTF8 {
   
   
   public static void writeUTF8() {
-    FileWriter f = new FileWriter();
+    FileAppend f = new FileAppend();
     try {
       if(f.open("/tmp/UTF-8.txt", "UTF-8", false) ==0) {
         
