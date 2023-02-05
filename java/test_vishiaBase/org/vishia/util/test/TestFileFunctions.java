@@ -15,6 +15,7 @@ import org.vishia.testBase.TestJava_vishiaBase;
 import org.vishia.util.Debugutil;
 import org.vishia.util.FileFunctions;
 import org.vishia.util.FileSystem;
+import org.vishia.util.FilepathFilterM;
 import org.vishia.util.StringFunctions;
 import org.vishia.util.TestOrg;
 
@@ -24,6 +25,8 @@ public class TestFileFunctions
     TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();
     TestOrg test = new TestOrg("Test FileFunctions", 3, args);
     TestFileFunctions thiz = new TestFileFunctions();
+    test_WildcardFilter(test);
+    test_WildcardFilterPaths(test);
     test_getParentDir(test);
     test_GetDir(test);
     fileProperties();
@@ -222,6 +225,112 @@ public class TestFileFunctions
 //    FileFunctions.addFilesWithBasePath(dirBase, searchPath, files);
     test.finish();
   }  
+  
+
+  
+  public static void test_WildcardFilter(TestOrg testParent) {
+    String[] masks = 
+      { "fix"
+      , "before*"
+      , "*behind"
+      , "before*behind"
+      , "before*mid*behind"
+      , "*mid*"
+      , "before**behind"
+      , "before**mid*behind"
+      , "**behind"
+      , "before**"
+      , "**"
+        // path combination
+      , "[dirA|dirB]/path*end/**/file*[ext1|ext2]"
+      , "[dirA/subdir|dirB]/path*end/**/file*[ext1|ext2]"
+      , "start[~dirA|~dirB]/path*end/**/file*ext"
+          
+      };
+    TestOrg test = new TestOrg("test_WildcardFilter", 6, testParent);
+    for(String mask: masks) {
+      int nOk;
+      int ctTest = 3;
+      do {
+        FilepathFilterM filter = FilepathFilterM.createWildcardFilter(mask);
+        String sFilter = filter.toString();
+        nOk = org.vishia.util.StringFunctions.comparePos(mask, sFilter);
+        if(nOk !=0) {
+          Debugutil.stop(); }
+      } while(nOk !=0 && --ctTest >=0);
+      test.expect(nOk ==0, 6, mask);
+      Debugutil.stop();
+    }
+    
+    
+  }
+  
+
+  
+  
+  public static void test_WildcardFilterPaths(TestOrg testParent) {
+    String[] paths = 
+      { "debug/theme/xy.o"
+      , "src/theme/cpp/xy.c"
+      , "src/theme/cpp/xy.cpp" 
+      , "src/theme/cpp/xy.txt" 
+      , "src/file.c"
+      , "debug/theme/xy.c"
+      };
+    class MaskSelect {
+      final String mask; final int select;
+      MaskSelect(String mask, int select){ this.mask = mask; this.select = select; }
+    }
+    MaskSelect[] masks = 
+      { new MaskSelect("[~debug]/**/*.[c|cpp]", 0x16)
+      };
+    TestOrg test = new TestOrg("test_WildcardFilterPaths", 6, testParent);
+    for(MaskSelect maskSelect: masks) {
+      int nOk;
+      int ctTest = 3;
+      int mSelect = 0;
+      int mBit = 1;
+      do {
+        try {
+          FilepathFilterM filter = FilepathFilterM.createWildcardFilter(maskSelect.mask);
+          String sFilter = filter.toString();
+          nOk = org.vishia.util.StringFunctions.comparePos(maskSelect.mask, sFilter);
+          if(nOk !=0) {
+            Debugutil.stop(); }
+          //
+          int ixPath = 1;
+          int zPath = paths.length;
+          for(String path: paths) {
+            String[] pathparts = path.split("/");
+            FilepathFilterM[] filterChild = new FilepathFilterM[1];
+            filterChild[0] = filter;
+            boolean bOk = true;
+            for(String pathp: pathparts) {                 // all path entries
+              if(!filterChild[0].check(pathp, ixPath != zPath, filterChild)) {
+                bOk = false;
+                break;
+              }
+              ixPath +=1;
+            }
+            if(bOk) {
+              mSelect |= mBit;
+            }
+            mBit <<=1;
+          }
+        } catch(Exception exc) {
+          test.exception(exc);
+          nOk = 0;
+        }
+        boolean bTestOk = maskSelect.select == mSelect;
+        if(!bTestOk) {
+          Debugutil.stop();
+        }
+        test.expect(bTestOk, 6, maskSelect.mask);
+        
+     } while(nOk !=0 && --ctTest >=0);
+      Debugutil.stop();
+    }
+  }
   
   
   
