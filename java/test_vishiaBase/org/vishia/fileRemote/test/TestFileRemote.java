@@ -152,19 +152,23 @@ public final class TestFileRemote {
   public void test_copyDirTreeWithCallback(TestOrg parent) {
     TestOrg test = new TestOrg("test_copy", 5, parent);
     this.execThread = new EventTimerThread("testFileRemote");
-    CopyProgress copyProgress = new CopyProgress( "copyProgress", this.evSrc, this.execThread, 100);
+    FileRemoteProgressTimeOrder copyProgress = new FileRemoteProgressTimeOrder( "copyProgress", this.evSrc, this.progress, this.execThread, 100);
+    boolean bOk = copyProgress.occupy(this.evSrc, this.progress, this.execThread, true);
+    test.expect(bOk, 6, "copyProgress timeorder occupied");
     startSeconds();
-    this.execThread.startThread();
-    copyProgress.activate(200);                  // show status in callbackCopy just in 200 ms cycle.
+    this.execThread.start();
+    copyProgress.clear();
+    copyProgress.activate(100);                  // show status in callbackCopy just in 200 ms cycle.
     FileRemote fsrc = FileRemote.get("d:\\vishia\\Java\\docuSrcJava_vishiaBase\\org");
     this.callbackDone = false;                   // init definitely state of callback 
-    fsrc.refreshAndMark(false, "**/*.java", FileMark.select, 20, null, copyProgress);
+    fsrc.refreshAndMark(false, "**/*.html", FileMark.select, 20, null, copyProgress);
     waitfinish(copyProgress);
     //fsrc.refreshPropertiesAndChildren(null, true, null);
     FileRemote fdst = FileRemote.get("T:/testCopyDirTree");
     fdst.mkdir();
     this.callbackDone = false;                   // init definitely state of callback 
     fdst.device().activate();                    // start the device thread
+    copyProgress.setAvailClear();
     copyProgress.activate(100);
     long time0 = System.nanoTime();
     this.callbackDone = false;                   // init definitely state of callback 
@@ -184,6 +188,7 @@ public final class TestFileRemote {
     test.expect(dTimeRespond > 10000000, 2, "time for execution > 10 ms = %3.3f ms", dTimeRespond/1000000.0);
     System.out.printf("timePrepare = %f, timeCall = %f ms, timeRespond = %f ms\n"
         , (time1 - time0)/1000000.0, dTimeCall/1000000.0, dTimeRespond/1000000.0);
+    this.execThread.close();
     test.finish();
     try { fdst.device().close(); } catch (IOException e) { }
   }
@@ -191,42 +196,32 @@ public final class TestFileRemote {
   
 
 
-  @SuppressWarnings("serial") 
-  private class CopyProgress extends FileRemoteProgressTimeOrder implements EventConsumer {
+  
+  
+  EventConsumer progress = new EventConsumer() {
 
     long nrBytesAllCmp = 0;
-    
-    protected CopyProgress(String name, EventSource srcAnswer, EventTimerThread_ifc mng, int delay) {
-      super(name, srcAnswer, mng, delay);
-      // TODO Auto-generated constructor stub
-    }
 
-    @Override protected void executeOrder () {             // CopyProgress execute
+    @Override public int processEvent ( EventObject ev ) {
+      FileRemoteProgressTimeOrder evProgress = (FileRemoteProgressTimeOrder)ev;
       float time = getSeconds();
       StringBuilder msg = new StringBuilder();
-      if(this.nrBytesAllCmp == this.nrofBytesAll) {
+      if(this.nrBytesAllCmp == evProgress.nrofBytesAll) {
         Debugutil.stop();
       }
-      this.nrBytesAllCmp = this.nrofBytesAll;
-      if(!this.bDone) {
-        this.activate(this.delay);
+      this.nrBytesAllCmp = evProgress.nrofBytesAll;
+      if(!evProgress.bDone) {
+        evProgress.activate(100); //evProgress.delay);
       } else {
         msg.append("done");
         notifyfinish(this);
       }
-      System.out.printf("%1.1f: bytes all:%d %s\n", time, this.nrofBytesAll, msg);
+      System.out.printf("%1.1f: bytes all:%d files aa: %d, %s\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed, msg);
       Debugutil.stop();
-    }
-
-    @Override public int processEvent ( EventObject ev ) {
-      // TODO Auto-generated method stub
       return 0;
     }
     
-  }
-  
-  
-  
+  };
   
  
   
