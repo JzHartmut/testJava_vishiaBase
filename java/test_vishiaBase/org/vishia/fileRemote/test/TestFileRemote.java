@@ -1,15 +1,20 @@
 package org.vishia.fileRemote.test;
 
 import java.io.IOException;
+import java.text.Format;
 import java.util.EventObject;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.vishia.event.EventConsumer;
 import org.vishia.event.EventSource;
 import org.vishia.event.EventTimerThread;
 import org.vishia.event.EventTimerThread_ifc;
+import org.vishia.event.EventWithDst;
 import org.vishia.fileRemote.FileMark;
 import org.vishia.fileRemote.FileRemote;
-import org.vishia.fileRemote.FileRemoteProgressTimeOrder;
+import org.vishia.fileRemote.FileRemoteProgressEvent;
+import org.vishia.msgDispatch.LogMessage;
 import org.vishia.util.Debugutil;
 import org.vishia.util.TestOrg;
 
@@ -19,7 +24,27 @@ public final class TestFileRemote {
   
   
   long time_ms;
+ 
+  static class Msg {
+    long date;
+    String src;
+    String msg;
+    
+    public Msg(long date, String src, String msg) {
+      this.date = date;
+      this.src = src;
+      this.msg = msg;
+    }
+    
+    @Override public String toString() {
+      StringBuilder ret = new StringBuilder(200);
+      ret.append(LogMessage.timeMsg(this.date, this.src));
+      ret.append(": ").append(msg);
+      return ret.toString();
+    }
+  }
   
+  List<Msg> msg = new LinkedList<Msg>();
   
   protected void startSeconds() {
     this.time_ms = System.currentTimeMillis();
@@ -85,7 +110,7 @@ public final class TestFileRemote {
     FileRemote fdst = FileRemote.get("T:/telgRingCommAnimation.gif");
     fdst.device().activate();                    // start the device thread
     long time0 = System.nanoTime();
-    FileRemote.CallbackEvent backEvent = new FileRemote.CallbackEvent(this.callbackCopy, null, this.evSrc);
+    FileRemote.CallbackEvent backEvent = new FileRemote.CallbackEvent("test-copycallback", this.callbackCopy, null, this.evSrc);
     backEvent.occupy(null, true);                // use an event for back info
     backEvent.setFiles(fsrc, fdst);              // the back event contains the forward event
     this.callbackDone = false;                   // init definitely state of callback 
@@ -152,33 +177,36 @@ public final class TestFileRemote {
   public void test_copyDirTreeWithCallback(TestOrg parent) {
     TestOrg test = new TestOrg("test_copy", 5, parent);
     this.execThread = new EventTimerThread("testFileRemote");
-    FileRemoteProgressTimeOrder copyProgress = new FileRemoteProgressTimeOrder( "copyProgress", this.evSrc, this.progress, this.execThread, 100);
-    boolean bOk = copyProgress.occupy(this.evSrc, this.progress, this.execThread, true);
-    test.expect(bOk, 6, "copyProgress timeorder occupied");
+    FileRemoteProgressEvent copyProgress = new FileRemoteProgressEvent( "copyProgress", this.execThread, this.evSrc, this.progress, 100);
+    //boolean bOk = copyProgress.occupy(this.evSrc, this.progress, this.execThread, true);
+    //test.expect(bOk, 6, "copyProgress timeorder occupied");
     startSeconds();
     this.execThread.start();
     copyProgress.clear();
-    copyProgress.activate(100);                  // show status in callbackCopy just in 200 ms cycle.
     FileRemote fsrc = FileRemote.get("d:\\vishia\\Java\\docuSrcJava_vishiaBase\\org");
-    this.callbackDone = false;                   // init definitely state of callback 
-    fsrc.refreshAndMark(false, "**/*.html", FileMark.select, 20, null, copyProgress);
-    waitfinish(copyProgress);
+    //this.callbackDone = false;                   // init definitely state of callback 
+    copyProgress.timeOrder.activate(100);                  // show status in callbackCopy just in 200 ms cycle.
+    fsrc.refreshAndMark(0, 0, "**/*.html", FileMark.select, 20, null, copyProgress);
+    copyProgress.timeOrder.awaitExecution(0, true);
+    //waitfinish(copyProgress);
     //fsrc.refreshPropertiesAndChildren(null, true, null);
     FileRemote fdst = FileRemote.get("T:/testCopyDirTree");
     fdst.mkdir();
-    this.callbackDone = false;                   // init definitely state of callback 
-    fdst.device().activate();                    // start the device thread
+    //this.callbackDone = false;                   // init definitely state of callback 
+    //fdst.device().activate();                    // start the device thread
     copyProgress.setAvailClear();
-    copyProgress.activate(100);
+    copyProgress.timeOrder.clear();
+    copyProgress.timeOrder.activate(100);
     long time0 = System.nanoTime();
-    this.callbackDone = false;                   // init definitely state of callback 
+    //this.callbackDone = false;                   // init definitely state of callback 
     long time1 = System.nanoTime();
     //======>>>>
     fsrc.copyDirTreeTo(fdst, 3, "**/*", 0, null, copyProgress);                // this is the copy routine with callback
-    System.out.printf("%1.1f finsih\n", getSeconds());
+    //System.out.printf("%1.1f finsih\n", getSeconds());
 
     long dTimeCall = System.nanoTime() - time1;
-    waitfinish(copyProgress);
+    copyProgress.timeOrder.awaitExecution(0, true);
+    //waitfinish(copyProgress);
     long dTimeRespond = System.nanoTime() - time1;
     copyProgress.relinquish();
     //... this may be normally in the callback operation:
@@ -203,22 +231,29 @@ public final class TestFileRemote {
     long nrBytesAllCmp = 0;
 
     @Override public int processEvent ( EventObject ev ) {
-      FileRemoteProgressTimeOrder evProgress = (FileRemoteProgressTimeOrder)ev;
+      FileRemoteProgressEvent evProgress = (FileRemoteProgressEvent)ev;
+      int ret = EventConsumer.mEventConsumed;
       float time = getSeconds();
-      StringBuilder msg = new StringBuilder();
       if(this.nrBytesAllCmp == evProgress.nrofBytesAll) {
         Debugutil.stop();
+      } else {
       }
       this.nrBytesAllCmp = evProgress.nrofBytesAll;
       if(!evProgress.bDone) {
-        evProgress.activate(100); //evProgress.delay);
+        //System.out.println(LogMessage.timeMsg(System.currentTimeMillis(), "progress, activate"));
+        evProgress.timeOrder.activate(100); //evProgress.delay);
+        Msg msg = new Msg(System.currentTimeMillis(), "progress", String.format(" %1.1f sec: bytes all:%d files aa: %d\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed));
+        TestFileRemote.this.msg.add(msg);
+        System.out.print(msg.toString());
       } else {
-        msg.append("done");
-        notifyfinish(this);
+        ret |= EventConsumer.mEventConsumFinished;
+        //notifyfinish(this);
+        Msg msg = new Msg(System.currentTimeMillis(), "progress done", String.format(" %1.1f sec: bytes all:%d files aa: %d\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed));
+        TestFileRemote.this.msg.add(msg);
+        System.out.print(msg.toString());
       }
-      System.out.printf("%1.1f: bytes all:%d files aa: %d, %s\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed, msg);
       Debugutil.stop();
-      return 0;
+      return ret;
     }
     
   };

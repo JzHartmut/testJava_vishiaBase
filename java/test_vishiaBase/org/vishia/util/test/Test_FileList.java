@@ -12,7 +12,7 @@ public class Test_FileList {
     //The following routine reads this file and sets the current dir for the tests.
     FileFunctions.setCurrdirFromFile("$(TMP)/WD_cmpnJava_vishiaBase.var");
     
-    String[] args =  {"L", "-l:$(TMP)/.filestest", "-d:src/test/java", "-m:**/*.java"};
+    String[] args =  {"L", "-l:$(TMP)/.filestest", "-d:src", "-m:**/java/**/test*/*.java"};
     FileList.main(args);
   }
 }

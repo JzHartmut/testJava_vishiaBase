@@ -25,7 +25,7 @@ public class TestFileFunctions
     TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();
     TestOrg test = new TestOrg("Test FileFunctions", 3, args);
     TestFileFunctions thiz = new TestFileFunctions();
-    test_WildcardFilter(test);
+    test_WildcardFilterSyntax(test);
     test_WildcardFilterPaths(test);
     test_getParentDir(test);
     test_GetDir(test);
@@ -38,8 +38,8 @@ public class TestFileFunctions
   
   
   public static void test_GetDir(TestOrg parent) {
-    TestOrg test = new TestOrg("Test GetDir", 7, parent);
-  
+    TestOrg test = new TestOrg("Test GetDir", 3, parent);
+    test.finish();
   }
   
   
@@ -72,7 +72,7 @@ public class TestFileFunctions
       , { "src\\file.x"          , "src/"            , "src"           , "null"          , "not exists:file.x",     "should also getDir of nonexist file in given directory" }          //0
       , { "src\\main"            , "src/"            , "src"           , "null"          , "not exists:main" ,      "should also getDir of a relative given directory" }          //0
       , { "src"                  , sParent + "/"     , sParentW         , "null"          , "not exists:src" ,      "should also getDir of a relative given directory" }          //0
-      , { sParent + "\\src\\main", sParent + "/src/" , sParentW + "\\src", sParentW + "\\src", sParentW + "\\src" ,  "should also getDir of nonexist file in given directory" }          //0
+      , { sParent + "\\src\\docs", sParent + "/src/" , sParentW + "\\src", sParentW + "\\src", sParentW + "\\src" ,  "should also getDir of nonexist file in given directory" }          //0
       , { "C:\\file"             , "C:/"             , "C:\\"           , "null"          , "not exists:file",  "should also getDir of nonexist file in given directory" }          //0
       , { "C:\\file"             , "C:/"             , "C:\\"           , "null"          , "not exists:file",  "should also getDir of nonexist file in given directory" }          //0
       };
@@ -89,30 +89,36 @@ public class TestFileFunctions
       bOk = StringFunctions.equals(result, sTests[ixCheckManual][1]);
     }
     for(String[] sTest : sTests) {
-      fileTest = new File(sTest[0]);
-      result = resultW = resultOld = result2 = null;
-      try { result = FileFunctions.getDirCharseq( fileTest, null).toString(); } 
-      catch(Exception exc) { result = exc.getMessage(); } 
-      try { resultW = FileFunctions.getDir( fileTest).getPath(); } 
-      catch(Exception exc) { resultW = exc.getMessage(); } 
-      try { File fparent = FileFunctions.getDirOld( fileTest); resultOld = fparent == null ? "null": fparent.getPath(); } 
-      catch(Exception exc) { resultOld = exc.getMessage(); } 
-      try { result2 = FileFunctions.getDirectory( fileTest).getPath(); } 
-      catch(Exception exc) { result2 = exc.getMessage(); } 
-      //
-      bOk = StringFunctions.equals(result, sTest[1]);
-      String msg = "getDirCharSeq: " + ( bOk ? sTest[0] + " => " + sTest[1] : sTest[0] + " ? => " + sTest[1] + " => " + result);
-      test.expect(bOk, nVerbose, msg );
-      bOk = StringFunctions.equals(resultW, sTest[2]);
-      msg = "getDir: "               + ( bOk ? sTest[0] + " => " + sTest[2] : sTest[0] + " ? => " + sTest[2] + " => " + resultW);
-      test.expect(bOk, nVerbose, msg );
-      bOk = StringFunctions.equals(resultOld, sTest[3]);
-      msg = "getDirOld: "            + ( bOk ? sTest[0] + " => " + sTest[3] : sTest[0] + " ? => " + sTest[3] + " => " + resultOld);
-      test.expect(bOk, nVerbose, msg );
-      bOk = StringFunctions.equals(result2, sTest[4]);
-      msg = "getDirectory: "         + ( bOk ? sTest[0] + " => " + sTest[4] : sTest[0] + " ? => " + sTest[4] + " => " + result2);
-      test.expect(bOk, nVerbose, msg );
-      Debugutil.stop();
+      int ctRepeat = 3;
+      boolean bTestOk = true;
+      do {
+        fileTest = new File(sTest[0]);
+        result = resultW = resultOld = result2 = null;
+        try { result = FileFunctions.getDirCharseq( fileTest, null).toString(); } 
+        catch(Exception exc) { result = exc.getMessage(); } 
+        try { resultW = FileFunctions.getDir( fileTest).getPath(); } 
+        catch(Exception exc) { resultW = exc.getMessage(); } 
+        try { File fparent = FileFunctions.getDirOld( fileTest); resultOld = fparent == null ? "null": fparent.getPath(); } 
+        catch(Exception exc) { resultOld = exc.getMessage(); } 
+        try { result2 = FileFunctions.getDirectory( fileTest).getPath(); } 
+        catch(Exception exc) { result2 = exc.getMessage(); } 
+        //
+        bTestOk &= bOk = StringFunctions.equals(result, sTest[1]);
+        String msg = "getDirCharSeq: " + ( bOk ? sTest[0] + " => " + sTest[1] : sTest[0] + " ? => " + sTest[1] + " => " + result);
+        test.expect(bOk, nVerbose, msg );
+        bTestOk &= bOk = StringFunctions.equals(resultW, sTest[2]);
+        msg = "getDir: "               + ( bOk ? sTest[0] + " => " + sTest[2] : sTest[0] + " ? => " + sTest[2] + " => " + resultW);
+        test.expect(bOk, nVerbose, msg );
+        bTestOk &= bOk = StringFunctions.equals(resultOld, sTest[3]);
+        msg = "getDirOld: "            + ( bOk ? sTest[0] + " => " + sTest[3] : sTest[0] + " ? => " + sTest[3] + " => " + resultOld);
+        test.expect(bOk, nVerbose, msg );
+        bTestOk &= bOk = StringFunctions.equals(result2, sTest[4]);
+        msg = "getDirectory: "         + ( bOk ? sTest[0] + " => " + sTest[4] : sTest[0] + " ? => " + sTest[4] + " => " + result2);
+        test.expect(bOk, nVerbose, msg );
+        if(!bTestOk) {
+          Debugutil.stop();
+        }
+      } while(!bTestOk && --ctRepeat >=0);
     }
     
     //assert(StringFunctions.equals(sFileTest,sDirAbs));
@@ -190,28 +196,28 @@ public class TestFileFunctions
     CharSequence cDirBase = FileFunctions.normalizePath(dirBase);  //now we have the absolute normalized path. 
     String sDirBase = cDirBase.toString();       // normalizePath returns a CharSequence to spare effort, now it is persistent.
     List<FileFunctions.FileAndBasePath> files = new ArrayList<FileFunctions.FileAndBasePath>();
-    String searchPathLocal = "src/test/jztc:../**/*";  //should search files only in jztz but path incl. jztc
+    String searchPathLocal = "src/docs/asciidoc:../**/*";  //should search files only in jztz but path incl. asciidoc
     String searchPath = sDirBase + '/' + searchPathLocal;
     FileFunctions.addFilesWithBasePath(null, searchPath, files);
-    test.expect(files.size()>=1, nVerbose, "number of files in /src/test/jztc >=1");
+    test.expect(files.size()>=1, nVerbose, "number of files in /src/docs/asciidoc >=1");
     for(FileFunctions.FileAndBasePath file: files) {
-      test.expect(file.localPath.startsWith("jztc"), nVerbose+1, "localpath jztc?: " + file.localPath);
+      test.expect(file.localPath.startsWith("asciidoc"), nVerbose+1, "localpath asciidoc ?: " + file.localPath);
     }
     files.clear();
     FileFunctions.addFilesWithBasePath(dirBase, searchPathLocal, files);
-    test.expect(files.size()>=1, nVerbose, "number of files in /src/test/jztc >=1");
+    test.expect(files.size()>=1, nVerbose, "number of files in /src/docs/asciidoc >=1");
     
     files.clear();
-    searchPathLocal = "src/test:jztc/**/*";  //should search files only in jztz but path incl. jztc
+    searchPathLocal = "src/docs:asciidoc/**/*";  //should search files only in jztz but path incl. asciidoc
     searchPath = sDirBase + '/' + searchPathLocal;
     FileFunctions.addFilesWithBasePath(null, searchPath, files);
-    test.expect(files.size()>=1, nVerbose, "number of files in /src/test/jztc >=1");
+    test.expect(files.size()>=1, nVerbose, "number of files in /src/docs/asciidoc >=1");
     for(FileFunctions.FileAndBasePath file: files) {
-      test.expect(file.localPath.startsWith("jztc"), nVerbose+1, "localpath jztc?: " + file.localPath);
+      test.expect(file.localPath.startsWith("asciidoc"), nVerbose+1, "localpath asciidoc ?: " + file.localPath);
     }
     files.clear();
     FileFunctions.addFilesWithBasePath(dirBase, searchPathLocal, files);
-    test.expect(files.size()>=1, nVerbose, "number of files in /src/test/jztc >=1");
+    test.expect(files.size()>=1, nVerbose, "number of files in /src/docs/asciidoc >=1");
     
     
 //    int posSlash = sDirBase.lastIndexOf('/');
@@ -228,7 +234,15 @@ public class TestFileFunctions
   
 
   
-  public static void test_WildcardFilter(TestOrg testParent) {
+  /**Tests whether a given string for the filter is parsed 
+   * and produces the same output in its {@link #toString()} presentation.
+   * Both should be identically. If a parser error occurs, it is not identicalls.
+   * If the toString() preparation is faulty, it is also not identically. 
+   * If both are fortuitously identically but the parsing is faulty, this error is not detected.
+   * But both algorithm are really different, so fortuna should not be present. 
+   * @param testParent
+   */
+  public static void test_WildcardFilterSyntax(TestOrg testParent) {
     String[] masks = 
       { "fix"
       , "before*"
@@ -242,12 +256,12 @@ public class TestFileFunctions
       , "before**"
       , "**"
         // path combination
-      , "[dirA|dirB]/path*end/**/file*[ext1|ext2]"
-      , "[dirA/subdir|dirB]/path*end/**/file*[ext1|ext2]"
+      , "[dirA|dirB]/path*end/**/file*.[ext1|ext2]"
+      , "[dirA/subdir|dirB]/path*end/**/file*.[ext1|ext2]"
       , "start[~dirA|~dirB]/path*end/**/file*ext"
           
       };
-    TestOrg test = new TestOrg("test_WildcardFilter", 6, testParent);
+    TestOrg test = new TestOrg("test_WildcardFilterSyntax", 3, testParent);
     for(String mask: masks) {
       int nOk;
       int ctTest = 3;
@@ -261,7 +275,7 @@ public class TestFileFunctions
       test.expect(nOk ==0, 6, mask);
       Debugutil.stop();
     }
-    
+    test.finish();
     
   }
   
@@ -271,20 +285,23 @@ public class TestFileFunctions
   public static void test_WildcardFilterPaths(TestOrg testParent) {
     String[] paths = 
       { "debug/theme/xy.o"
-      , "src/theme/cpp/xy.c"
-      , "src/theme/cpp/xy.cpp" 
-      , "src/theme/cpp/xy.txt" 
+      , "src/theme/cpp/xyA.c"
+      , "src/theme/cpp/xyB.cpp" 
+      , "src/theme/cpp/xyC.txt" 
       , "src/file.c"
-      , "debug/theme/xy.c"
+      , "debug/theme/xyD.c"
+      , "theme/xyD.c"
       };
     class MaskSelect {
       final String mask; final int select;
       MaskSelect(String mask, int select){ this.mask = mask; this.select = select; }
     }
     MaskSelect[] masks = 
-      { new MaskSelect("[~debug]/**/*.[c|cpp]", 0x16)
+      { new MaskSelect("[~debug]/**/xy*.[c|cpp]", 0x46)
+      , new MaskSelect("[~debug]/**/*.[c|cpp]", 0x56)
       };
-    TestOrg test = new TestOrg("test_WildcardFilterPaths", 6, testParent);
+    //
+    TestOrg test = new TestOrg("test_WildcardFilterPaths", 3, testParent);
     for(MaskSelect maskSelect: masks) {
       int nOk;
       int ctTest = 3;
@@ -298,22 +315,32 @@ public class TestFileFunctions
           if(nOk !=0) {
             Debugutil.stop(); }
           //
-          int ixPath = 1;
-          int zPath = paths.length;
           for(String path: paths) {
-            String[] pathparts = path.split("/");
+            String[] pathparts = path.split("/");          // any path part is individually checkes
+            int zPathParts = pathparts.length;
             FilepathFilterM[] filterChild = new FilepathFilterM[1];
-            filterChild[0] = filter;
-            boolean bOk = true;
-            for(String pathp: pathparts) {                 // all path entries
-              if(!filterChild[0].check(pathp, ixPath != zPath, filterChild)) {
-                bOk = false;
-                break;
+            FilepathFilterM filterCurr;
+            boolean bShouldOk = (maskSelect.select & mBit) !=0;
+            int ctAbort = 3;
+            boolean bOk;
+            do {
+              int ixPathParts = 1;
+              filterCurr = filter;                     // start with the top filter
+              bOk = true;                                  // start on first entry, presume bOk
+              for(String pathp: pathparts) {               // all path entries
+                boolean bDir = ixPathParts != zPathParts;  // bDir for all expect last entry.
+                filterCurr = filterCurr.check(pathp, bDir);
+                if(filterCurr == null) {
+                  bOk = false;
+                  break;
+                }
+                ixPathParts +=1;                                  // set bDir = false for last entry
               }
-              ixPath +=1;
-            }
+              if(bShouldOk != bOk)
+                Debugutil.stop();
+            } while(bShouldOk != bOk && --ctAbort >0);   // loop for debug if should and is does not match
             if(bOk) {
-              mSelect |= mBit;
+              mSelect |= mBit;                             // mark the bit if matches.
             }
             mBit <<=1;
           }
@@ -328,8 +355,8 @@ public class TestFileFunctions
         test.expect(bTestOk, 6, maskSelect.mask);
         
      } while(nOk !=0 && --ctTest >=0);
-      Debugutil.stop();
     }
+    test.finish();
   }
   
   
@@ -361,7 +388,7 @@ public class TestFileFunctions
       , { "path/file:./**/*.java"  , "path/file:**/*.java" }  //17
       , { "path/..:file", "file" }
         };
-    TestOrg test = new TestOrg("test_normalizePath", 6, testParent);
+    TestOrg test = new TestOrg("test_normalizePath", 3, testParent);
     int ixCheckManual = -1;
     if(ixCheckManual >=0) {
       result = FileFunctions.normalizePath( sTests[ixCheckManual][0]); 
