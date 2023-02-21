@@ -1,12 +1,15 @@
 package org.vishia.fileRemote.test;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.Format;
 import java.util.EventObject;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.vishia.event.EventConsumer;
+import org.vishia.event.EventConsumerAwait;
 import org.vishia.event.EventSource;
 import org.vishia.event.EventTimerThread;
 import org.vishia.event.EventTimerThread_ifc;
@@ -14,6 +17,7 @@ import org.vishia.event.EventWithDst;
 import org.vishia.fileRemote.FileMark;
 import org.vishia.fileRemote.FileRemote;
 import org.vishia.fileRemote.FileRemoteProgressEvent;
+import org.vishia.fileRemote.FileRemoteWalkerCallbackLog;
 import org.vishia.msgDispatch.LogMessage;
 import org.vishia.util.Debugutil;
 import org.vishia.util.TestOrg;
@@ -163,6 +167,9 @@ public final class TestFileRemote {
       notifyfinish( ev );
       return mEventDonotRelinquish;      // will be relinquished after wait
     }
+
+    @Override public boolean awaitExecution ( long timeout ) { return false; }
+
   };
   //end::callbackCopy[]
   
@@ -177,7 +184,16 @@ public final class TestFileRemote {
   public void test_copyDirTreeWithCallback(TestOrg parent) {
     TestOrg test = new TestOrg("test_copy", 5, parent);
     this.execThread = new EventTimerThread("testFileRemote");
-    FileRemoteProgressEvent copyProgress = new FileRemoteProgressEvent( "copyProgress", this.execThread, this.evSrc, this.progress, 100);
+    OutputStream outfile;
+    try{ 
+      outfile= new FileOutputStream("T:\\testLog.txt");
+    } catch(IOException exc) {
+      outfile = null;
+      test.exception(exc);
+    }
+    FileRemoteWalkerCallbackLog log = new FileRemoteWalkerCallbackLog(outfile, System.out, null, false);
+    FileRemoteProgressEvent copyProgress = new FileRemoteProgressEvent( "copyProgress", this.execThread
+        , this.evSrc, this.progress, 250);
     //boolean bOk = copyProgress.occupy(this.evSrc, this.progress, this.execThread, true);
     //test.expect(bOk, 6, "copyProgress timeorder occupied");
     startSeconds();
@@ -185,9 +201,9 @@ public final class TestFileRemote {
     copyProgress.clear();
     FileRemote fsrc = FileRemote.get("d:\\vishia\\Java\\docuSrcJava_vishiaBase\\org");
     //this.callbackDone = false;                   // init definitely state of callback 
-    copyProgress.timeOrder.activate(100);                  // show status in callbackCopy just in 200 ms cycle.
-    fsrc.refreshAndMark(0, 0, "**/*.html", FileMark.select, 20, null, copyProgress);
-    copyProgress.timeOrder.awaitExecution(0, true);
+    fsrc.refreshAndMark(0, 0, "**/*.html", 0 /*FileMark.select*/, 20, log, copyProgress);
+    boolean bOk = this.progress.awaitExecution(10000000);
+    test.expect(bOk, 5, "progress done comes");
     //waitfinish(copyProgress);
     //fsrc.refreshPropertiesAndChildren(null, true, null);
     FileRemote fdst = FileRemote.get("T:/testCopyDirTree");
@@ -196,16 +212,15 @@ public final class TestFileRemote {
     //fdst.device().activate();                    // start the device thread
     copyProgress.setAvailClear();
     copyProgress.timeOrder.clear();
-    copyProgress.timeOrder.activate(100);
     long time0 = System.nanoTime();
     //this.callbackDone = false;                   // init definitely state of callback 
     long time1 = System.nanoTime();
     //======>>>>
-    fsrc.copyDirTreeTo(fdst, 3, "**/*", 0, null, copyProgress);                // this is the copy routine with callback
+    fsrc.copyDirTreeTo(fdst, 3, "**/*", 0, log, copyProgress);                // this is the copy routine with callback
     //System.out.printf("%1.1f finsih\n", getSeconds());
 
     long dTimeCall = System.nanoTime() - time1;
-    copyProgress.timeOrder.awaitExecution(0, true);
+    this.progress.awaitExecution(0);
     //waitfinish(copyProgress);
     long dTimeRespond = System.nanoTime() - time1;
     copyProgress.relinquish();
@@ -226,7 +241,11 @@ public final class TestFileRemote {
 
   
   
-  EventConsumer progress = new EventConsumer() {
+  /**The progress consumer writes some info as progress information.
+   * It is also the instance to call {@link EventConsumer#awaitExecution(long)}
+   * for success execution. 
+   */
+  EventConsumer progress = new EventConsumerAwait() {
 
     long nrBytesAllCmp = 0;
 
@@ -239,15 +258,15 @@ public final class TestFileRemote {
       } else {
       }
       this.nrBytesAllCmp = evProgress.nrofBytesAll;
-      if(!evProgress.bDone) {
+      if(!evProgress.done()) {
         //System.out.println(LogMessage.timeMsg(System.currentTimeMillis(), "progress, activate"));
-        evProgress.timeOrder.activate(100); //evProgress.delay);
+        //evProgress.timeOrder.activate(100); //evProgress.delay);
         Msg msg = new Msg(System.currentTimeMillis(), "progress", String.format(" %1.1f sec: bytes all:%d files aa: %d\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed));
         TestFileRemote.this.msg.add(msg);
         System.out.print(msg.toString());
       } else {
         ret |= EventConsumer.mEventConsumFinished;
-        //notifyfinish(this);
+        super.setDone(null);
         Msg msg = new Msg(System.currentTimeMillis(), "progress done", String.format(" %1.1f sec: bytes all:%d files aa: %d\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed));
         TestFileRemote.this.msg.add(msg);
         System.out.print(msg.toString());
@@ -255,7 +274,8 @@ public final class TestFileRemote {
       Debugutil.stop();
       return ret;
     }
-    
+
+
   };
   
  
