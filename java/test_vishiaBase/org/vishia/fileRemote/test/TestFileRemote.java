@@ -161,15 +161,14 @@ public final class TestFileRemote {
   
   
   //tag::callbackCopy[]
-  EventConsumer callbackCopy = new EventConsumer() {
+  EventConsumer callbackCopy = new EventConsumerAwait() {
     @Override public int processEvent ( EventObject ev ) {
       //FileRemote.CallbackEvent backEvent = (FileRemote.CallbackEvent) ev;
       notifyfinish( ev );
       return mEventDonotRelinquish;      // will be relinquished after wait
     }
 
-    @Override public boolean awaitExecution ( long timeout ) { return false; }
-
+ 
   };
   //end::callbackCopy[]
   
@@ -193,17 +192,16 @@ public final class TestFileRemote {
     }
     FileRemoteWalkerCallbackLog log = new FileRemoteWalkerCallbackLog(outfile, System.out, null, false);
     FileRemoteProgressEvent copyProgress = new FileRemoteProgressEvent( "copyProgress", this.execThread
-        , this.evSrc, this.progress, 250);
-    //boolean bOk = copyProgress.occupy(this.evSrc, this.progress, this.execThread, true);
-    //test.expect(bOk, 6, "copyProgress timeorder occupied");
+        , this.evSrc, this.progress, 50);
     startSeconds();
     this.execThread.start();
     copyProgress.clear();
     FileRemote fsrc = FileRemote.get("d:\\vishia\\Java\\docuSrcJava_vishiaBase\\org");
-    //this.callbackDone = false;                   // init definitely state of callback 
-    fsrc.refreshAndMark(0, 0, "**/*.html", 0 /*FileMark.select*/, 20, log, copyProgress);
-    boolean bOk = this.progress.awaitExecution(10000000);
+    fsrc.refreshAndMark(20, FileMark.select, FileMark.selectSomeInDir, "**/File*.html", 0 /*FileMark.select*/, null, copyProgress);
+    boolean bOk = this.progress.awaitExecution(10000000, true);
     test.expect(bOk, 5, "progress done comes");
+    bOk = ! this.progress.done();
+    test.expect(bOk, 5, "progress done is cleaned after awaitExecution(..., true)");
     //waitfinish(copyProgress);
     //fsrc.refreshPropertiesAndChildren(null, true, null);
     FileRemote fdst = FileRemote.get("T:/testCopyDirTree");
@@ -216,11 +214,14 @@ public final class TestFileRemote {
     //this.callbackDone = false;                   // init definitely state of callback 
     long time1 = System.nanoTime();
     //======>>>>
-    fsrc.copyDirTreeTo(fdst, 3, "**/*", 0, log, copyProgress);                // this is the copy routine with callback
+    //fsrc.copyDirTreeTo(fdst, 20, 0,0, "**/*.html", 0, log, copyProgress);                // this is the copy routine with callback
+    int selectMark = FileMark.select + FileMark.selectSomeInDir;
+    int resetMark = FileMark.resetMark + selectMark;
+    fsrc.copyDirTreeTo(fdst, 20, resetMark, resetMark, null, selectMark, log, copyProgress);                // this is the copy routine with callback
     //System.out.printf("%1.1f finsih\n", getSeconds());
 
     long dTimeCall = System.nanoTime() - time1;
-    this.progress.awaitExecution(0);
+    this.progress.awaitExecution(0, true);
     //waitfinish(copyProgress);
     long dTimeRespond = System.nanoTime() - time1;
     copyProgress.relinquish();
@@ -245,7 +246,7 @@ public final class TestFileRemote {
    * It is also the instance to call {@link EventConsumer#awaitExecution(long)}
    * for success execution. 
    */
-  EventConsumer progress = new EventConsumerAwait() {
+  EventConsumerAwait progress = new EventConsumerAwait() {
 
     long nrBytesAllCmp = 0;
 
@@ -253,25 +254,40 @@ public final class TestFileRemote {
       FileRemoteProgressEvent evProgress = (FileRemoteProgressEvent)ev;
       int ret = EventConsumer.mEventConsumed;
       float time = getSeconds();
-      if(this.nrBytesAllCmp == evProgress.nrofBytesAll) {
+      if(this.nrBytesAllCmp == evProgress.nrofBytesAll && !evProgress.done()) {
         Debugutil.stop();
       } else {
+        String line;
+        String sDir = evProgress.currDir==null ? "-no dir-" : evProgress.currDir.getAbsolutePath();
+        String sFile = evProgress.currFile==null ? "-no file-" : evProgress.currFile.getName();
+        if(evProgress.nrFilesAvail >0) {
+          int filesPercent = evProgress.nrofFilesSelected * 100 / evProgress.nrFilesAvail;
+          int bytesPercent = (int)(evProgress.nrofBytesAll * 100 / evProgress.nrofBytesAllAvail);
+          int bytesFilePercent = evProgress.nrofBytesFile <=0 ? 0 : (int)(evProgress.nrofBytesFileCopied * 100 / evProgress.nrofBytesFile);
+          line = String.format(" %1.1f sec: bytes:%d%% files: %d%% bytesFile: %d%%  dirs:%d/%d %s %s", time
+             , filesPercent, bytesPercent, bytesFilePercent, evProgress.nrDirProcessed, evProgress.nrDirAvail
+             , sDir, sFile);
+        } else {
+          line = String.format(" %1.1f sec: dirs: %d file: %d bytes all:%d files selected: %d, marked: %d %s %s", time
+              , evProgress.nrDirVisited, evProgress.nrFilesVisited, evProgress.nrofBytesAll, evProgress.nrofFilesSelected, evProgress.nrofFilesMarked
+              , sDir, sFile);
+        }
+        this.nrBytesAllCmp = evProgress.nrofBytesAll;
+        if(!evProgress.done()) {
+          //System.out.println(LogMessage.timeMsg(System.currentTimeMillis(), "progress, activate"));
+          //evProgress.timeOrder.activate(100); //evProgress.delay);
+          Msg msg = new Msg(System.currentTimeMillis(), "progress ... ", line);
+          TestFileRemote.this.msg.add(msg);
+          System.out.println(msg.toString());
+        } else {
+          ret |= EventConsumer.mEventConsumFinished;
+          super.setDone(null);                             // set done for the EventConsumerAwait
+          Msg msg = new Msg(System.currentTimeMillis(), "progress done: ", line);
+          TestFileRemote.this.msg.add(msg);
+          System.out.println(msg.toString());
+        }
+        Debugutil.stop();
       }
-      this.nrBytesAllCmp = evProgress.nrofBytesAll;
-      if(!evProgress.done()) {
-        //System.out.println(LogMessage.timeMsg(System.currentTimeMillis(), "progress, activate"));
-        //evProgress.timeOrder.activate(100); //evProgress.delay);
-        Msg msg = new Msg(System.currentTimeMillis(), "progress", String.format(" %1.1f sec: bytes all:%d files aa: %d\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed));
-        TestFileRemote.this.msg.add(msg);
-        System.out.print(msg.toString());
-      } else {
-        ret |= EventConsumer.mEventConsumFinished;
-        super.setDone(null);
-        Msg msg = new Msg(System.currentTimeMillis(), "progress done", String.format(" %1.1f sec: bytes all:%d files aa: %d\n", time, evProgress.nrofBytesAll, evProgress.nrFilesProcessed));
-        TestFileRemote.this.msg.add(msg);
-        System.out.print(msg.toString());
-      }
-      Debugutil.stop();
       return ret;
     }
 
