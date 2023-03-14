@@ -37,9 +37,9 @@ public class TestJava_vishiaBase {
     final File testfile3 = new File(currdir3, "src/srcJava_vishiaBase/java/org/vishia");
     final boolean bOk = testfile3.exists();
     if(!bOk) {
-      System.err.println("The current directory is not the root of TestJava_vishiaBase\n");
-      System.err.println("  either start test from the correct current dir\n");
-      System.err.println("  or call \"src/buildScripts/+setWDtoTmp.sh\" or \"...bat\" \n");
+      System.err.print("The current directory is not the root of TestJava_vishiaBase\n");
+      System.err.print("  either start test from the correct current dir\n");
+      System.err.print("  or call \"src/buildScripts/+setWDtoTmp.sh\" or \"...bat\" \n");
     }
     return bOk;
   }

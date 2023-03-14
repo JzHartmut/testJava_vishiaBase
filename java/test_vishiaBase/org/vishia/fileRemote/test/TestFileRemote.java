@@ -23,6 +23,7 @@ import org.vishia.fileRemote.XXXFileRemoteWalkerEvent;
 import org.vishia.msgDispatch.LogMessage;
 import org.vishia.util.Debugutil;
 import org.vishia.util.TestOrg;
+import org.vishia.testBase.TestJava_vishiaBase;
 
 public final class TestFileRemote {
 
@@ -192,6 +193,47 @@ public final class TestFileRemote {
 
   
   
+  public void test_getFileRemote(TestOrg parent) {
+    TestOrg test = new TestOrg("test_getFileRemote", 5, parent);
+    //
+    String sfName = "src/file.nonexist";
+    FileRemote fSrc = FileRemote.get(sfName);
+    String sAbsPath = fSrc.getAbsolutePath();
+    test.expect(!fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
+    test.expect(!fSrc.isDirectory(), 3, sfName + " : is not a directory independent of refresh");
+   
+    sfName = "/tmp/file_in_tmpdir.nonexist";
+    fSrc = FileRemote.get(sfName);
+    sAbsPath = fSrc.getAbsolutePath();
+    test.expect(!fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
+   
+    sfName = "~/file_in_homedir.nonexist";
+    fSrc = FileRemote.get(sfName);
+    sAbsPath = fSrc.getAbsolutePath();
+    test.expect(!fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
+   
+    //
+    sfName = "src/srcJava_vishiaBase";
+    fSrc = FileRemote.getDir(sfName);
+    test.expect(fSrc.isDirectory(), 3, sfName + " : is a directory independent of refresh");
+    //
+    sfName = "src/docs/";
+    fSrc = FileRemote.get(sfName);
+    test.expect(fSrc.isDirectory(), 3, sfName + " : is a directory independent of refresh");
+    //
+    sfName = "src/docs";
+    fSrc = FileRemote.get(sfName);
+    test.expect(fSrc.isDirectory(), 3, sfName + " : is a directory because before created as directory, independent of refresh");
+    fSrc.refreshProperties();
+    boolean bOk = fSrc.exists() && fSrc.isDirectory();
+    test.expect(bOk, 3, sfName + " : found, is directory");
+    test.finish();
+  }
+  
+  
+  
+  
+  
   //tag::test_simpleWalkImmediatelyevBack[]
   public void test_simpleWalkImmediatelyevBack(TestOrg parent) {
     TestOrg test = new TestOrg("test_simpleWalkImmediatelyevBack", 5, parent);
@@ -281,7 +323,7 @@ public final class TestFileRemote {
       test.exception(exc);
     }
     //--------------------------------------------- Create the log and back event for progress 
-    FileRemote fsrc = FileRemote.get("d:\\vishia\\Java\\docuSrcJava_vishiaBase");
+    FileRemote fsrc = FileRemote.get("d:/vishia/Java/docuSrcJava_vishiaBase");
     FileRemoteWalkerCallbackLog log = new FileRemoteWalkerCallbackLog(outfile, System.out, null, false);
     EventWithDst<FileRemoteProgressEvData,?> evProgress = new EventWithDst<FileRemoteProgressEvData, Object>("evProgress", null, this.progressCopyDirTreeWithCallback, null, new FileRemoteProgressEvData());
     //
@@ -322,7 +364,7 @@ public final class TestFileRemote {
         , (time1 - time0)/1000000.0, dTimeCall/1000000.0, dTimeRespond/1000000.0);
     this.progressThread.close();
     test.finish();
-    try { fdst.device().close(); } catch (IOException e) { }
+    fdst.device().close();
   }
   //end::test_copyDirTreeWithCallback[]
   
@@ -390,9 +432,10 @@ public final class TestFileRemote {
   public static final void main(String[] args){ test(args);}
   
   public static final void test ( String[] args ){
-    
+    TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();  // determines the current dir for FileRemote
     TestOrg test = new TestOrg("TestFileRemote", 5, args);
     TestFileRemote thiz = new TestFileRemote();
+    thiz.test_getFileRemote(test);
     //thiz.test_checkPhysicalDevice(test);
     //thiz.test_copyWithCallback(test);
 //    thiz.test_simpleWalkImmediatelyevBack(test);

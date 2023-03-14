@@ -23,25 +23,25 @@ public class TestFileCluster
   @SuppressWarnings("unused") 
   public void execute(){
     
-    FileRemote file1 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJava_Zbnf_priv/org");
-    FileRemote file2 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJava_vishiaBase/org/vishia/zbnf");
-    FileRemote file0 = this.fileCluster.getDir("D:/vishia/Java");
+    FileRemote file1 = FileRemote.getDir("D:/vishia/Java/docuSrcJava_Zbnf_priv/org");
+    FileRemote file2 = FileRemote.getDir("D:/vishia/Java/docuSrcJava_vishiaBase/org/vishia/zbnf");
+    FileRemote file0 = FileRemote.getDir("D:/vishia/Java");
     FileRemote file2p = file2.getParentFile();  //searches whether the parent is registered in FileCluster.
-    FileRemote file3 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJava_vishiaBase");
+    FileRemote file3 = FileRemote.getDir("D:/vishia/Java/docuSrcJava_vishiaBase");
     FileRemote file4 = file3.child("org/vishia");
 
     ExcUtil.check(file2p == file4);
 
-    FileRemote file5 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJava_vishiaBase/org/vishia/fileRemote");
+    FileRemote file5 = FileRemote.getDir("D:/vishia/Java/docuSrcJava_vishiaBase/org/vishia/fileRemote");
 
   }
   
   
   @SuppressWarnings("unused") public void execute2(){
     
-    FileRemote file1 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJavaPriv_Zbnf/org/vishia/zbnf");
-    FileRemote file3 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJavaPriv_Zbnf/org/vishia/zcmd");
-    FileRemote file2 = this.fileCluster.getDir("D:/vishia/Java/docuSrcJavaPriv_Zbnf");
+    FileRemote file1 = FileRemote.getDir("D:/vishia/Java/docuSrcJavaPriv_Zbnf/org/vishia/zbnf");
+    FileRemote file3 = FileRemote.getDir("D:/vishia/Java/docuSrcJavaPriv_Zbnf/org/vishia/zcmd");
+    FileRemote file2 = FileRemote.getDir("D:/vishia/Java/docuSrcJavaPriv_Zbnf");
     FileRemote file0 = file2.child("org/vishia");
 
     ExcUtil.check(file0 == file1);
