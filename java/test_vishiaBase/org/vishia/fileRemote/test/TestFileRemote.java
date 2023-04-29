@@ -14,6 +14,7 @@ import org.vishia.event.EventSource;
 import org.vishia.event.EventTimerThread;
 import org.vishia.event.EventTimerThread_ifc;
 import org.vishia.event.EventWithDst;
+import org.vishia.event.Payload;
 import org.vishia.fileRemote.FileMark;
 import org.vishia.fileRemote.FileRemote;
 import org.vishia.fileRemote.FileRemoteProgress;
@@ -98,16 +99,16 @@ public final class TestFileRemote {
     FileRemote fsrc = FileRemote.get("q:\\VIDEOS\\telgRingCommAnimation.gif.gif");
     FileRemote fdst = FileRemote.get("T:/telgRingCommAnimation.gif");
     try {
-      java.nio.file.FileStore fstore5rc = java.nio.file.Files.getFileStore(fsrc.path);
-      java.nio.file.FileStore fstoreDst = java.nio.file.Files.getFileStore(fdst.path);
+      java.nio.file.FileStore fstore5rc = java.nio.file.Files.getFileStore(fsrc.path());
+      java.nio.file.FileStore fstoreDst = java.nio.file.Files.getFileStore(fdst.path());
       test.expect(fstore5rc != fstoreDst, 4, "different phyisical devices for %s... and %s...", fsrc.getAbsolutePath().substring(0,8), fdst.getAbsolutePath().substring(0,8));
     } catch (IOException exc) {
       test.exception(exc);
     }
     //end::getFileStore[]
     //tag::getFileSystem[]
-    java.nio.file.FileSystem fsSrc = fsrc.path.getFileSystem();
-    java.nio.file.FileSystem fsDst = fsrc.path.getFileSystem();
+    java.nio.file.FileSystem fsSrc = fsrc.path().getFileSystem();
+    java.nio.file.FileSystem fsDst = fsrc.path().getFileSystem();
     test.expect(fsSrc == fsDst, 4, "same file systems for %s... and %s...", fsrc.getAbsolutePath().substring(0,8), fdst.getAbsolutePath().substring(0,8));
     Iterable<java.nio.file.FileStore> fstoresSrc = fsSrc.getFileStores();
     for(java.nio.file.FileStore fstoreSrc: fstoresSrc) {
@@ -196,12 +197,26 @@ public final class TestFileRemote {
   public void test_getFileRemote(TestOrg parent) {
     TestOrg test = new TestOrg("test_getFileRemote", 5, parent);
     //
-    String sfName = "src/file.nonexist";
+    String sfName = "SRC/file.nonexist";         // Note: the existing directory is named "src". 
     FileRemote fSrc = FileRemote.get(sfName);
     String sAbsPath = fSrc.getAbsolutePath();
     test.expect(!fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
     test.expect(!fSrc.isDirectory(), 3, sfName + " : is not a directory independent of refresh");
    
+    sfName = "SRC/DOcs";
+    fSrc = FileRemote.get(sfName);
+    sAbsPath = fSrc.getAbsolutePath();
+    test.expect(!fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
+    test.expect(!fSrc.isDirectory(), 3, sfName + " : is not a directory independent of refresh");
+    test.expect(sAbsPath.endsWith(sfName), 3, sfName + " : this is the name");
+    //
+    fSrc.refreshProperties();
+    sAbsPath = fSrc.getAbsolutePath();
+    test.expect(fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
+    test.expect(fSrc.isDirectory(), 3, sfName + " : is not a directory independent of refresh");
+    test.expect(sAbsPath.endsWith("src/docs"), 3, sfName + " : has correct existing name \"src/docs\"");
+    
+    
     sfName = "/tmp/file_in_tmpdir.nonexist";
     fSrc = FileRemote.get(sfName);
     sAbsPath = fSrc.getAbsolutePath();
@@ -227,6 +242,25 @@ public final class TestFileRemote {
     fSrc.refreshProperties();
     boolean bOk = fSrc.exists() && fSrc.isDirectory();
     test.expect(bOk, 3, sfName + " : found, is directory");
+    //
+    sfName = "child.nonexisting";
+    FileRemote fChild = fSrc.child(sfName);
+    bOk = !fChild.isTested() && !fChild.isDirectory();
+    test.expect(bOk, 3, sfName + " : child created as file, non existing");
+    //
+    sfName = "childdir_nonexisting/";
+    fChild = fSrc.child(sfName);
+    sAbsPath = fChild.getAbsolutePath();
+    bOk = !fChild.isTested() && fChild.isDirectory();
+    test.expect(bOk, 3, sfName + " : child created as file, non existing. AbsPath is %s", sAbsPath);
+    //
+    sfName = "asciidoc";
+    fChild = fSrc.child(sfName);
+    sAbsPath = fChild.getAbsolutePath();
+    fChild.refreshProperties();
+    bOk = fChild.isTested() && fChild.exists() && fChild.isDirectory();
+    test.expect(bOk, 3, sfName + " : child created as file, existing as directory. AbsPath is %s", sAbsPath);
+    
     test.finish();
   }
   
@@ -238,7 +272,7 @@ public final class TestFileRemote {
   public void test_simpleWalkImmediatelyevBack(TestOrg parent) {
     TestOrg test = new TestOrg("test_simpleWalkImmediatelyevBack", 5, parent);
     FileRemote fsrc = FileRemote.get("d:/vishia/Java/docuSrcJava_vishiaBase");
-    EventWithDst<FileRemoteProgressEvData,?> evBack = new EventWithDst<FileRemoteProgressEvData, Object>("evProgress", null, this.refreshDirProgress, null, new FileRemoteProgressEvData());
+    EventWithDst<FileRemoteProgressEvData,?> evBack = new EventWithDst<FileRemoteProgressEvData, Payload>("evProgress", null, this.refreshDirProgress, null, new FileRemoteProgressEvData());
     //
     startSeconds();                              // start time to measure
     this.refreshDirProgress.clear();
@@ -257,7 +291,7 @@ public final class TestFileRemote {
    * It is also the instance to call {@link EventConsumer#awaitExecution(long)}
    * for success execution. 
    */
-  FileRemoteProgress refreshDirProgress = new FileRemoteProgress(null) {  // do not associate a thread
+  FileRemoteProgress refreshDirProgress = new FileRemoteProgress("refreshDirProgress", null) {  // do not associate a thread
 
     /**This is a test implementation, It shows the progress as console output. */
     @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEvent, ?> evCmd) {
@@ -267,15 +301,15 @@ public final class TestFileRemote {
           //evProgress.timeOrder.activate(100); //evProgress.delay);
           float time = 0;
           String line;
-          if(evProgress.answer == FileRemote.Cmd.refreshDirPre) {
+          if(evProgress.progressCmd == FileRemoteProgressEvData.ProgressCmd.refreshDirPre) {
             line = String.format(" %1.1f sec: %d  %s", time
                 , evProgress.nrFilesVisited, evProgress.currDir.toString()
                 );
-          } else if(evProgress.answer == FileRemote.Cmd.refreshDirPost) {
+          } else if(evProgress.progressCmd == FileRemoteProgressEvData.ProgressCmd.refreshDirPost) {
               line = String.format(" %1.1f sec: files: %d", time
                   , evProgress.nrFilesVisited
                   );
-          } else if(evProgress.answer == FileRemote.Cmd.refreshFile) {
+          } else if(evProgress.progressCmd == FileRemoteProgressEvData.ProgressCmd.refreshFile) {
             line = String.format(" %1.1f sec: %d  %s", time
               , evProgress.nrFilesVisited, evProgress.currFile.getName()
               );
@@ -325,7 +359,7 @@ public final class TestFileRemote {
     //--------------------------------------------- Create the log and back event for progress 
     FileRemote fsrc = FileRemote.get("d:/vishia/Java/docuSrcJava_vishiaBase");
     FileRemoteWalkerCallbackLog log = new FileRemoteWalkerCallbackLog(outfile, System.out, null, false);
-    EventWithDst<FileRemoteProgressEvData,?> evProgress = new EventWithDst<FileRemoteProgressEvData, Object>("evProgress", null, this.progressCopyDirTreeWithCallback, null, new FileRemoteProgressEvData());
+    EventWithDst<FileRemoteProgressEvData,?> evProgress = new EventWithDst<FileRemoteProgressEvData, Payload>("evProgress", null, this.progressCopyDirTreeWithCallback, null, new FileRemoteProgressEvData());
     //
     startSeconds();                              // start time to measure
     this.progressThread.start();
@@ -376,7 +410,7 @@ public final class TestFileRemote {
    * It is also the instance to call {@link EventConsumer#awaitExecution(long)}
    * for success execution. 
    */
-  FileRemoteProgress progressCopyDirTreeWithCallback = new FileRemoteProgress(this.progressThread) {
+  FileRemoteProgress progressCopyDirTreeWithCallback = new FileRemoteProgress("progressCopyDirTreeWithCallback", this.progressThread) {
 
     /**Indicator whether there is progress in {@link FileRemoteProgressEvData#nrofBytesAll}. */
     private long nrBytesAllCmp = 0;
@@ -439,7 +473,7 @@ public final class TestFileRemote {
     //thiz.test_checkPhysicalDevice(test);
     //thiz.test_copyWithCallback(test);
 //    thiz.test_simpleWalkImmediatelyevBack(test);
-    thiz.test_copyDirTreeWithCallback(test);
+    //thiz.test_copyDirTreeWithCallback(test);
     //thiz.execute2();
   }
 

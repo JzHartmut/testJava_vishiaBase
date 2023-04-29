@@ -57,9 +57,26 @@ public class Test_Office_odgData {
    */
   public void analyzeXmlStruct(File fXmlIn) throws IOException {
     File fXmlCfg = new File("T:/xmlcfg.xml");
+    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
     this.cfgAnalyzer.readXmlStruct(fXmlIn);
+    this.cfgAnalyzer.writeData(new File("T:/xmlcfg.txt"));
+    this.cfgAnalyzer.writeCfgText(new File("T:/xmlcfg.cfg"));
     this.cfgAnalyzer.writeCfgTemplate(fXmlCfg);
+
+    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
+    this.cfgAnalyzer.readXmlStructZip(new File("d:\\vishia\\Fpga\\doc\\Java2Vhdl_Diagrams.odg"), "content.xml");
+    this.cfgAnalyzer.writeCfgText(new File("T:/Java2Vhdl_Diagrams.odg.cfg"));
+
+    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
+    this.cfgAnalyzer.readXmlStructZip(new File("d:\\vishia\\spe\\SPE-card\\wrk-src\\src\\src_SpeA_Fpga\\oodg\\modules_SpeA-c.odg"), "content.xml");
+    this.cfgAnalyzer.writeCfgText(new File("T:/modules_SpeA-c.odg.cfg"));
+    
+    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
+    this.cfgAnalyzer.readConfigText(new File("T:/xmlcfg.cfg"));
+    this.cfgAnalyzer.writeCfgText(new File("T:/xmlcfg.back.cfg"));
+    this.cfgAnalyzer.writeCfgTemplate(new File("T:/xmlcfg.back.xml"));
     Debugutil.stop();
+    System.out.println("done\n");
   }
 
   
@@ -70,7 +87,8 @@ public class Test_Office_odgData {
    */
   public void genJavaData() {
     String[] args = 
-      { "-cfg:D:/vishia/spe/SPE-card/FPGA/src/main/oodg/xmlcfg.xml"
+      { //Arguments.replaceEnv("-cfg:$(TMP)/test_XmlOdg/xmlcfg.xml")
+        "-cfg:T:/xmlcfg.xml"
       , "-dirJava:" + Arguments.replaceEnv("$(TMP)/test_XmlOdg/Java")
       , "-pkg:org.vishia.odg.data"
       , "-class:XmlForOdg"
@@ -130,9 +148,9 @@ public class Test_Office_odgData {
   public static void main(String[] args) {
     Test_Office_odgData main = new Test_Office_odgData();
     try {
-//      main.analyzeXmlStruct(new File("d:\\vishia\\spe\\SPE-card\\FPGA\\src\\main\\oodg\\content.xml"));
+      main.analyzeXmlStruct(new File("t:\\content.xml"));    // analyzes the given exemplar of XML file
 //      main.genJavaData();
-      main.parseExample();
+//      main.parseExample();
     } catch (Exception e) {
       System.err.println("Unexpected: " + e.getMessage());
       e.printStackTrace(System.err);

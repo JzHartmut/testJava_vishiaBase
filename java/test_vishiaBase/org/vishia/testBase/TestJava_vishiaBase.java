@@ -32,7 +32,7 @@ public class TestJava_vishiaBase {
     //to set the current dir to a determined directory the only way is to produce a file with that directory
     // on a known path. This is done by call of +setWDtoTmp.bat or +setWDtoTmp.sh in this SBOX.
     //The following routine reads this file and sets the current dir for the tests.
-    FileFunctions.setCurrdirFromFile("$(TMP)/WD_cmpnJava_vishiaBase.var");
+    FileFunctions.setCurrdirFromFile("/tmp/WD_cmpnJava_vishiaBase.var");
     final String currdir3 = System.getProperty("user.dir");
     final File testfile3 = new File(currdir3, "src/srcJava_vishiaBase/java/org/vishia");
     final boolean bOk = testfile3.exists();
