@@ -14,6 +14,8 @@ import org.vishia.xmlReader.XmlCfg;
 import org.vishia.xmlReader.XmlJzCfgAnalyzer;
 import org.vishia.xmlReader.XmlJzReader;
 import org.vishia.xmlReader.XmlNodeSimpleReader;
+import org.vishia.xmlReader.ZmlReader;
+import org.vishia.xmlSimple.XmlBeautificator;
 import org.vishia.xmlSimple.XmlNodeSimple;
 
 public class Test_Office_odgData {
@@ -58,23 +60,33 @@ public class Test_Office_odgData {
   public void analyzeXmlStruct(File fXmlIn) throws IOException {
     File fXmlCfg = new File("T:/xmlcfg.xml");
     this.cfgAnalyzer = new XmlJzCfgAnalyzer();
-    this.cfgAnalyzer.readXmlStruct(fXmlIn);
-    this.cfgAnalyzer.writeData(new File("T:/xmlcfg.txt"));
-    this.cfgAnalyzer.writeCfgText(new File("T:/xmlcfg.cfg"));
-    this.cfgAnalyzer.writeCfgTemplate(fXmlCfg);
+    //this.cfgAnalyzer.readXmlStruct(fXmlIn);
+//    String sIn = "D:/vishia/SwEng/doc/ofb-UML-Examples.odg";
+//    String[] args = new String[] {sIn + ":zip:content.xml", "T:/ofb-UML-Examples.xml"};
+//    XmlBeautificator.main(args);
+//    this.cfgAnalyzer.readXmlStructZip(new File(sIn), "content.xml");
+//    this.cfgAnalyzer.writeData(new File("T:/xmlcfg.txt"));
+//    this.cfgAnalyzer.writeCfgText(new File("T:/xmlcfg.cfg"));
+//    this.cfgAnalyzer.writeCfgTemplate(fXmlCfg);
 
-    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
-    this.cfgAnalyzer.readXmlStructZip(new File("d:\\vishia\\Fpga\\doc\\Java2Vhdl_Diagrams.odg"), "content.xml");
-    this.cfgAnalyzer.writeCfgText(new File("T:/Java2Vhdl_Diagrams.odg.cfg"));
+//    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
+//    this.cfgAnalyzer.readXmlStructZip(new File("d:\\vishia\\Fpga\\doc\\Java2Vhdl_Diagrams.odg"), "content.xml");
+//    this.cfgAnalyzer.writeCfgText(new File("T:/Java2Vhdl_Diagrams.odg.cfg"));
 
-    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
-    this.cfgAnalyzer.readXmlStructZip(new File("d:\\vishia\\spe\\SPE-card\\wrk-src\\src\\src_SpeA_Fpga\\oodg\\modules_SpeA-c.odg"), "content.xml");
-    this.cfgAnalyzer.writeCfgText(new File("T:/modules_SpeA-c.odg.cfg"));
+//    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
+//    this.cfgAnalyzer.readXmlStructZip(new File("d:\\vishia\\spe\\SPE-card\\wrk-src\\src\\src_SpeA_Fpga\\oodg\\modules_SpeA-c.odg"), "content.xml");
+//    this.cfgAnalyzer.writeCfgText(new File("T:/modules_SpeA-c.odg.cfg"));
     
-    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
-    this.cfgAnalyzer.readConfigText(new File("T:/xmlcfg.cfg"));
-    this.cfgAnalyzer.writeCfgText(new File("T:/xmlcfg.back.cfg"));
-    this.cfgAnalyzer.writeCfgTemplate(new File("T:/xmlcfg.back.xml"));
+    XmlCfg cfg = new XmlCfg();
+    cfg.setCfgFromZml(new File("D:/vishia/Java/cmpnJava_vishiaBase/src/srcJava_vishiaBase/java/org/vishia/odg/data/xmlcfg.cfg"));
+    
+    
+    
+    
+//    this.cfgAnalyzer = new XmlJzCfgAnalyzer();
+//    this.cfgAnalyzer.readConfigText(new File("T:/xmlcfg.cfg"));
+//    this.cfgAnalyzer.writeCfgText(new File("T:/xmlcfg.back.cfg"));
+//    this.cfgAnalyzer.writeCfgTemplate(new File("T:/xmlcfg.back.xml"));
     Debugutil.stop();
     System.out.println("done\n");
   }
@@ -130,7 +142,7 @@ public class Test_Office_odgData {
         JZtxtcmdTester.dataHtml(data.dataXmlForOdg, foutData);
         XmlForOdg odg = data.dataXmlForOdg;
         odg.prepareData();
-        for(Map.Entry<String, XmlForOdg.Module> emdl: odg.idxAllModule.entrySet()) {
+        for(Map.Entry<String, XmlForOdg.FBlock> emdl: odg.idxFBlockByType.entrySet()) {
           System.out.print(emdl.getValue().showMdlAggregations());
         }
         Debugutil.stop();
