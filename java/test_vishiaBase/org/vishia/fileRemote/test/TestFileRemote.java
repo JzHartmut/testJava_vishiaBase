@@ -7,6 +7,7 @@ import java.text.Format;
 import java.util.EventObject;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.vishia.event.EventConsumer;
 import org.vishia.event.EventConsumerAwait;
@@ -26,6 +27,13 @@ import org.vishia.util.Debugutil;
 import org.vishia.util.TestOrg;
 import org.vishia.testBase.TestJava_vishiaBase;
 
+/**Test operations for the FileRemote concept.
+ * The {@link org.vishia.fileLocalAccessor.FileAccessorLocalJava7} especially 
+ * {@link org.vishia.fileLocalAccessor.FileAccessorLocalJava7#walkFileTreeExecInThisThread(org.vishia.fileRemote.FileRemote.CmdEventData, boolean, EventWithDst, boolean)}
+ * is used inside this operations.
+ * @author hartmut
+ *
+ */
 public final class TestFileRemote {
 
   protected boolean callbackDone; 
@@ -178,9 +186,8 @@ public final class TestFileRemote {
   
   
   //tag::callbackCopy[]
-  EventConsumer callbackCopy = new EventConsumerAwait(null) {
+  EventConsumer progressEventDst = new EventConsumerAwait(null) {
     @Override public int processEvent ( EventObject ev ) {
-      //FileRemote.CallbackEvent backEvent = (FileRemote.CallbackEvent) ev;
       notifyfinish( ev );
       return mEventDonotRelinquish;      // will be relinquished after wait
     }
@@ -203,6 +210,9 @@ public final class TestFileRemote {
     test.expect(!fSrc.isTested(), 3, sfName + " : is not refreshed till now. AbsPath is %s", sAbsPath);
     test.expect(!fSrc.isDirectory(), 3, sfName + " : is not a directory independent of refresh");
    
+    FileRemote fSrc2 = FileRemote.get(sfName);
+    test.expect(fSrc2 == fSrc, 3, "same instance for two FileRemote with same name");
+    
     sfName = "SRC/DOcs";
     fSrc = FileRemote.get(sfName);
     sAbsPath = fSrc.getAbsolutePath();
@@ -269,7 +279,7 @@ public final class TestFileRemote {
   
   
   //tag::test_simpleWalkImmediatelyevBack[]
-  public void test_simpleWalkImmediatelyevBack(TestOrg parent) {
+  public void test_simpleWalkImmediately_evBack(TestOrg parent) {
     TestOrg test = new TestOrg("test_simpleWalkImmediatelyevBack", 5, parent);
     FileRemote fsrc = FileRemote.get("d:/vishia/Java/docuSrcJava_vishiaBase");
     EventWithDst<FileRemoteProgressEvData,?> evBack = new EventWithDst<FileRemoteProgressEvData, Payload>("evProgress", null, this.refreshDirProgress, null, new FileRemoteProgressEvData());
@@ -294,7 +304,7 @@ public final class TestFileRemote {
   FileRemoteProgress refreshDirProgress = new FileRemoteProgress("refreshDirProgress", null) {  // do not associate a thread
 
     /**This is a test implementation, It shows the progress as console output. */
-    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEvent, ?> evCmd) {
+    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEventData, ?> evCmd) {
       int ret = EventConsumer.mEventConsumed;
         if(!evProgress.done()) {
           //info(LogMessage.timeMsg(System.currentTimeMillis(), "progress, activate"));
@@ -347,7 +357,7 @@ public final class TestFileRemote {
    * If all is met, the progress respectively event-back approach should work.
    * @param parent
    */
-  public void test_copyDirTreeWithCallback(TestOrg parent) {
+  public void test_copyDelDirTreeWithCallback(TestOrg parent) {
     TestOrg test = new TestOrg("test_copy", 5, parent);
     OutputStream outfile;
     try{ 
@@ -356,49 +366,77 @@ public final class TestFileRemote {
       outfile = null;
       test.exception(exc);
     }
+    FileRemote fsrc = FileRemote.get("d:/vishia/Java/docuSrcJava_vishiaBase");    //use a proper location with html files (javadoc)
     //--------------------------------------------- Create the log and back event for progress 
-    FileRemote fsrc = FileRemote.get("d:/vishia/Java/docuSrcJava_vishiaBase");
     FileRemoteWalkerCallbackLog log = new FileRemoteWalkerCallbackLog(outfile, System.out, null, false);
     EventWithDst<FileRemoteProgressEvData,?> evProgress = new EventWithDst<FileRemoteProgressEvData, Payload>("evProgress", null, this.progressCopyDirTreeWithCallback, null, new FileRemoteProgressEvData());
     //
-    startSeconds();                              // start time to measure
-    this.progressThread.start();
-    this.progressCopyDirTreeWithCallback.clear();
-    //======>>>>
-    long time0 = System.nanoTime();
-    fsrc.refreshAndMark(false, 20, FileMark.select, FileMark.selectSomeInDir, "**/File*.html", FileMark.ignoreSymbolicLinks, null, evProgress);
-    //
+    startSeconds();                                        // start time to measure
+    this.progressThread.start();                           // this thread is used by the evProgress. Start it before usage.
+    this.progressCopyDirTreeWithCallback.clear();          // clear it before usage.
+    boolean bWait = false;
+    //======>>>>       -------------------------------------- refreshAndMark runs in a FileAccessor thread because bWait=false using the FileWalker
+    long time0 = System.nanoTime();                        // it markes and counts all files with mask File*.html.
+    fsrc.refreshAndMark(bWait, 20, FileMark.select, FileMark.selectSomeInDir, "**/File*.html", FileMark.ignoreSymbolicLinks, null, evProgress);
+    //                                                     // it requests bDone from evProgress
     boolean bOk = this.progressCopyDirTreeWithCallback.awaitExecution(10000000, true);
-    //
-    test.expect(bOk, 5, "progress done comes");
+    long dtimeMark = System.nanoTime()-time0;
+    //======>>>>       
+    test.expect(bOk, 3, "refresheAndMark, progress done comes after %f ms", dtimeMark/1000000.0f);
     bOk = ! this.progressCopyDirTreeWithCallback.done();
     test.expect(bOk, 5, "progress done is cleaned after awaitExecution(..., true)");
     FileRemote fdst = FileRemote.get("T:/testCopyDirTree");
     fdst.mkdir();
-//    progress.timeOrder.clear();
-    //this.callbackDone = false;                   // init definitely state of callback 
     long time1 = System.nanoTime();
-    //======>>>>
-    //fsrc.copyDirTreeTo(fdst, 20, 0,0, "**/*.html", 0, log, copyProgress);                // this is the copy routine with callback
     int selectMark = FileMark.select + FileMark.selectSomeInDir;
     int resetMark = FileMark.resetMark + selectMark;
-    //======>>>>
-    fsrc.copyDirTreeTo(false, fdst, 20, resetMark, resetMark, null, selectMark, log, evProgress);                // this is the copy routine with callback
+    //======>>>>      --------------------------------------- copyDirTree runs in a FileAccessor thread using the fileWalker 
+    evProgress.clean();
+    fsrc.copyDirTreeTo(false, fdst, 20, resetMark, resetMark, null, selectMark, evProgress);                // this is the copy routine with callback
     long dTimeCall = System.nanoTime() - time1;
-    this.progressCopyDirTreeWithCallback.awaitExecution(0, true);
-    //waitfinish(copyProgress);
+    bOk = this.progressCopyDirTreeWithCallback.awaitExecution(0, true);
     long dTimeRespond = System.nanoTime() - time1;
-    //evProgress.relinquish();
     //... this may be normally in the callback operation:
     //... end normally in callback operation
     //========== write test results:             // note: it is not tested whether the file is copied yet.
-    test.expect(dTimeCall < 2000000, 3, "time for call < 2 ms = %3.3f", dTimeCall/1000000.0);
-    test.expect(dTimeRespond > 10000000, 2, "time for execution > 10 ms = %3.3f ms", dTimeRespond/1000000.0);
-    System.out.printf("timePrepare = %f, timeCall = %f ms, timeRespond = %f ms\n"
+    test.expect(dTimeCall < 2000000, 3, "time for call copy < 2 ms = %3.3f", dTimeCall/1000000.0);
+    test.expect(bOk, 3, "copy progress.awaitExecution() returns true");
+    test.expect(dTimeRespond > 10000000, 2, "time for execution copy > 10 ms = %3.3f ms", dTimeRespond/1000000.0);
+    boolean bWasCreated = fdst.exists();
+    test.expect(bWasCreated, 2, "the destination directory was created");
+    System.out.printf("timePrepare = %3.3f, timeCall = %3.3f ms, timeRespond = %3.3f ms\n"
         , (time1 - time0)/1000000.0, dTimeCall/1000000.0, dTimeRespond/1000000.0);
+    //
+    //======================================================= Test delete of the copied files
+    evProgress.clean();
+    FileRemote fdstDel = FileRemote.get("t:/testCopyDirTree");           // do not use the older instance maybe removed.
+    test.expect(fdst == fdstDel, 5, "same instance of fdst after copy");
+    time1 = System.nanoTime();
+    fdstDel.deleteFilesDirTree(false, 20, "org/**/*", evProgress);
+    bOk = this.progressCopyDirTreeWithCallback.awaitExecution(0, true);
+    dTimeRespond = System.nanoTime() - time1;
+    test.expect(bOk, 3, "delete progress.awaitExecution() returns true");
+    test.expect(dTimeRespond > 100000, 2, "time for execution delete > 0.1 ms = %3.3f ms", dTimeRespond/1000000.0);
+    bOk = fdst.children().size()==0;
+    if(!bOk)
+      Debugutil.stop();
+    test.expect(bWasCreated && bOk, 2, "the destination directory is empty");
+    //
+    //======================================================= delete the dst directory, it is empty:
+    evProgress.clean();   //
+    time1 = System.nanoTime();
+    fdst.delete(evProgress);
+    dTimeCall = System.nanoTime() - time1;
+    bOk = this.progressCopyDirTreeWithCallback.awaitExecution(0, true);
+    dTimeRespond = System.nanoTime() - time1;
+    test.expect(bOk, 3, "delete one dir progress.awaitExecution() returns true");
+    test.expect(dTimeRespond > 1000000, 2, "time for call = %3.3f, time for execution delete > 1 ms = %3.3f ms", dTimeCall/1000000.0, dTimeRespond/1000000.0);
+    test.expect(!fdst.exists(), 3, "dst dir is deleted" );
+    //
     this.progressThread.close();
     test.finish();
     fdst.device().close();
+    Debugutil.stop();
   }
   //end::test_copyDirTreeWithCallback[]
   
@@ -416,7 +454,7 @@ public final class TestFileRemote {
     private long nrBytesAllCmp = 0;
 
     /**This is a test implementation, It shows the progress as console output. */
-    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEvent, ?> evCmd) {
+    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEventData, ?> evCmd) {
       int ret = EventConsumer.mEventConsumed;
       float time = getSeconds();
       if(this.nrBytesAllCmp == evProgress.nrofBytesAll && !evProgress.done()) {
@@ -462,18 +500,39 @@ public final class TestFileRemote {
   };
   
  
+  void test_AnyCallback(TestOrg testParent) {
+    
+  }
+  
+  
+  void test_WalkerFileLocale(TestOrg testParent) {
+    TestOrg test = new TestOrg("test_WalkerFileLocale", 3, testParent);
+    FileRemote.CmdEventData co = new FileRemote.CmdEventData();
+    FileRemote fsrc = FileRemote.get("../docuSrcJava_vishiaBase");    //use a proper location with html files (javadoc)
+    test.expect(fsrc.exists(),5,"directory ./docuSrcJava_vishiaBase exists");
+    fsrc.cmdRemote(FileRemote.Cmd.walkRefresh, null, null, 0, 0, co, null);  // evBack can be null because it is on the local file system.
+    //co.setCmdWalkLocal(srcdir, cmd, dstdir, markSet, markSetDir, selectFilter, selectMask, cycleProgress, depthWalk);
+    EventWithDst<FileRemoteProgressEvData,?> evProgress = new EventWithDst<FileRemoteProgressEvData, Payload>("evProgressLocal", null, null, null, new FileRemoteProgressEvData());
+    fsrc.walkLocal(FileRemote.Cmd.noCmd, null, FileMark.select, FileMark.selectSomeInDir, "**/File*.html", 0, 0, null, co, -1, evProgress);
+    
+    test.finish();
+  }
+  
+  
   
   public static final void main(String[] args){ test(args);}
   
   public static final void test ( String[] args ){
     TestJava_vishiaBase.setCurrDir_TestJava_vishiaBase();  // determines the current dir for FileRemote
+    Locale.setDefault(Locale.ENGLISH);
     TestOrg test = new TestOrg("TestFileRemote", 5, args);
     TestFileRemote thiz = new TestFileRemote();
+    thiz.test_WalkerFileLocale(test);
     thiz.test_getFileRemote(test);
-    //thiz.test_checkPhysicalDevice(test);
+    thiz.test_checkPhysicalDevice(test);
     //thiz.test_copyWithCallback(test);
-//    thiz.test_simpleWalkImmediatelyevBack(test);
-    //thiz.test_copyDirTreeWithCallback(test);
+    thiz.test_simpleWalkImmediately_evBack(test);
+    thiz.test_copyDelDirTreeWithCallback(test);
     //thiz.execute2();
   }
 

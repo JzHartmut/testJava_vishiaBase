@@ -1,0 +1,30 @@
+
+
+<:otx:otxIfColors:color> 
+<:if:color == 'white'>wh<: >                     ##The pattern: example for a if-chain
+<:elsif:color == 'yellow'>ye<: >
+<:elsif:color ?starts 'gr'>green or gray:<:if:color=='gray'>gray<:else>green: <&color><.if><: >
+<:elsif:color ?ends 'ck'>black<: >
+<:elsif:color ?contains 'a'>a-type-<&color><: >
+<:else>unknown<.if><: >
+<.otx>
+
+
+
+<:otx:otxListIfColors: colors : text >
+<&text>: <:for:color:colors><:call:otxIfColors:color=color><:if:color_next>, <.if><.for><.otx>
+
+
+<:otx:otxListColors : colors: text>
+<&text>: <:for:color:colors><&color><:if:color_next>, <.if><.for><.otx>
+
+
+
+<:otx:otxCall:dataColor: text1 >         ##This is the main script
+Text: <&text1> ##                        ##Note: one space after text
+Test Call colors1: <:call:otxListColors: colors = dataColor.colors1, text='Colors-1'> END
+Test Call colors2: <:call:otxListColors: colors = dataColor.colors2, text='Colors-2' > END
+Test Call colors1: <:call:otxListIfColors: colors = dataColor.colors1, text='Colors-1a'> END
+Test Call colors1: <:call:otxListIfColors: colors = dataColor.colors2, text='Colors-2a'> END
+<:exec:operation:dataColor> END
+<.otx>

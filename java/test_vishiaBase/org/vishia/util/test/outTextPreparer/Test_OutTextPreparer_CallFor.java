@@ -1,4 +1,4 @@
-package org.vishia.util.test;
+package org.vishia.util.test.outTextPreparer;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -102,7 +102,7 @@ public class Test_OutTextPreparer_CallFor
 
 
 
-  void testCall(TestOrg parent) throws IOException {
+  void testCall ( TestOrg parent) throws IOException {
     TestOrg test = new TestOrg("test script with <:call:..>", 2, parent);
     Writer_Appendable sb = new Writer_Appendable(new StringBuilder(500));
     OutTextPreparer.DataTextPreparer vars = otxCall.createArgumentDataObj();

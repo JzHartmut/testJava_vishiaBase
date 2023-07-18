@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.vishia.cmd.JZtxtcmdTester;
-import org.vishia.odg.data.XmlForOdg;
-import org.vishia.odg.data.XmlForOdg_Zbnf;
+import org.vishia.odg.xml.XmlForOdg;
+import org.vishia.odg.xml.XmlForOdg_Zbnf;
 import org.vishia.util.Arguments;
 import org.vishia.util.Debugutil;
 import org.vishia.xmlReader.GenXmlCfgJavaData;
@@ -142,9 +142,6 @@ public class Test_Office_odgData {
         JZtxtcmdTester.dataHtml(data.dataXmlForOdg, foutData);
         XmlForOdg odg = data.dataXmlForOdg;
         odg.prepareData();
-        for(Map.Entry<String, XmlForOdg.FBlock> emdl: odg.idxFBlockByType.entrySet()) {
-          System.out.print(emdl.getValue().showMdlAggregations());
-        }
         Debugutil.stop();
         //System.out.println(data.get_BillOfMaterial().toString()); //set breakpoint here to view data
       } catch (IOException | NoSuchFieldException e) {
