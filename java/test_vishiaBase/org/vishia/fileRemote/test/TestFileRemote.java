@@ -18,6 +18,7 @@ import org.vishia.event.EventWithDst;
 import org.vishia.event.Payload;
 import org.vishia.fileRemote.FileMark;
 import org.vishia.fileRemote.FileRemote;
+import org.vishia.fileRemote.FileRemoteCmdEventData;
 import org.vishia.fileRemote.FileRemoteProgress;
 import org.vishia.fileRemote.FileRemoteProgressEvData;
 import org.vishia.fileRemote.FileRemoteWalkerCallbackLog;
@@ -304,7 +305,7 @@ public final class TestFileRemote {
   FileRemoteProgress refreshDirProgress = new FileRemoteProgress("refreshDirProgress", null) {  // do not associate a thread
 
     /**This is a test implementation, It shows the progress as console output. */
-    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEventData, ?> evCmd) {
+    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemoteCmdEventData, ?> evCmd) {
       int ret = EventConsumer.mEventConsumed;
         if(!evProgress.done()) {
           //info(LogMessage.timeMsg(System.currentTimeMillis(), "progress, activate"));
@@ -454,7 +455,7 @@ public final class TestFileRemote {
     private long nrBytesAllCmp = 0;
 
     /**This is a test implementation, It shows the progress as console output. */
-    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemote.CmdEventData, ?> evCmd) {
+    @Override protected int processEvent(FileRemoteProgressEvData evProgress, EventWithDst<FileRemoteCmdEventData, ?> evCmd) {
       int ret = EventConsumer.mEventConsumed;
       float time = getSeconds();
       if(this.nrBytesAllCmp == evProgress.nrofBytesAll && !evProgress.done()) {
@@ -507,13 +508,13 @@ public final class TestFileRemote {
   
   void test_WalkerFileLocale(TestOrg testParent) {
     TestOrg test = new TestOrg("test_WalkerFileLocale", 3, testParent);
-    FileRemote.CmdEventData co = new FileRemote.CmdEventData();
+    FileRemoteCmdEventData co = new FileRemoteCmdEventData();
     FileRemote fsrc = FileRemote.get("../docuSrcJava_vishiaBase");    //use a proper location with html files (javadoc)
     test.expect(fsrc.exists(),5,"directory ./docuSrcJava_vishiaBase exists");
-    fsrc.cmdRemote(FileRemote.Cmd.walkRefresh, null, null, 0, 0, co, null);  // evBack can be null because it is on the local file system.
+    fsrc.cmdRemote(FileRemoteCmdEventData.Cmd.walkRefresh, null, null, 0, 0, co, null);  // evBack can be null because it is on the local file system.
     //co.setCmdWalkLocal(srcdir, cmd, dstdir, markSet, markSetDir, selectFilter, selectMask, cycleProgress, depthWalk);
     EventWithDst<FileRemoteProgressEvData,?> evProgress = new EventWithDst<FileRemoteProgressEvData, Payload>("evProgressLocal", null, null, null, new FileRemoteProgressEvData());
-    fsrc.walkLocal(FileRemote.Cmd.noCmd, null, FileMark.select, FileMark.selectSomeInDir, "**/File*.html", 0, 0, null, co, -1, evProgress);
+    fsrc.walkLocal(FileRemoteCmdEventData.Cmd.noCmd, null, FileMark.select, FileMark.selectSomeInDir, "**/File*.html", 0, 0, null, co, -1, evProgress);
     
     test.finish();
   }
