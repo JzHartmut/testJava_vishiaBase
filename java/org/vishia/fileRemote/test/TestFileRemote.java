@@ -21,11 +21,10 @@ import org.vishia.fileLocalAccessor.FileAccessorLocalJava7;
 import org.vishia.fileRemote.FileMark;
 import org.vishia.fileRemote.FileRemote;
 import org.vishia.fileRemote.FileRemoteCmdEventData;
-import org.vishia.fileRemote.FileRemoteProgress;
+import org.vishia.fileRemote.FileRemoteProgressEventConsumer;
 import org.vishia.fileRemote.FileRemoteProgressEvData;
 import org.vishia.fileRemote.FileRemoteWalkerCallbackCopy;
 import org.vishia.fileRemote.FileRemoteWalkerCallbackLog;
-import org.vishia.fileRemote.XXXFileRemoteWalkerEvent;
 import org.vishia.msgDispatch.LogMessage;
 import org.vishia.util.Debugutil;
 import org.vishia.util.TestOrg;
@@ -94,12 +93,12 @@ public final class TestFileRemote {
 
   //tag::callbackCopy[]
   /**This is a event consumer instance containing the event only for done response.
-   * The {@link FileRemoteProgress#evBack} does not force an extra thread for the progress and back,
-   * instead this instance is used to execute the {@link FileRemoteProgress#processEvent(EventObject)} immediately in the executin thread.
+   * The {@link FileRemoteProgressEventConsumer#evBack} does not force an extra thread for the progress and back,
+   * instead this instance is used to execute the {@link FileRemoteProgressEventConsumer#processEvent(EventObject)} immediately in the executin thread.
    * Furthermore it does not force an extra thread for the FileRemote command. 
    * It means per default all is executed in the calling thread of a FileRemote command. 
    */
-  FileRemoteProgress progressOnlyAwait = new FileRemoteProgress("progressOnlyAwait", null, null);
+  FileRemoteProgressEventConsumer progressOnlyAwait = new FileRemoteProgressEventConsumer("progressOnlyAwait", null, null);
   
   
   //end::test_copyDirTreeWithCallback[]
@@ -112,7 +111,7 @@ public final class TestFileRemote {
    * It is also the instance to call {@link EventConsumer#awaitExecution(long)}
    * for success execution. 
    */
-  class FileRemoteProgressShow extends FileRemoteProgress {
+  class FileRemoteProgressShow extends FileRemoteProgressEventConsumer {
   
     public FileRemoteProgressShow(String name, EventThread_ifc progressThread, EventThread_ifc cmdThread) {
       super(name, progressThread, cmdThread);
@@ -167,7 +166,7 @@ public final class TestFileRemote {
   
   } // class
 
-  FileRemoteProgress progressShow = new FileRemoteProgressShow("progressCopyDirTreeWithCallback", this.progressThread, null);
+  FileRemoteProgressEventConsumer progressShow = new FileRemoteProgressShow("progressCopyDirTreeWithCallback", this.progressThread, null);
 
   //end::test_simpleWalkImmediatelyevBack[]
   
@@ -178,7 +177,7 @@ public final class TestFileRemote {
    * It is also the instance to call {@link EventConsumer#awaitExecution(long)}
    * for success execution. 
    */
-  FileRemoteProgress refreshDirProgress = new FileRemoteProgressShow("refreshDirProgress", null, null);
+  FileRemoteProgressEventConsumer refreshDirProgress = new FileRemoteProgressShow("refreshDirProgress", null, null);
   /**Instance used in the test main thread for command data.
    * 
    */
