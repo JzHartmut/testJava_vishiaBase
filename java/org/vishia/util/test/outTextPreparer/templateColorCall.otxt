@@ -26,5 +26,5 @@ Test Call colors1: <:call:otxListColors: colors = dataColor.colors1, text='Color
 Test Call colors2: <:call:otxListColors: colors = dataColor.colors2, text='Colors-2' > END
 Test Call colors1: <:call:otxListIfColors: colors = dataColor.colors1, text='Colors-1a'> END
 Test Call colors1: <:call:otxListIfColors: colors = dataColor.colors2, text='Colors-2a'> END
-<:exec:operation:dataColor> END
+<:exec:operation(dataColor, OUT)> END
 <.otx>

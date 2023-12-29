@@ -5,8 +5,8 @@ public class AccessClass {
   String exmplData;
   
   
-  public String operation(Object data) {
+  public static void operation(Object data, Appendable wr) {
     System.out.println(data.toString());
-    return exmplData;
+    //return "";
   }
 }

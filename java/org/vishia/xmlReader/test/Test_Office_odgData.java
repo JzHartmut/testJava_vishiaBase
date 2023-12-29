@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.vishia.cmd.JZtxtcmdTester;
-import org.vishia.odg.xml.XmlForOdg;
-import org.vishia.odg.xml.XmlForOdg_Zbnf;
+import org.vishia.fbcl.readOdg.xml.XmlForOdg;
+import org.vishia.fbcl.readOdg.xml.XmlForOdg_Zbnf;
 import org.vishia.util.Arguments;
 import org.vishia.util.Debugutil;
 import org.vishia.xmlReader.GenXmlCfgJavaData;

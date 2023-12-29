@@ -93,7 +93,51 @@ public class Test_OutTextPreparerScript {
   }
   
   
+  /**Test of any script whether it is processable. 
+   * This is for manually test of user scripts.
+   * @param parent Test
+   * @param byClass Class where the script in jar is able to find 
+   * @param name Name of the script
+   */
+  public static void testScript_B ( TestOrg parent, Class<?> byClass, String name ) {
+    TestOrg test = new TestOrg("test script with <:call:..>", 2, parent);
+    InputStream inTpl = null;
+    Map<String, Object> otps = new TreeMap<String, Object>();
+    OutTextPreparer mainOtx = null;
+    try {
+      inTpl = byClass.getResourceAsStream(name);  //pathInJar with slash: from root.
+      
+      mainOtx = OutTextPreparer.readTemplateCreatePreparer(inTpl, "===", AccessClass.class, otps, "otxCall");
+      inTpl.close(); inTpl = null;
+    } catch(Exception exc) {
+      CharSequence sExc = org.vishia.util.ExcUtil.exceptionInfo("unexpected", exc, 0, 10);
+      System.err.println(sExc);
+    } finally { 
+      if(inTpl !=null) { try{ inTpl.close(); } catch(IOException exc) { throw new RuntimeException("cannot close ressource" + exc.getMessage()); } }
+    }
+    ExampleDataClass data = new ExampleDataClass();
+    AccessClass data2 = new AccessClass(); data2.exmplData = "accessClass";
+    Writer_Appendable sb = new Writer_Appendable(new StringBuilder(500));
+    try {
+      OutTextPreparer.DataTextPreparer vars = mainOtx.createArgumentDataObj();
+      vars.setArgument("dataColor", data);        //The data class for access.
+      vars.setArgument("text1", "any test text");
+      vars.setExecObj(data2);
+      mainOtx.exec(sb, vars);
+    } catch(Exception exc) {
+      CharSequence sExc = org.vishia.util.ExcUtil.exceptionInfo("unexpected", exc, 0, 10);
+      System.err.println(sExc);
+    }    
+    test.expect(sb.getContent(), resultExpected, 7, "Test_OutTextPreparer_CallFor:testCall()");
+    test.finish();
+
+    try{ sb.close();} catch(IOException exc) { throw new RuntimeException("cannot close", exc); }
+    
+    
+  }
   
+  
+ 
   public static void test(String[] args) {
     //DataAccess.debugIdent = "dataColor";  //possibility to set a data depending debug break
     TestOrg test = new TestOrg("Test_OutTextPreparer", 1, args);
@@ -101,6 +145,26 @@ public class Test_OutTextPreparerScript {
       //Note: The creation of the test instance may cause errors if the OutTextPreparer construction
       //fails because errors in the pattern. It is reported in C# in the calling level of this routine already 
       //because the calling of this static routine is loaded and created the type already.
+      //testScript_B(test, org.vishia.fbcl.translate.TranslationScripts.class, "cHeader.txt");
+      Test_OutTextPreparerScript thiz = new Test_OutTextPreparerScript();
+      thiz.testScriptCall(test);
+      //nonsense: test.testClassic();
+      
+    } catch (Exception e) {
+      test.exception(e);
+    }
+    test.finish();
+  }
+
+  
+  public static void testSpecific(String[] args) {
+    //DataAccess.debugIdent = "dataColor";  //possibility to set a data depending debug break
+    TestOrg test = new TestOrg("Test_OutTextPreparer", 1, args);
+    try {
+      //Note: The creation of the test instance may cause errors if the OutTextPreparer construction
+      //fails because errors in the pattern. It is reported in C# in the calling level of this routine already 
+      //because the calling of this static routine is loaded and created the type already.
+      //testScript_B(test, org.vishia.fbcl.translate.TranslationScripts.class, "cHeader.txt");
       Test_OutTextPreparerScript thiz = new Test_OutTextPreparerScript();
       thiz.testScriptCall(test);
       //nonsense: test.testClassic();
@@ -114,5 +178,6 @@ public class Test_OutTextPreparerScript {
   
   public static void main (String[] args) {
     test(args);
+    //testSpecific(args);
   }
 }
